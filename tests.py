@@ -66,3 +66,12 @@ a = random.uniform(1e07, 1e09)
 o = orbit.Orbit.from_period_apsis(b, p, a)
 assert o.period - p < 1e-5
 assert (o.apoapsis - a < 1e-3) or (o.periapsis - a) < 1e-3
+
+
+import body
+
+A = body.CelestialBody("A", 1e30)
+o = orbit.Orbit(A, random.uniform(1e10, 1e11))
+B = body.CelestialBody("B", random.uniform(1e07, 1e09), random.uniform(1e7, 1e8), random.uniform(1e3, 1e5), o)
+t = random.randint(1e6, 1e8)
+assert B.str2time(B.time2str(t)) == t
