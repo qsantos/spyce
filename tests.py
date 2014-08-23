@@ -1,4 +1,5 @@
 import math
+import random
 
 
 import vector
@@ -47,3 +48,21 @@ m = [[0.33482917221585295, 0.8711838511445769, -0.3590656248350022], [-0.6665159
 assert matrix.dot_m(A,B) == [[42, 36, 30], [96, 81, 66], [150, 126, 102]]
 assert matrix.dot_m(B,A) == [[18, 24, 30], [54, 69, 84], [ 90, 114, 138]]
 assert checkdiff(matrix.rotation_rad(5, 1, 2, 3), m)
+
+
+import orbit
+
+class Object: pass
+b = Object()
+b.mass = 1e30
+
+a = random.uniform(1e07, 1e09)
+e = random.uniform( 0.1,  0.9)
+o = orbit.Orbit(b, a, e)
+assert (o.apoapsis + o.periapsis) / 2 - a < 1e-3
+
+p = random.uniform(1e07, 1e10)
+a = random.uniform(1e07, 1e09)
+o = orbit.Orbit.from_period_apsis(b, p, a)
+assert o.period - p < 1e-5
+assert (o.apoapsis - a < 1e-3) or (o.periapsis - a) < 1e-3
