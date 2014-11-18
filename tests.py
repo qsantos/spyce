@@ -85,3 +85,51 @@ def check_mass(b):
 		check_mass(s)
 check_mass(solar .Sun)
 check_mass(kerbol.Kerbol)
+
+
+import cfg
+try:
+	from StringIO import StringIO # not in Python3
+except ImportError:
+	from io import StringIO # expect unicode in Python2
+
+assert cfg.parse(StringIO(
+"""
+PART
+{
+name = somepart
+}
+"""
+)) == {'PART': {'name': 'somepart'}}
+
+assert cfg.parse(StringIO(
+"""
+PART
+{
+MODULE
+{
+name = somemodule
+}
+}
+"""
+)) == {'PART': {'MODULE': {'name': 'somemodule'}}}
+
+part = cfg.parse(StringIO(
+"""
+PART
+{
+MODULE
+{
+name = first
+}
+MODULE
+{
+name = second
+}
+}
+"""
+))
+assert part == {'PART': {'MODULE': [{'name': 'first'}, {'name': 'second'}]}}
+
+part = part['PART']
+assert cfg.dic_get_group(part, 'MODULE', 'first') == {'name': 'first'}
