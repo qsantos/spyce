@@ -21,13 +21,13 @@ assert vector.angle([4,5,7], [3,8,5]) ==  0.3861364787976416
 import matrix
 
 def checkdiff(A,B):
-	for i in range(3):
-		for j in range(3):
-			a = A[i][j]
-			b = B[i][j]
-			if abs(a - b) > 1e-10:
-				return False
-	return True
+    for i in range(3):
+        for j in range(3):
+            a = A[i][j]
+            b = B[i][j]
+            if abs(a - b) > 1e-10:
+                return False
+    return True
 
 # easily verified
 i = matrix.identity()
@@ -80,18 +80,18 @@ assert B.str2time(B.time2str(t)) == t
 import solar
 import kerbol
 def check_mass(b):
-	assert b.mass > 1e9
-	for s in b.satellites:
-		check_mass(s)
+    assert b.mass > 1e9
+    for s in b.satellites:
+        check_mass(s)
 check_mass(solar .Sun)
 check_mass(kerbol.Kerbol)
 
 
 import cfg
 try:
-	from StringIO import StringIO # not in Python3
+    from StringIO import StringIO # not in Python3
 except ImportError:
-	from io import StringIO # expect unicode in Python2
+    from io import StringIO # expect unicode in Python2
 
 assert cfg.parse(StringIO(
 """
