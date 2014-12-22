@@ -1,99 +1,38 @@
-"""
-Main physical constants
-"""
+"""Main physical constants"""
 
 # universal constants
-
-# speed of ligth (m/s)
-c = 299792458
-
-# gravitational constant (N.(m/kg)^2)
-# F = G mM / r^2
-G = 6.67384e-11
-
-# Planck constant (J.s)
-h = 6.6260695729e-34
-
-
+c = 299792458         # speed of ligth (m/s)
+G = 6.67384e-11       # gravitational constant (N.(m/kg)^2)
+h = 6.6260695729e-34  # Planck constant (J.s)
 
 # electromagnetic constants
-
-# magnetic permeability in vacuum (H/m)
-mu0 = 1.2566370614e-6
-
-# elementary charge (C)
-e = 1.60217656635e-19
-
-
+mu0 = 1.2566370614e-6  # magnetic permeability in vacuum (H/m)
+e = 1.60217656635e-19  # elementary charge (C)
 
 # nuclear constatns
-
-# electron mass (kg)
-m_e = 9.1093829140e-31
-
-# proton mass (kg)
-m_p = 1.67262177774e-27
-
-
+m_e = 9.1093829140e-31   # electron mass (kg)
+m_p = 1.67262177774e-27  # proton mass (kg)
 
 # physico-chemical constants
-
-# atomic mass constant (kg)
-m_u = 1.66053892173e-27
-
-# Avogadro constant (1/mol)
-N_A = 6.0221412927e23
-
-# Bolzmann constant (J/K)
-k = 1.380648813e-23
-
-# gas constant (J/mol/K)
-# PV = nRT
-R = 8.31447
-
-
+m_u = 1.66053892173e-27  # atomic mass constant (kg)
+N_A = 6.0221412927e23    # Avogadro constant (1/mol)
+k = 1.380648813e-23      # Bolzmann constant (J/K)
+R = 8.31447              # gas constant (J/mol/K)
 
 # adopted values
+g0 = 9.80665   # standard gravity (m/s^2)
+T0 = 288.15    # standard temperature (K)
+p0 = 101325e3  # standard pressure (Pa)
+atm = p0       # atmosphere unit
 
-# standard gravity (m/s^2)
-# a = m * g0
-g0 = 9.80665
-
-# standard temperature and pressure (K, Pa)
-T0 = 288.15
-p0 = 101325e3
-atm = p0
-
-
-
-# natural units
-
-# Planck length (m)
-l_P = 1.61619997e-35
-
-# Planck mass (kg)
-m_P = 2.1765113e-8
-
-# Planck time (s)
-t_P = 5.3910632e-44
-
-# Planck charge (C)
-q_P = 1.87554595641e-18
-
-# Planck temperature (K)
-T_P = 1.41683385e32
-
-
+# Planck constants
+l_P = 1.61619997e-35     # Planck length (m)
+m_P = 2.1765113e-8       # Planck mass (kg)
+t_P = 5.3910632e-44      # Planck time (s)
+q_P = 1.87554595641e-18  # Planck charge (C)
+T_P = 1.41683385e32      # Planck temperature (K)
 
 # miscellaneous
-
-# molar mass of air (kg/mol)
-# rho_air = M_air V_air
-M_air = 0.0289644
-
-# temperature lapse rate (K/m)
-# T = T0 - Lz
-L = 0.0064
-
-# light year (m)
-ly = 365*24*60*60*c
+M_air = 0.0289644    # molar mass of air (kg/mol)
+L = 0.0064           # temperature lapse rate (K/m)
+ly = 365*24*60*60*c  # light year (m)
