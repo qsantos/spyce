@@ -83,15 +83,11 @@ class CelestialBody:
         """
         n = s < 0
         s = abs(float(s))
-        yl = self.orbit.period
-        dl = self.rot_period
-        hl = 3600
-        ml = 60
-        y = math.floor(s / yl); s %= yl
-        d = math.floor(s / dl); s %= dl
-        h = math.floor(s / hl); s %= hl
-        m = math.floor(s / ml); s %= ml
-        return "%s%uy, %ud, %u:%u:%.1f" % ("-" if n else "+",y,d,h,m,s)
+        y, s = divmod(s, self.orbit.period)
+        d, s = divmod(s, self.rot_period)
+        h, s = divmod(s, 3600)
+        m, s = divmod(s, 60)
+        return "%s%uy, %ud, %u:%u:%.1f" % ("-" if n else "+", y, d, h, m, s)
 
     def str2time(self, t):
         """Convert a string to a duration
@@ -107,17 +103,17 @@ class CelestialBody:
         x = re.search("([0-9]*)d", t)
         d = 0 if x is None else int(x.group(1))
 
-        x = re.search("((([0-9]{1,2}):)?([0-9]{1,2}):)?([0-9]{1,2}(\.[0-9]*)?)$", t)
-        h = 0 if x is None else   int(x.group(3))
-        m = 0 if x is None else   int(x.group(4))
+        time_re = "((([0-9]{1,2}):)?([0-9]{1,2}):)?([0-9]{1,2}(\.[0-9]*)?)$"
+        x = re.search(time_re, t)
+        h = 0 if x is None else int(x.group(3))
+        m = 0 if x is None else int(x.group(4))
         s = 0 if x is None else float(x.group(5))
 
-        yl = self.orbit.period
-        dl = self.rot_period
-        hl = 3600
-        ml = 60
-
-        return round(s + ml*m + hl*h + dl*d + yl*y, 1)
+        s += y * self.orbit.period
+        s += d * self.rot_period
+        s += h * 3600
+        s += m * 60
+        return s
 
     def escape_velocity(self, r):
         """Escape velocity at a given distance"""
