@@ -3,7 +3,7 @@ import orbit
 
 
 
-""" Kerbol system
+"""Kerbol system
 
 Definition of the major celestial bodies from Kerbal Space Program
 """

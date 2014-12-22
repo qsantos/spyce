@@ -4,15 +4,14 @@ import constants
 
 
 class CelestialBody:
-    """ Celestial Body
+    """Celestial Body
 
     Minimalistic model of celestial bodies (stars, planets, moons)
     It includes a few handy methods to plan orbital travel.
     """
 
     def __init__(self, name, mass, radius=0, rot_period=0, orbit=None):
-        """
-        Definition of a celestial body
+        """Definition of a celestial body
 
         Arguments:
         name       (string):          used for easy identification
@@ -40,15 +39,15 @@ class CelestialBody:
             self.rot_period = float(rot_period)
 
     def __repr__(self):
-        """ Appear as <Name> in a Python interpreter """
+        """Appear as <Name> in a Python interpreter"""
         return "<%s>" % (self.name)
 
     def __str__(self):
-        """ Cast to string using the name """
+        """Cast to string using the name"""
         return self.name
 
     def gravity(self, a=0):
-        """ Gravity at given altitude
+        """Gravity at given altitude
 
         Defaults to surface gravity
         """
@@ -60,7 +59,7 @@ class CelestialBody:
         return constants.G*M / r**2
 
     def SoI(self):
-        """ Radius of the sphere of influence """
+        """Radius of the sphere of influence"""
         p = self.orbit.primary
         if p is None:
             return float("inf")
@@ -68,13 +67,13 @@ class CelestialBody:
             return self.orbit.semimajor * (self.mass / p.mass)**0.4
 
     def primary_day(self):
-        """ Duration of the solar day """
+        """Duration of the solar day"""
         d = self.rot_period
         y = self.orbit.period
         return d * y/(y-d)
 
     def time2str(self, s):
-        """ Convert a duration to a string
+        """Convert a duration to a string
 
         The string will use conventional minutes and hours,
         as well as local days (based on rotational period)
@@ -95,7 +94,7 @@ class CelestialBody:
         return "%s%uy, %ud, %u:%u:%.1f" % ("-" if n else "+",y,d,h,m,s)
 
     def str2time(self, t):
-        """ Convert a string to a duration
+        """Convert a string to a duration
 
         See time2str()
         """
@@ -121,9 +120,9 @@ class CelestialBody:
         return round(s + ml*m + hl*h + dl*d + yl*y, 1)
 
     def escape_velocity(self, r):
-        """ Escape velocity at a given distance """
+        """Escape velocity at a given distance"""
         return math.sqrt(2*constants.G*self.mass/r)
 
     def angular_diameter(self, d):
-        """ Angular diameter / apparent size """
+        """Angular diameter / apparent size"""
         return math.atan(self.radius/d)

@@ -3,7 +3,7 @@ import orbit
 
 
 
-""" Solar system
+"""Solar system
 
 Definition of the major celestial bodies from our solar system
 """

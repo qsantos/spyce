@@ -6,13 +6,13 @@ import constants
 
 
 class Orbit:
-    """ Kepler orbit
+    """Kepler orbit
 
     Allow to define an orbit in a number of way (see class methods)
     and to retrieve the position and velocity from various parameters.
     """
     def __init__(self, primary, semimajor, eccentricity=0, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """ Definition of an orbit from the usual orbital parameters
+        """Definition of an orbit from the usual orbital parameters
 
         Arguments:
         primary:                        the primary body at the focus, needs a attribute 'mass' (kg)
@@ -49,7 +49,7 @@ class Orbit:
 
     @classmethod
     def from_deg(cls, primary, semimajor, eccentricity=0, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """ Constructor using degress for angles """
+        """Constructor using degress for angles"""
         anomaly0    = float(anomaly0)    * math.pi / 180
         inclination = float(inclination) * math.pi / 180
         ascending   = float(ascending)   * math.pi / 180
@@ -58,7 +58,7 @@ class Orbit:
 
     @classmethod
     def from_apses(cls, primary, apsis1, apsis2, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """ Constructor with periapsis (m) and apoapsis (m) instead of semi-major axis and eccentricity """
+        """Constructor with periapsis (m) and apoapsis (m) instead of semi-major axis and eccentricity"""
         apsis1 = float(apsis1)
         apsis2 = float(apsis2)
         semimajor = (apsis1 + apsis2) / 2
@@ -67,7 +67,7 @@ class Orbit:
 
     @classmethod
     def from_period(cls, primary, period, eccentricity=0, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """ Constructor with period (s) instead of semi-major axis """
+        """Constructor with period (s) instead of semi-major axis"""
         period = float(period)
         mu = constants.G * primary.mass
         mean_motion = period / (2*math.pi)
@@ -76,7 +76,7 @@ class Orbit:
 
     @classmethod
     def from_period_apsis(cls, primary, period, apsis, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """ Constructor with period (s) and apoapsis/periapsis (m) instead of semi_major axis and eccentricity """
+        """Constructor with period (s) and apoapsis/periapsis (m) instead of semi_major axis and eccentricity"""
         period = float(period)
         mu = constants.G * primary.mass
         mean_motion = period / (2*math.pi)
@@ -88,7 +88,7 @@ class Orbit:
     # inspired from https://space.stackexchange.com/questions/1904/#1919
     @classmethod
     def from_state(cls, primary, r, v):
-        """ Deduce the orbit of a vessel from its current state
+        """Deduce the orbit of a vessel from its current state
 
         The state is given in a referential centerd on the primary.
 
@@ -124,7 +124,7 @@ class Orbit:
         return cls(primary, semimajor, eccentricity, anomaly0, inclination, ascending, argument)
 
     def visviva(self, r=None):
-        """ Computes the orbital speed at a given distance from the focus
+        """Computes the orbital speed at a given distance from the focus
 
         This is an implementation of the vis-viva equation:
         v**2 / (GM) = 2/r - 1/a
@@ -141,31 +141,31 @@ class Orbit:
         return math.sqrt(mu * (2./r - 1./self.semimajor))
 
     def visviva_peri(self):
-        """ Computes the orbital speed at periapsis """
+        """Computes the orbital speed at periapsis"""
         return self.visviva(self.periapsis)
 
     def visviva_apo(self):
-        """ Computes the orbital speed at apoapsis """
+        """Computes the orbital speed at apoapsis"""
         return self.visviva(self.apoapsis)
 
     def r(self, theta):
-        """     Computes the distance from the focus (m) at a given true anomaly (rad) """
+        """Computes the distance from focus (m) at given true anomaly (rad)"""
         return self.semilatus / (1 + self.eccentricity * math.cos(theta))
 
     def v(self, theta):
-        """ Computes the orbital speed (m/s) at a given true anomaly (rad) """
+        """Computes the orbital speed (m/s) at a given true anomaly (rad)"""
         r = self.r(theta)
         return self.visviva(r)
 
     def position(self, theta):
-        """ Computes the position vector at a given true anomaly (rad) """
+        """Computes the position vector at a given true anomaly (rad)"""
         r = self.r(theta)
         x = [r*math.cos(theta), r*math.sin(theta), 0.0]
         x = matrix.dot_v(self.transform, x)
         return x
 
     def velocity(self, theta):
-        """ Computes the velocity vector at a given true anomaly (rad) """
+        """Computes the velocity vector at a given true anomaly (rad)"""
         r = self.r(theta)
         c = math.cos(theta)
         s = math.sin(theta)
@@ -178,11 +178,11 @@ class Orbit:
         return v
 
     def mean_anomaly(self, t):
-        """ Computes the mean anomaly at a given time since epoch (s) """
+        """Computes the mean anomaly at a given time since epoch (s)"""
         return self.anomaly0 + self.mean_motion * t
 
     def eccentric_anomaly(self, t):
-        """ Computes the eccentric anomaly at a given time since epoch (s) """
+        """Computes the eccentric anomaly at a given time since epoch (s)"""
         M = self.mean_anomaly(t)
         e = self.eccentricity
         E = M if e < 0.8 else math.pi
@@ -194,7 +194,7 @@ class Orbit:
         return E
 
     def true_anomaly(self, t):
-        """ Computes the true anomaly at a given time since epoch (s) """
+        """Computes the true anomaly at a given time since epoch (s)"""
         E = self.eccentric_anomaly(t)
         e = self.eccentricity
         c = math.cos(E)
@@ -202,9 +202,9 @@ class Orbit:
         return v
 
     def position_t(self, t):
-        """ Computes the position vector at a given time since epoch (s) """
+        """Computes the position vector at a given time since epoch (s)"""
         return self.position(self.true_anomaly(t))
 
     def velocity_t(self, t):
-        """ Computes the velocity vector at a given time since epoch (s) """
+        """Computes the velocity vector at a given time since epoch (s)"""
         return self.velocity(self.true_anomaly(t))
