@@ -46,12 +46,14 @@ def parse(f):
 
     return r
 
+
 def dic_get_float(dic, key):
     """Get float a a given key (default: 0.)"""
     if key in dic:
         return float(dic[key])
     else:
         return 0.
+
 
 def dic_get_string(dic, key):
     """Get string at a given key (default: "")"""
@@ -60,17 +62,18 @@ def dic_get_string(dic, key):
     else:
         return ""
 
+
 def dic_get_group(dic, group, name):
     """Get element of a given name in a given group.
 
     For example, find the MODULE named ModuleEngine in the
     dictionary. If none is found, None is returned.
     """
-    if not group in dic:
+    if group not in dic:
         return None
     g = dic[group]
     if isinstance(g, list):
-        for _,v in enumerate(g):
+        for _, v in enumerate(g):
             if 'name' in v and v['name'] == name:
                 return v
     elif 'name' in g and g['name'] == name:

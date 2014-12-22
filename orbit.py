@@ -11,7 +11,9 @@ class Orbit:
     Allow to define an orbit in a number of way (see class methods)
     and to retrieve the position and velocity from various parameters.
     """
-    def __init__(self, primary, semimajor, eccentricity=0, anomaly0=0, inclination=0, ascending=0, argument=0):
+    def __init__(self, primary,
+                 semimajor, eccentricity=0, anomaly0=0,    # 2D shape
+                 inclination=0, ascending=0, argument=0):  # plane
         """Definition of an orbit from the usual orbital parameters
 
         Arguments:
@@ -23,67 +25,91 @@ class Orbit:
         ascending    (float, optional): longitude of ascending node (rad)
         argument     (float, optional): argument of periapsis (rad)
         """
-        self.primary      = primary
-        self.semimajor    = float(semimajor)
+
+        self.primary = primary
+        self.semimajor = float(semimajor)
         self.eccentricity = float(eccentricity)
-        self.anomaly0     = float(anomaly0)
-        self.inclination  = float(inclination)
-        self.ascending    = float(ascending)
-        self.argument     = float(argument)
+        self.anomaly0 = float(anomaly0)
+        self.inclination = float(inclination)
+        self.ascending = float(ascending)
+        self.argument = float(argument)
 
         self.periapsis = self.semimajor * (1-self.eccentricity)
-        self.apoapsis  = self.semimajor * (1+self.eccentricity)
+        self.apoapsis = self.semimajor * (1+self.eccentricity)
         self.semilatus = self.semimajor * (1-self.eccentricity**2)
-        #self.semiminor = self.semimajor * math.sqrt(1 - self.eccentricity**2)
-        #self.focus     = self.semimajor * self.eccentricity
+#        self.semiminor = self.semimajor * math.sqrt(1 - self.eccentricity**2)
+#        self.focus = self.semimajor * self.eccentricity
 
         mu = constants.G * self.primary.mass
         self.mean_motion = math.sqrt(mu / self.semimajor**3)
-        self.period      = 2*math.pi / self.mean_motion
+        self.period = 2*math.pi / self.mean_motion
 
-        m =              matrix.rotation_rad(self.argument,    0, 0, 1)
+        m = matrix.identity()
+        m = matrix.dot_m(matrix.rotation_rad(self.argument,    0, 0, 1), m)
         m = matrix.dot_m(matrix.rotation_rad(self.inclination, 1, 0, 0), m)
         m = matrix.dot_m(matrix.rotation_rad(self.ascending,   0, 0, 1), m)
         self.transform = m
 
-
     @classmethod
-    def from_deg(cls, primary, semimajor, eccentricity=0, anomaly0=0, inclination=0, ascending=0, argument=0):
+    def from_deg(cls, primary,
+                 semimajor, eccentricity=0, anomaly0=0,    # 2D shape
+                 inclination=0, ascending=0, argument=0):  # plane
         """Defines an orbit using degress for angles"""
-        anomaly0    = float(anomaly0)    * math.pi / 180
-        inclination = float(inclination) * math.pi / 180
-        ascending   = float(ascending)   * math.pi / 180
-        argument    = float(argument)    * math.pi / 180
-        return cls(primary, semimajor, eccentricity, anomaly0, inclination, ascending, argument)
+
+        anomaly0 *= math.pi / 180
+        inclination *= math.pi / 180
+        ascending *= math.pi / 180
+        argument *= math.pi / 180
+
+        return cls(primary,
+                   semimajor, eccentricity, anomaly0,
+                   inclination, ascending, argument)
 
     @classmethod
-    def from_apses(cls, primary, apsis1, apsis2, anomaly0=0, inclination=0, ascending=0, argument=0):
+    def from_apses(cls, primary,
+                   apsis1, apsis2, anomaly0=0,               # 2D shape
+                   inclination=0, ascending=0, argument=0):  # plane
         """Defines an orbit from periapsis (m) and apoapsis (m)"""
+
         apsis1 = float(apsis1)
         apsis2 = float(apsis2)
         semimajor = (apsis1 + apsis2) / 2
         eccentricity = abs(apsis1 - apsis2) / (apsis1 + apsis2)
-        return cls(primary, semimajor, eccentricity, anomaly0, inclination, ascending, argument)
+
+        return cls(primary,
+                   semimajor, eccentricity, anomaly0,
+                   inclination, ascending, argument)
 
     @classmethod
-    def from_period(cls, primary, period, eccentricity=0, anomaly0=0, inclination=0, ascending=0, argument=0):
+    def from_period(cls, primary,
+                    period, eccentricity=0, anomaly0=0,       # 2D shape
+                    inclination=0, ascending=0, argument=0):  # plane
         """Defines an orbit from orbital period (s)"""
+
         period = float(period)
         mu = constants.G * primary.mass
         mean_motion = period / (2*math.pi)
-        semimajor = ( mean_motion**2 * mu )**(1./3)
-        return cls(primary, semimajor, eccentricity, anomaly0, inclination, ascending, argument)
+        semimajor = (mean_motion**2 * mu)**(1./3)
+
+        return cls(primary,
+                   semimajor, eccentricity, anomaly0,
+                   inclination, ascending, argument)
 
     @classmethod
-    def from_period_apsis(cls, primary, period, apsis, anomaly0=0, inclination=0, ascending=0, argument=0):
+    def from_period_apsis(cls, primary,
+                          period, apsis, anomaly0=0,                # 2D shape
+                          inclination=0, ascending=0, argument=0):  # plane
         """Defines an orbit from orbital period (s) and one apsis (m)"""
+
         period = float(period)
         mu = constants.G * primary.mass
         mean_motion = period / (2*math.pi)
-        semimajor = ( mean_motion**2 * mu )**(1./3)
-
+        semimajor = (mean_motion**2 * mu)**(1./3)
         eccentricity = abs(apsis/semimajor - 1)
-        return cls(primary, semimajor, eccentricity, anomaly0, inclination, ascending, argument)
+
+        return cls(primary,
+                   semimajor, eccentricity, anomaly0,
+                   inclination, ascending, argument)
 
     # inspired from https://space.stackexchange.com/questions/1904/#1919
     @classmethod
@@ -97,8 +123,9 @@ class Orbit:
         r:       position vector of the vessel (m)
         v:       velocity vector of the vessel (m/s)
         """
+
         # normal vector to the orbital plane
-        h = vector.cross(r,v)
+        h = vector.cross(r, v)
         h[0] += 0.0001
         # inclination
         inclination = vector.angle(h, [0, 0, 1])
@@ -110,7 +137,7 @@ class Orbit:
 
         # from the vis-viva equation
         mu = constants.G * primary.mass
-        semimajor = 1 / abs(2/vector.norm(r) - vector.dot(v,v)/mu)
+        semimajor = 1 / abs(2/vector.norm(r) - vector.dot(v, v)/mu)
 
         # https://en.wikipedia.org/wiki/Eccentricity_vector
         vh = vector.cross(v, h)
@@ -121,7 +148,9 @@ class Orbit:
         argument = vector.angle(n, e)
         anomaly0 = vector.angle(e, r)
 
-        return cls(primary, semimajor, eccentricity, anomaly0, inclination, ascending, argument)
+        return cls(primary,
+                   semimajor, eccentricity, anomaly0,
+                   inclination, ascending, argument)
 
     def visviva(self, r=None):
         """Computes the orbital speed at a given distance from the focus
@@ -135,7 +164,8 @@ class Orbit:
         Returns:
         float: orbital speed (m/s)
         """
-        if r == None:
+
+        if r is None:
             r = self.periapsis
         mu = constants.G * self.primary.mass
         return math.sqrt(mu * (2./r - 1./self.semimajor))
@@ -197,8 +227,9 @@ class Orbit:
         """Computes the true anomaly at a given time since epoch (s)"""
         E = self.eccentric_anomaly(t)
         e = self.eccentricity
-        c = math.cos(E)
-        v = 2 * math.atan2(math.sqrt(1+e)*math.sin(E/2), math.sqrt(1-e)*math.cos(E/2))
+        x = math.sqrt(1+e)*math.sin(E/2)
+        y = math.sqrt(1-e)*math.cos(E/2)
+        v = 2 * math.atan2(x, y)
         return v
 
     def position_t(self, t):
