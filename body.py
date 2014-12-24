@@ -17,7 +17,7 @@ class CelestialBody:
         name       (string):          used for easy identification
         mass       (float):           total mass (kg)
         radius     (float, optional): mean radius (m)
-        rot_period (float, optional): rotational period (s)
+        rot_period (float, optional): rotational period (s), 0 for tidal lock
         orbit      (Orbit, optional): trajectory around a more massive body
         """
         self.name   = name

@@ -15,12 +15,12 @@ class Orbit:
         """Definition of an orbit from the usual orbital parameters
 
         Arguments:
-        primary:                        the primary body at the focus, needs a attribute 'mass' (kg)
+        primary:                        object with a 'mass' attribute (kg)
         semimajor    (float):           semi-major axis (m)
-        eccentricity (float, optional): eccentricity (-)
+        eccentricity (float, optional): ellipse eccentricity (-)
         anomaly0     (float, optional): mean anomaly at epoch (rad)
         inclination  (float, optional): inclination (rad)
-        ascending    (float, optional): longitude of the ascending node (rad)
+        ascending    (float, optional): longitude of ascending node (rad)
         argument     (float, optional): argument of periapsis (rad)
         """
         self.primary      = primary
@@ -49,7 +49,7 @@ class Orbit:
 
     @classmethod
     def from_deg(cls, primary, semimajor, eccentricity=0, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """Constructor using degress for angles"""
+        """Defines an orbit using degress for angles"""
         anomaly0    = float(anomaly0)    * math.pi / 180
         inclination = float(inclination) * math.pi / 180
         ascending   = float(ascending)   * math.pi / 180
@@ -58,7 +58,7 @@ class Orbit:
 
     @classmethod
     def from_apses(cls, primary, apsis1, apsis2, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """Constructor with periapsis (m) and apoapsis (m) instead of semi-major axis and eccentricity"""
+        """Defines an orbit from periapsis (m) and apoapsis (m)"""
         apsis1 = float(apsis1)
         apsis2 = float(apsis2)
         semimajor = (apsis1 + apsis2) / 2
@@ -67,7 +67,7 @@ class Orbit:
 
     @classmethod
     def from_period(cls, primary, period, eccentricity=0, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """Constructor with period (s) instead of semi-major axis"""
+        """Defines an orbit from orbital period (s)"""
         period = float(period)
         mu = constants.G * primary.mass
         mean_motion = period / (2*math.pi)
@@ -76,7 +76,7 @@ class Orbit:
 
     @classmethod
     def from_period_apsis(cls, primary, period, apsis, anomaly0=0, inclination=0, ascending=0, argument=0):
-        """Constructor with period (s) and apoapsis/periapsis (m) instead of semi_major axis and eccentricity"""
+        """Defines an orbit from orbital period (s) and one apsis (m)"""
         period = float(period)
         mu = constants.G * primary.mass
         mean_motion = period / (2*math.pi)
@@ -88,14 +88,14 @@ class Orbit:
     # inspired from https://space.stackexchange.com/questions/1904/#1919
     @classmethod
     def from_state(cls, primary, r, v):
-        """Deduce the orbit of a vessel from its current state
+        """Defines an orbit from position and velocity
 
-        The state is given in a referential centerd on the primary.
+        The state is given in a referential centered on the primary.
 
         Arguments:
-        primary: the body the vessel is orbiting, needs a attribute 'mass' (kg)
-        r: the position vector of the vessel (m)
-        v: the velocity vector of the vessel (m/s)
+        primary: orbited body, object with a 'mass' attribute (kg)
+        r:       position vector of the vessel (m)
+        v:       velocity vector of the vessel (m/s)
         """
         # normal vector to the orbital plane
         h = vector.cross(r,v)
