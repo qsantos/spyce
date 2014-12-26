@@ -124,29 +124,40 @@ class Orbit:
         v:       velocity vector of the vessel (m/s)
         """
 
-        # normal vector to the orbital plane
-        h = vector.cross(r, v)
-        h[0] += 0.0001
-        # inclination
-        inclination = vector.angle(h, [0, 0, 1])
-
-        # intersection of the equatorial and orbital planes
-        n = vector.cross([0, 0, 1], h)
-        # longitude of the ascending node
-        ascending = vector.angle([1, 0, 0], n)
-
         # from the vis-viva equation
         mu = constants.G * primary.mass
         semimajor = 1 / abs(2/vector.norm(r) - vector.dot(v, v)/mu)
 
+        # normal vector to the orbital plane
+        h = vector.cross(r, v)
+
+        # the eccentricity is the norm of the eccentricity vector
         # https://en.wikipedia.org/wiki/Eccentricity_vector
         vh = vector.cross(v, h)
         d = vector.norm(r)
         e = [vh[i]/mu-r[i]/d for i in range(3)]
         eccentricity = vector.norm(e)
 
-        argument = vector.angle(n, e)
+        # mean anomaly at epoch
         anomaly0 = vector.angle(e, r)
+
+        # inclination
+        inclination = vector.angle(h, [0, 0, 1])
+        if inclination == 0:
+            # longitude of the ascending node
+            ascending = 0
+            # argument of periapsis
+            argument = vector.angle([1, 0, 0], e)
+        else:
+            # intersection of the equatorial and orbital planes
+            n = vector.cross([0, 0, 1], h)
+            # longitude of the ascending node
+            ascending = vector.angle([1, 0, 0], n)
+            # argument of periapsis
+            argument = vector.angle(n, e)
+            # picking right orientation
+            if h[2] < 0:
+                argument = -argument
 
         return cls(primary,
                    semimajor, eccentricity, anomaly0,
