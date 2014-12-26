@@ -20,10 +20,10 @@ k = 1.380648813e-23      # Bolzmann constant (J/K)
 R = 8.31447              # gas constant (J/mol/K)
 
 # adopted values
-g0 = 9.80665   # standard gravity (m/s^2)
-T0 = 288.15    # standard temperature (K)
-p0 = 101325e3  # standard pressure (Pa)
-atm = p0       # atmosphere unit
+g0 = 9.80665  # standard gravity (m/s^2)
+T0 = 288.15   # standard temperature (K)
+p0 = 101325   # standard pressure (Pa)
+atm = p0      # atmosphere unit
 
 # Planck constants
 l_P = 1.61619997e-35     # Planck length (m)
