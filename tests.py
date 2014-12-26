@@ -72,16 +72,49 @@ class Object:
 b = Object()
 b.mass = 1e30
 
-a = random.uniform(1e07, 1e09)
-e = random.uniform(0.1,  0.9)
-o = orbit.Orbit(b, a, e)
-assert (o.apoapsis + o.periapsis) / 2 - a < 1e-3
 
-p = random.uniform(1e07, 1e10)
-a = random.uniform(1e07, 1e09)
-o = orbit.Orbit.from_period_apsis(b, p, a)
-assert o.period - p < 1e-5
-assert (o.apoapsis - a < 1e-3) or (o.periapsis - a) < 1e-3
+def check_val(a, b):
+    if a == 0:
+        return b < 1e-6
+    else:
+        return abs(a-b) / a < 1e-6
+
+
+def check_orbit(o1, o2):
+    return (
+        check_val(o1.semimajor, o2.semimajor) and
+        check_val(o1.eccentricity, o2.eccentricity) and
+        check_val(o1.inclination, o2.inclination) and
+        (o1.inclination == 0 or check_val(o1.ascending, o2.ascending)) and
+        (o1.eccentricity == 0 or check_val(o1.argument, o2.argument)) and
+        True
+    )
+
+
+def check_fromstate(o1):
+    o2 = orbit.Orbit.from_state(b, o.position(7), o.velocity(7))
+    return check_orbit(o1, o2)
+
+for _ in range(10):
+    a = random.uniform(1e07, 1e09)
+    e = random.uniform(0.1,  0.9)
+    inc = random.uniform(0, math.pi)
+    lan = random.uniform(0, math.pi)
+    aop = random.uniform(0, math.pi)
+    o = orbit.Orbit(b, a, e, 0, inc, lan, aop)
+    assert (o.apoapsis + o.periapsis) / 2 - a < 1e-3
+    assert check_fromstate(o)
+
+for _ in range(10):
+    p = random.uniform(1e07, 1e10)
+    a = random.uniform(1e07, 1e09)
+    inc = random.uniform(0, math.pi)
+    lan = random.uniform(0, math.pi)
+    aop = random.uniform(0, math.pi)
+    o = orbit.Orbit.from_period_apsis(b, p, a, 0, inc, lan, aop)
+    assert o.period - p < 1e-5
+    assert (o.apoapsis - a < 1e-3) or (o.periapsis - a) < 1e-3
+    assert check_fromstate(o)
 
 
 import body
