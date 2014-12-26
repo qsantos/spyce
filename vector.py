@@ -1,9 +1,11 @@
 import math
 
+"""
+Utilities for linear algebra
 
-"""Vector manipulation functions
-
-We only care 3D: vectors are lists of length 3
+We only care 3D:
+  * vectors are lists of length 3
+  * matrices are 3-by-3 lists of lists
 """
 
 
@@ -42,3 +44,31 @@ def angle(u, v):
         return -angle
     else:
         return angle
+
+
+class Matrix(list):
+    def __mul__(self, x):
+        if type(x) == Matrix:
+            # matrix-matrix multiplication
+            m = Matrix(zip(*x))
+            return Matrix(m*row for row in self)
+        else:
+            # matrix-vector multiplication
+            return [sum(a*b for a, b in zip(row, x)) for row in self]
+
+    @classmethod
+    def identity(cls):
+        return cls([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+
+    @classmethod
+    def rotation(cls, angle, x, y, z):
+        """Rotation matrix of given angle (radians) around axis (x,y,z)"""
+        s = math.sin(angle)
+        c = math.cos(angle)
+        d = math.sqrt(x*x + y*y + z*z)
+        x, y, z = x/d, y/d, z/d
+        return cls([
+            [x*x*(1-c)+c,   x*y*(1-c)-z*s, x*z*(1-c)+y*s],
+            [y*x*(1-c)+z*s, y*y*(1-c)+c,   y*z*(1-c)-x*s],
+            [z*x*(1-c)-y*s, z*y*(1-c)+x*s, z*z*(1-c)+c],
+        ])

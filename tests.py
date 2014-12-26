@@ -18,9 +18,6 @@ assert vector.angle([4, 7, 5], [3, 5, 8]) == -0.3861364787976416
 assert vector.angle([4, 5, 7], [3, 8, 5]) == +0.3861364787976416
 
 
-import matrix
-
-
 def checkdiff(A, B):
     for i in range(3):
         for j in range(3):
@@ -31,37 +28,37 @@ def checkdiff(A, B):
     return True
 
 # easily verified
-i = matrix.identity()
-m = [[2, 0, 0], [0, 2, 0], [0, 0, 2]]
-r = matrix.rotation(90, 1, 0, 0)
-assert i == [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-assert matrix.dot_v(i, [1, 2, 3]) == [1, 2, 3]
-assert matrix.dot_v(m, [1, 2, 3]) == [2, 4, 6]
-assert matrix.dot_m(i, i) == i
-assert matrix.dot_m(m, m) == [[4, 0, 0], [0, 4, 0], [0, 0, 4]]
-assert r == matrix.rotation_rad(math.pi/2, 1, 0, 0)
-assert checkdiff(r, [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]])
+i = vector.Matrix.identity()
+m = vector.Matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]])
+r = vector.Matrix.rotation(math.pi/2, 1, 0, 0)
+assert i * [1, 2, 3] == [1, 2, 3]
+assert m * [1, 2, 3] == [2, 4, 6]
+assert i * i == i
+assert m * m == [[4, 0, 0], [0, 4, 0], [0, 0, 4]]
+assert checkdiff(r, [[1, 0, 0], [0, 0, -1], [0, 1, 0]])
 
 for _ in range(10):
     angle = random.uniform(0, math.pi)
     x = random.uniform(0, 1)
     y = random.uniform(0, 1)
-    r = matrix.rotation_rad(angle, 0, 0, 1)
+    r = vector.Matrix.rotation(angle, 0, 0, 1)
     u = [x, y, 0]
-    v = matrix.dot_v(r, u)
+    v = r * u
     assert abs(angle - vector.angle(u, v)) < 1e-6
 
 # initial results
-A = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-B = [[3, 2, 1], [6, 5, 4], [9, 8, 7]]
-m = [
+A = vector.Matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+B = vector.Matrix([[3, 2, 1], [6, 5, 4], [9, 8, 7]])
+assert A * B == [[42, 36, 30], [96, 81, 66], [150, 126, 102]]
+assert B * A == [[18, 24, 30], [54, 69, 84], [90, 114, 138]]
+
+m = vector.Matrix([
     [0.33482917221585295, 0.8711838511445769, -0.3590656248350022],
     [-0.66651590413407, 0.4883301324737331, 0.5632852130622015],
     [0.6660675453507625, 0.050718627969319086, 0.7441650662368666],
-]
-assert matrix.dot_m(A, B) == [[42, 36, 30], [96, 81, 66], [150, 126, 102]]
-assert matrix.dot_m(B, A) == [[18, 24, 30], [54, 69, 84], [90, 114, 138]]
-assert checkdiff(matrix.rotation_rad(5, 1, 2, 3), m)
+])
+r = vector.Matrix.rotation(5, 1, 2, 3)
+assert checkdiff(r, m)
 
 
 import orbit

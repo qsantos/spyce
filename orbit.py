@@ -1,6 +1,5 @@
 import math
 
-import matrix
 import vector
 import constants
 
@@ -44,10 +43,10 @@ class Orbit:
         self.mean_motion = math.sqrt(mu / self.semimajor**3)
         self.period = 2*math.pi / self.mean_motion
 
-        m = matrix.identity()
-        m = matrix.dot_m(matrix.rotation_rad(self.argument,    0, 0, 1), m)
-        m = matrix.dot_m(matrix.rotation_rad(self.inclination, 1, 0, 0), m)
-        m = matrix.dot_m(matrix.rotation_rad(self.ascending,   0, 0, 1), m)
+        m = vector.Matrix.identity()
+        m = vector.Matrix.rotation(self.argument,    0, 0, 1) * m
+        m = vector.Matrix.rotation(self.inclination, 1, 0, 0) * m
+        m = vector.Matrix.rotation(self.ascending,   0, 0, 1) * m
         self.transform = m
 
     @classmethod
@@ -202,7 +201,7 @@ class Orbit:
         """Computes the position vector at a given true anomaly (rad)"""
         r = self.r(theta)
         x = [r*math.cos(theta), r*math.sin(theta), 0.0]
-        x = matrix.dot_v(self.transform, x)
+        x = self.transform * x
         return x
 
     def velocity(self, theta):
@@ -215,7 +214,7 @@ class Orbit:
         n = vector.norm(v)
         V = self.v(theta)
         v = [x/n*V for x in v]
-        v = matrix.dot_v(self.transform, v)
+        v = self.transform * v
         return v
 
     def mean_anomaly(self, t):
