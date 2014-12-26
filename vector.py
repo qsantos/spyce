@@ -33,7 +33,9 @@ def cross(u, v):
 
 def angle(u, v):
     """Angle formed by two vectors"""
-    angle = math.acos(dot(u, v)/norm(u)/norm(v))
+    r = dot(u, v)/norm(u)/norm(v)
+    r = max(-1, min(1, r))
+    angle = math.acos(r)
     # we need to check the orientation of the cross-product
     # relatively to (0,0,1), i.e. dot([0,0,1],cross(u,v)), or:
     if cross(u, v)[2] < 0:
