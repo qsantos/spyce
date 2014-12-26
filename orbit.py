@@ -217,9 +217,9 @@ class Orbit:
         e = self.eccentricity
         E = M if e < 0.8 else math.pi
         while True:
-            oldE = E
+            old_E = E
             E -= (E - e*math.sin(E) - M) / (1 - e*math.cos(E))
-            if (oldE - E)/2 <= 2**-51:
+            if (old_E - E)/2 <= 2**-51:
                 break
         return E
 

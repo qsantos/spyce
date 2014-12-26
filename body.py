@@ -27,9 +27,9 @@ class CelestialBody:
 
         self.satellites = []
         if self.orbit is not None:
-            l = self.orbit.primary.satellites
-            self.label = len(l)
-            l.append(self)
+            s = self.orbit.primary.satellites
+            s.append(self)
+            self.label = len(s)  # moon label convention
         else:
             self.label = 0
 
@@ -58,7 +58,7 @@ class CelestialBody:
             M *= r**3/R**3
         return constants.G*M / r**2
 
-    def SoI(self):
+    def sphere_of_influence(self):
         """Radius of the sphere of influence"""
         p = self.orbit.primary
         if p is None:
