@@ -42,6 +42,15 @@ assert matrix.dot_m(m, m) == [[4, 0, 0], [0, 4, 0], [0, 0, 4]]
 assert r == matrix.rotation_rad(math.pi/2, 1, 0, 0)
 assert checkdiff(r, [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]])
 
+for _ in range(10):
+    angle = random.uniform(0, math.pi)
+    x = random.uniform(0, 1)
+    y = random.uniform(0, 1)
+    r = matrix.rotation_rad(angle, 0, 0, 1)
+    u = [x, y, 0]
+    v = matrix.dot_v(r, u)
+    assert abs(angle - vector.angle(u, v)) < 1e-6
+
 # initial results
 A = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 B = [[3, 2, 1], [6, 5, 4], [9, 8, 7]]
