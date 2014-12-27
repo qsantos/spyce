@@ -10,7 +10,7 @@ class CelestialBody:
     It includes a few handy methods to plan orbital travel.
     """
 
-    def __init__(self, name, mass, radius=0, rotational_period=0, orbit=None):
+    def __init__(self, name, mu, radius=0, rotational_period=0, orbit=None):
         """Definition of a celestial body
 
         Arguments:
@@ -22,7 +22,7 @@ class CelestialBody:
         """
         self.name = name
         self.radius = float(radius)
-        self.mass = float(mass)
+        self.mass = float(mu)/constants.G
         self.orbit = orbit
 
         self.satellites = []
