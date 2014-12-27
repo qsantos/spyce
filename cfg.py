@@ -14,25 +14,25 @@ def parse(f):
         line = f.readline()
         if not line:
             break
-        s = re.split('(\w+|//|[{}=])', line.strip())
+        s = re.split("(\w+|//|[{}=])", line.strip())
 
         if len(s) <= 1:
             continue
 
         key = s[1]
-        if key == '' or key == '//':
+        if key == "" or key == "//":
             continue
-        if key == '}':
+        if key == "}":
             break
 
-        if len(s) > 5 and s[3] == '=':
-            val = ''.join(s[5:])
-        elif (len(s) >= 4 and s[3] == '{') or f.readline().strip() == '{':
+        if len(s) > 5 and s[3] == "=":
+            val = "".join(s[5:])
+        elif (len(s) >= 4 and s[3] == "{") or f.readline().strip() == "{":
             val = parse(f)
         else:
-            s = re.split('\W', line)
+            s = re.split("\W", line)
             for key in s:
-                if key != '':
+                if key != "":
                     r[key] = True
             continue
 
@@ -74,8 +74,8 @@ def dic_get_group(dic, group, name):
     g = dic[group]
     if isinstance(g, list):
         for _, v in enumerate(g):
-            if 'name' in v and v['name'] == name:
+            if "name" in v and v["name"] == name:
                 return v
-    elif 'name' in g and g['name'] == name:
+    elif "name" in g and g["name"] == name:
         return g
     return None

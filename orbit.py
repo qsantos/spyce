@@ -16,7 +16,7 @@ class Orbit:
         """Definition of an orbit from the usual orbital parameters
 
         Arguments:
-        primary                     object with a 'gravitational_parameter'
+        primary                     object with a "gravitational_parameter"
         semi_major_axis             m
         eccentricity                -, optional
         mean_anomaly_at_epoch       rad, optional
@@ -121,7 +121,7 @@ class Orbit:
         The state is given in a referential centered on the primary.
 
         Arguments:
-        primary:  orbited body, object with a 'gravitational_parameter'
+        primary:  orbited body, object with a "gravitational_parameter"
         position: position vector of the vessel (m)
         velocity: velocity vector of the vessel (m/s)
         """

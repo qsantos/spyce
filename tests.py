@@ -147,7 +147,7 @@ PART
 {
 name = somepart
 }
-""")) == {'PART': {'name': 'somepart'}}
+""")) == {"PART": {"name": "somepart"}}
 
 assert cfg.parse(StringIO("""
 PART
@@ -156,7 +156,7 @@ MODULE
 {
 name = somemodule
 }
-}""")) == {'PART': {'MODULE': {'name': 'somemodule'}}}
+}""")) == {"PART": {"MODULE": {"name": "somemodule"}}}
 
 part = cfg.parse(StringIO("""
 PART
@@ -171,7 +171,7 @@ name = second
 }
 }
 """))
-assert part == {'PART': {'MODULE': [{'name': 'first'}, {'name': 'second'}]}}
+assert part == {"PART": {"MODULE": [{"name": "first"}, {"name": "second"}]}}
 
-part = part['PART']
-assert cfg.dic_get_group(part, 'MODULE', 'first') == {'name': 'first'}
+part = part["PART"]
+assert cfg.dic_get_group(part, "MODULE", "first") == {"name": "first"}
