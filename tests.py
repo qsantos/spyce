@@ -67,7 +67,7 @@ import orbit
 class Object:
     pass
 b = Object()
-b.mass = 1e30
+b.gravitational_parameter = 1e20
 
 
 def check_val(a, b):
@@ -114,12 +114,12 @@ for _ in range(10):
 
 import body
 
-A = body.CelestialBody("A", 1e30)
+A = body.CelestialBody("A", 1e20)
 o = orbit.Orbit(A, random.uniform(1e10, 1e11))
-b_mass = random.uniform(1e07, 1e09)
+b_mu = random.uniform(1e07, 1e09)
 b_radius = random.uniform(1e7, 1e8)
 b_rotational_period = random.uniform(1e3, 1e5)
-B = body.CelestialBody("B", b_mass, b_radius, b_rotational_period, o)
+B = body.CelestialBody("B", b_mu, b_radius, b_rotational_period, o)
 t = random.randint(1e6, 1e8)
 assert round(B.str2time(B.time2str(t))) == t
 

@@ -10,20 +10,23 @@ class CelestialBody:
     It includes a few handy methods to plan orbital travel.
     """
 
-    def __init__(self, name, mu, radius=0, rotational_period=0, orbit=None):
+    def __init__(self, name, gravitational_parameter, radius=0,
+                 rotational_period=0, orbit=None):
         """Definition of a celestial body
 
         Arguments:
         name
-        mass       kg
-        radius     m, optional
-        rotational_period s, optional, 0 for tidal lock
-        orbit      Orbit, optional
+        gravitational_parameter  m^3/s^2
+        radius                   m, optional
+        rotational_period        s, optional, 0 for tidal lock
+        orbit                    Orbit, optional
         """
         self.name = name
         self.radius = float(radius)
-        self.mass = float(mu)/constants.G
+        self.gravitational_parameter = float(gravitational_parameter)
         self.orbit = orbit
+
+        self.mass = self.gravitational_parameter/constants.G
 
         self.satellites = []
         if self.orbit is not None:
@@ -53,18 +56,19 @@ class CelestialBody:
         """
         # see https://en.wikipedia.org/wiki/Shell_theorem
         r = self.radius+a
-        M = self.mass
+        mu = self.gravitational_parameter
         if a < 0:
-            M *= r**3/self.radius**3
-        return constants.G*M / r**2
+            mu *= r**3/self.radius**3
+        return mu / r**2
 
     def sphere_of_influence(self):
         """Radius of the sphere of influence (m)"""
-        p = self.orbit.primary
-        if p is None:
+        if self.orbit is None:
             return float("inf")
-        else:
-            return self.orbit.semi_major_axis * (self.mass / p.mass)**0.4
+
+        mu_p = self.orbit.primary.gravitational_parameter
+        mu_b = self.gravitational_parameter
+        return self.orbit.semi_major_axis * (mu_b / mu_p)**0.4
 
     def solar_day(self):
         """Duration of the solar day (s)"""
@@ -117,7 +121,7 @@ class CelestialBody:
 
     def escape_velocity(self, distance):
         """Escape velocity at a given distance (m)"""
-        return math.sqrt(2*constants.G*self.mass/distance)
+        return math.sqrt(2*gravitational_parameter/distance)
 
     def angular_diameter(self, distance):
         """Angular diameter / apparent size at a given distance (m)"""

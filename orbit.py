@@ -16,7 +16,7 @@ class Orbit:
         """Definition of an orbit from the usual orbital parameters
 
         Arguments:
-        primary                     object with a 'mass' attribute (kg)
+        primary                     object with a 'gravitational_parameter'
         semi_major_axis             m
         eccentricity                -, optional
         mean_anomaly_at_epoch       rad, optional
@@ -41,7 +41,7 @@ class Orbit:
         self.semi_minor_axis = self.semi_major_axis * math.sqrt(e2)
         self.focus = self.semi_major_axis * self.eccentricity
 
-        mu = constants.G * self.primary.mass
+        mu = self.primary.gravitational_parameter
         self.mean_motion = math.sqrt(mu / self.semi_major_axis**3)
         self.period = 2*math.pi / self.mean_motion
 
@@ -88,7 +88,7 @@ class Orbit:
         """Defines an orbit from orbital period (s)"""
 
         period = float(period)
-        mu = constants.G * primary.mass
+        mu = primary.gravitational_parameter
         mean_motion = period / (2*math.pi)
         semi_major_axis = (mean_motion**2 * mu)**(1./3)
 
@@ -104,7 +104,7 @@ class Orbit:
         """Defines an orbit from orbital period (s) and one apsis (m)"""
 
         period = float(period)
-        mu = constants.G * primary.mass
+        mu = primary.gravitational_parameter
         mean_motion = period / (2*math.pi)
         semi_major_axis = (mean_motion**2 * mu)**(1./3)
         eccentricity = abs(apsis/semi_major_axis - 1)
@@ -121,7 +121,7 @@ class Orbit:
         The state is given in a referential centered on the primary.
 
         Arguments:
-        primary:  orbited body, object with a 'mass' attribute (kg)
+        primary:  orbited body, object with a 'gravitational_parameter'
         position: position vector of the vessel (m)
         velocity: velocity vector of the vessel (m/s)
         """
@@ -130,7 +130,7 @@ class Orbit:
         speed = vector.norm(velocity)
 
         # from the vis-viva equation
-        mu = constants.G * primary.mass
+        mu = primary.gravitational_parameter
         semi_major_axis = 1 / (2/distance - speed**2/mu)
 
         orbital_plane_normal_vector = vector.cross(position, velocity)
@@ -178,7 +178,7 @@ class Orbit:
         distance: distance from the focus (m)
         """
 
-        mu = constants.G * self.primary.mass
+        mu = self.primary.gravitational_parameter
         return math.sqrt(mu * (2./distance - 1./self.semi_major_axis))
 
     def visviva_peri(self):
