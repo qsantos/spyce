@@ -1,5 +1,3 @@
-import math
-
 """
 Utilities for linear algebra
 
@@ -7,6 +5,8 @@ We only care 3D:
   * vectors are lists of length 3
   * matrices are 3-by-3 lists of lists
 """
+
+import math
 
 
 def dot(u, v):

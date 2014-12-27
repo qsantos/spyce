@@ -1,12 +1,11 @@
-import body
-import orbit
-
-
-
 """Solar system
 
 Definition of the major celestial bodies from our solar system
 """
+
+import body
+import orbit
+
 
 # from https://en.wikipedia.org/wiki/List_of_gravitationally_rounded_objects_of_the_Solar_System and sublinks
 # the information seems to be hard-coded IRL

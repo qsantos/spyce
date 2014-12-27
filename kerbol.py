@@ -1,12 +1,11 @@
-import body
-import orbit
-
-
-
 """Kerbol system
 
 Definition of the major celestial bodies from Kerbal Space Program
 """
+
+import body
+import orbit
+
 
 # data from http://wiki.kerbalspaceprogram.com/wiki/Kerbol_System and sublinks
 # the information seems to be hard-coded in the game
