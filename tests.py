@@ -72,25 +72,23 @@ b.mass = 1e30
 
 def check_val(a, b):
     if a == 0:
-        return b < 1e-6
+        assert b < 1e-6
     else:
-        return abs(a-b) / a < 1e-6
+        assert abs(a-b) / a < 1e-6
 
 
-def check_orbit(o1, o2):
-    return (
-        check_val(o1.semimajor, o2.semimajor) and
-        check_val(o1.eccentricity, o2.eccentricity) and
-        check_val(o1.inclination, o2.inclination) and
-        (o1.inclination == 0 or check_val(o1.ascending, o2.ascending)) and
-        (o1.eccentricity == 0 or check_val(o1.argument, o2.argument)) and
-        True
-    )
+def check_orbit(a, b):
+    check_val(a.semi_major_axis, b.semi_major_axis)
+    check_val(a.eccentricity, b.eccentricity)
+    check_val(a.inclination, b.inclination)
+    if a.inclination != 0:
+        check_val(a.longitude_of_ascending_node, b.longitude_of_ascending_node)
+    if a.eccentricity != 0:
+        check_val(a.argument_of_periapsis, b.argument_of_periapsis)
 
 
-def check_fromstate(o1):
-    o2 = orbit.Orbit.from_state(b, o.position(7), o.velocity(7))
-    return check_orbit(o1, o2)
+def check_fromstate(o):
+    check_orbit(o, orbit.Orbit.from_state(b, o.position(7), o.velocity(7)))
 
 for _ in range(10):
     a = random.uniform(1e07, 1e09)
@@ -100,18 +98,18 @@ for _ in range(10):
     aop = random.uniform(0, math.pi)
     o = orbit.Orbit(b, a, e, 0, inc, lan, aop)
     assert (o.apoapsis + o.periapsis) / 2 - a < 1e-3
-    assert check_fromstate(o)
+    check_fromstate(o)
 
 for _ in range(10):
-    p = random.uniform(1e07, 1e10)
+    period = random.uniform(1e07, 1e10)
     a = random.uniform(1e07, 1e09)
     inc = random.uniform(0, math.pi)
     lan = random.uniform(0, math.pi)
     aop = random.uniform(0, math.pi)
-    o = orbit.Orbit.from_period_apsis(b, p, a, 0, inc, lan, aop)
-    assert o.period - p < 1e-5
+    o = orbit.Orbit.from_period_apsis(b, period, a, 0, inc, lan, aop)
+    assert o.period - period < 1e-5
     assert (o.apoapsis - a < 1e-3) or (o.periapsis - a) < 1e-3
-    assert check_fromstate(o)
+    check_fromstate(o)
 
 
 import body
@@ -120,8 +118,8 @@ A = body.CelestialBody("A", 1e30)
 o = orbit.Orbit(A, random.uniform(1e10, 1e11))
 b_mass = random.uniform(1e07, 1e09)
 b_radius = random.uniform(1e7, 1e8)
-b_rot_period = random.uniform(1e3, 1e5)
-B = body.CelestialBody("B", b_mass, b_radius, b_rot_period, o)
+b_rotational_period = random.uniform(1e3, 1e5)
+B = body.CelestialBody("B", b_mass, b_radius, b_rotational_period, o)
 t = random.randint(1e6, 1e8)
 assert round(B.str2time(B.time2str(t))) == t
 

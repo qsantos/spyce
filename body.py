@@ -10,15 +10,15 @@ class CelestialBody:
     It includes a few handy methods to plan orbital travel.
     """
 
-    def __init__(self, name, mass, radius=0, rot_period=0, orbit=None):
+    def __init__(self, name, mass, radius=0, rotational_period=0, orbit=None):
         """Definition of a celestial body
 
         Arguments:
-        name       (string):          used for easy identification
-        mass       (float):           total mass (kg)
-        radius     (float, optional): mean radius (m)
-        rot_period (float, optional): rotational period (s), 0 for tidal lock
-        orbit      (Orbit, optional): trajectory around a more massive body
+        name
+        mass       kg
+        radius     m, optional
+        rotational_period s, optional, 0 for tidal lock
+        orbit      Orbit, optional
         """
         self.name = name
         self.radius = float(radius)
@@ -33,10 +33,10 @@ class CelestialBody:
         else:
             self.label = 0
 
-        if rot_period == 0 and orbit is not None:
-            self.rot_period = self.orbit.period
+        if rotational_period == 0 and orbit is not None:
+            self.rotational_period = self.orbit.period
         else:
-            self.rot_period = float(rot_period)
+            self.rotational_period = float(rotational_period)
 
     def __repr__(self):
         """Appear as <Name> in a Python interpreter"""
@@ -47,33 +47,33 @@ class CelestialBody:
         return self.name
 
     def gravity(self, a=0):
-        """Gravity at given altitude
+        """Gravity at given altitude (m/s^2)
 
         Defaults to surface gravity
         """
-        R = self.radius
+        # see https://en.wikipedia.org/wiki/Shell_theorem
         r = self.radius+a
         M = self.mass
         if a < 0:
-            M *= r**3/R**3
+            M *= r**3/self.radius**3
         return constants.G*M / r**2
 
     def sphere_of_influence(self):
-        """Radius of the sphere of influence"""
+        """Radius of the sphere of influence (m)"""
         p = self.orbit.primary
         if p is None:
             return float("inf")
         else:
-            return self.orbit.semimajor * (self.mass / p.mass)**0.4
+            return self.orbit.semi_major_axis * (self.mass / p.mass)**0.4
 
-    def primary_day(self):
-        """Duration of the solar day"""
-        d = self.rot_period
+    def solar_day(self):
+        """Duration of the solar day (s)"""
+        d = self.rotational_period
         y = self.orbit.period
         return d * y/(y-d)
 
     def time2str(self, s):
-        """Convert a duration to a string
+        """Convert a duration (s) to a human-readable string
 
         The string will use conventional minutes and hours,
         as well as local days (based on rotational period)
@@ -84,13 +84,13 @@ class CelestialBody:
         n = s < 0
         s = abs(float(s))
         y, s = divmod(s, self.orbit.period)
-        d, s = divmod(s, self.rot_period)
+        d, s = divmod(s, self.rotational_period)
         h, s = divmod(s, 3600)
         m, s = divmod(s, 60)
         return "%s%uy, %ud, %u:%u:%.1f" % ("-" if n else "+", y, d, h, m, s)
 
     def str2time(self, t):
-        """Convert a string to a duration
+        """Convert a string formated time to a duration (s)
 
         See time2str()
         """
@@ -110,15 +110,15 @@ class CelestialBody:
         s = 0 if x is None else float(x.group(5))
 
         s += y * self.orbit.period
-        s += d * self.rot_period
+        s += d * self.rotational_period
         s += h * 3600
         s += m * 60
         return s
 
-    def escape_velocity(self, r):
-        """Escape velocity at a given distance"""
-        return math.sqrt(2*constants.G*self.mass/r)
+    def escape_velocity(self, distance):
+        """Escape velocity at a given distance (m)"""
+        return math.sqrt(2*constants.G*self.mass/distance)
 
-    def angular_diameter(self, d):
-        """Angular diameter / apparent size"""
-        return math.atan(self.radius/d)
+    def angular_diameter(self, distance):
+        """Angular diameter / apparent size at a given distance (m)"""
+        return math.atan(self.radius/distance)
