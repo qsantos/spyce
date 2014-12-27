@@ -12,7 +12,7 @@ class Orbit:
     """
     def __init__(self, primary, semi_major_axis, eccentricity=0,
                  mean_anomaly_at_epoch=0, inclination=0,
-                 longitude_of_ascending_node=0, argument_of_periapsis=0):
+                 longitude_of_ascending_node=0, argument_of_periapsis=0, **_):
         """Definition of an orbit from the usual orbital parameters
 
         Arguments:
@@ -54,7 +54,7 @@ class Orbit:
     @classmethod
     def from_deg(cls, primary, semi_major_axis, eccentricity=0,
                  mean_anomaly_at_epoch=0, inclination=0,
-                 longitude_of_ascending_node=0, argument_of_periapsis=0):
+                 longitude_of_ascending_node=0, argument_of_periapsis=0, **_):
         """Defines an orbit using degress for angles"""
 
         mean_anomaly_at_epoch *= math.pi / 180
@@ -69,7 +69,8 @@ class Orbit:
     @classmethod
     def from_apses(cls, primary, apsis1, apsis2,
                    mean_anomaly_at_epoch=0, inclination=0,
-                   longitude_of_ascending_node=0, argument_of_periapsis=0):
+                   longitude_of_ascending_node=0,
+                   argument_of_periapsis=0, **_):
         """Defines an orbit from periapsis (m) and apoapsis (m)"""
 
         apsis1 = float(apsis1)
@@ -84,7 +85,8 @@ class Orbit:
     @classmethod
     def from_period(cls, primary, period, eccentricity=0,
                     mean_anomaly_at_epoch=0, inclination=0,
-                    longitude_of_ascending_node=0, argument_of_periapsis=0):
+                    longitude_of_ascending_node=0,
+                    argument_of_periapsis=0, **_):
         """Defines an orbit from orbital period (s)"""
 
         period = float(period)
@@ -100,7 +102,7 @@ class Orbit:
     def from_period_apsis(cls, primary, period, apsis,
                           mean_anomaly_at_epoch=0, inclination=0,
                           longitude_of_ascending_node=0,
-                          argument_of_periapsis=0):
+                          argument_of_periapsis=0, **_):
         """Defines an orbit from orbital period (s) and one apsis (m)"""
 
         period = float(period)

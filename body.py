@@ -10,8 +10,8 @@ class CelestialBody:
     It includes a few handy methods to plan orbital travel.
     """
 
-    def __init__(self, name, gravitational_parameter, radius=0,
-                 rotational_period=0, orbit=None):
+    def __init__(self, name, gravitational_parameter=0, radius=0,
+                 rotational_period=0, orbit=None, **_):
         """Definition of a celestial body
 
         Arguments:
