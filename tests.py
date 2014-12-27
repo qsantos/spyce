@@ -94,8 +94,8 @@ for _ in range(10):
     a = random.uniform(1e07, 1e09)
     e = random.uniform(0.1,  0.9)
     inc = random.uniform(0, math.pi)
-    lan = random.uniform(0, math.pi)
-    aop = random.uniform(0, math.pi)
+    lan = random.uniform(-math.pi, math.pi)
+    aop = random.uniform(-math.pi, math.pi)
     o = orbit.Orbit(b, a, e, 0, inc, lan, aop)
     assert (o.apoapsis + o.periapsis) / 2 - a < 1e-3
     check_fromstate(o)
@@ -104,8 +104,8 @@ for _ in range(10):
     period = random.uniform(1e07, 1e10)
     a = random.uniform(1e07, 1e09)
     inc = random.uniform(0, math.pi)
-    lan = random.uniform(0, math.pi)
-    aop = random.uniform(0, math.pi)
+    lan = random.uniform(-math.pi, math.pi)
+    aop = random.uniform(-math.pi, math.pi)
     o = orbit.Orbit.from_period_apsis(b, period, a, 0, inc, lan, aop)
     assert o.period - period < 1e-5
     assert (o.apoapsis - a < 1e-3) or (o.periapsis - a) < 1e-3
