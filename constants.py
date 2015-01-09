@@ -79,6 +79,8 @@ p0 = _(101325)   # standard pressure (Pa)
 atm = p0
 
 # miscellaneous (not CODATA)
-M_air = _(0.0289644, 50e-9)                     # molar mass of air (kg/mol)
-L = _(0.0064, 10e-5)                            # temperature lapse rate (K/m)
-ly = _(9460730472580800, None, 365.25*86400*c)  # light year (m)
+M_air = _(0.0289644, 50e-9)                          # air mass (kg/mol)
+L = _(0.0064, 10e-5)                                 # lapse rate (K/m)
+ly = _(9460730472580800, None, 365.25*86400*c)       # light year (m)
+au = _(149597870700)                                 # astronomical unit (m)
+parsec = _(3.0856775815e16, None, 648e3/math.pi*au)  # parsec (m)
