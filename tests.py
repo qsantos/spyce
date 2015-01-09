@@ -124,16 +124,24 @@ t = random.randint(1e6, 1e8)
 assert round(B.str2time(B.time2str(t))) == t
 
 
-import solar
-import kerbol
+import constants
+import load
 
+Kerbol = load.kerbol['Kerbol']
+Sun = load.solar['Sun']
+assert len(Kerbol.satellites) == 7
+assert sum(1 for x in Sun.satellites if x.mass > 1e23) == 8
+assert max(b.orbit.semi_major_axis for b in Sun.satellites) < 100*constants.au
+assert max(b.orbit.semi_major_axis for b in Kerbol.satellites) < constants.au
 
-def check_mass(b):
-    assert b.mass > 1e9
-    for s in b.satellites:
-        check_mass(s)
-check_mass(solar .Sun)
-check_mass(kerbol.Kerbol)
+for system in (load.kerbol, load.solar):
+    assert sum(1 for b in system if system[b].orbit is None) == 1
+    for name in system:
+        body = system[name]
+        for b in body.satellites:
+            assert b.mass < body.mass, "%s is not satellite of %s" % (b, body)
+        if body.orbit is not None:
+            assert body.orbit.period > 3600, "%s has a short orbit" % body
 
 
 import cfg
