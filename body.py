@@ -30,11 +30,7 @@ class CelestialBody:
 
         self.satellites = []
         if self.orbit is not None:
-            s = self.orbit.primary.satellites
-            s.append(self)
-            self.label = len(s)  # moon label convention
-        else:
-            self.label = 0
+            self.orbit.primary.satellites.append(self)
 
         if rotational_period == 0 and orbit is not None:
             self.rotational_period = self.orbit.period
