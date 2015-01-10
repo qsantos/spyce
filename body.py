@@ -1,6 +1,6 @@
 import math
 
-import constants
+import physics
 
 
 class CelestialBody:
@@ -26,7 +26,7 @@ class CelestialBody:
         self.gravitational_parameter = float(gravitational_parameter)
         self.orbit = orbit
 
-        self.mass = self.gravitational_parameter/constants.G
+        self.mass = self.gravitational_parameter/physics.G
 
         self.satellites = []
         if self.orbit is not None:

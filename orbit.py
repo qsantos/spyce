@@ -1,7 +1,6 @@
 import math
 
 import vector
-import constants
 
 
 class Orbit:

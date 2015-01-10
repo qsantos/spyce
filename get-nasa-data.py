@@ -6,7 +6,7 @@ try:  # python 3
 except ImportError:  # python 2
     from urllib2 import urlopen
 
-import constants
+import physics
 
 
 def tt_to_j2000(year, month=1, day=1, hour=0, minute=0, second=0):
@@ -109,7 +109,7 @@ def get_planets_orbits(bodies):
         body["orbit"] = {
             "epoch": epoch,
             "primary": "Sun",
-            "semi_major_axis": semi_major_axis * constants.au,
+            "semi_major_axis": semi_major_axis * physics.au,
             "eccentricity": eccentricity,
             "mean_anomaly_at_epoch": math.radians(mean_anomaly % 360),
             "inclination": math.radians(inclination % 360),
@@ -241,7 +241,7 @@ def get_dwarf_planet_data(bodies, name):
     body["orbit"] = {
         "epoch": float(epoch) * 86400,
         "primary": "Sun",
-        "semi_major_axis": float(elements["a"]) * constants.au,
+        "semi_major_axis": float(elements["a"]) * physics.au,
         "eccentricity": float(elements["e"]),
         "mean_anomaly_at_epoch": math.radians(float(elements["M"])),
         "inclination": math.radians(float(elements["i"])),
