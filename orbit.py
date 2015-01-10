@@ -52,21 +52,6 @@ class Orbit:
         self.transform = m
 
     @classmethod
-    def from_deg(cls, primary, semi_major_axis, eccentricity=0,
-                 mean_anomaly_at_epoch=0, inclination=0,
-                 longitude_of_ascending_node=0, argument_of_periapsis=0, **_):
-        """Defines an orbit using degress for angles"""
-
-        mean_anomaly_at_epoch *= math.pi / 180
-        inclination *= math.pi / 180
-        longitude_of_ascending_node *= math.pi / 180
-        argument_of_periapsis *= math.pi / 180
-
-        return cls(primary, semi_major_axis, eccentricity,
-                   mean_anomaly_at_epoch, inclination,
-                   longitude_of_ascending_node, argument_of_periapsis)
-
-    @classmethod
     def from_apses(cls, primary, apsis1, apsis2,
                    mean_anomaly_at_epoch=0, inclination=0,
                    longitude_of_ascending_node=0,
