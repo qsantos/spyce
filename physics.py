@@ -67,7 +67,7 @@ T_P = _(1.416833e32, 85e26, m_P * c**2 / k_B)        # Planck temperature (K)
 q_P = _(1.875545956e-18, 41e-29, math.sqrt(bh*1e7/c))  # Planck charge (C)
 
 # electromagnetic constants
-e = _(1.602176565e-19, 35e-28, math.sqrt(alph)*q_P)  # elementary charge (C)
+q = _(1.602176565e-19, 35e-28, math.sqrt(alph)*q_P)  # elementary charge (C)
 
 # physico-chemical constants
 m_u = _(1.660538921e-27, 73e-36, m_e / A_r_e)  # atomic mass constant (kg)
