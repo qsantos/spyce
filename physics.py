@@ -1,22 +1,8 @@
-"""Main physical constants
-
-All values but Planck charge and values from the "miscellaneous" section
-comes from CODATA 2010 by NIST [1]. Those, as well as formulaes are from
-various pages of Wikipedia such as [2]. All values are in SI units.
-
-The function _() allows to have the value from CODATA 2010 along with its
-absolute uncertainty as well as an explicit expression from previously
-defined constants. The current implementation prefers locally computed
-values but checks them against the tabulated ones.
-
-[1] http://physics.nist.gov/cuu/Constants/
-[2] https://en.wikipedia.org/wiki/Plank_units
-"""
-
-import math
+"""Main physical constants"""
 
 
 def _(tabulated, uncertainty=None, computed=None):
+    """Checks tabulated against computed values"""
     if computed is None:
         return tabulated
 
@@ -29,6 +15,12 @@ def _(tabulated, uncertainty=None, computed=None):
             "absolute error (%g) above threshold (%g)" % (error, uncertainty)
     return computed
 
+
+# All values except for Planck charge and the "miscellaneous" section come from
+# http://physics.nist.gov/cuu/Constants/ . Other values, as well as explicit
+# expressions were taken from various pages of Wikipedia. All use SI units.
+
+import math
 
 # universal constants
 c = _(299792458)               # speed of ligth in vacuum (m/s)
