@@ -8,25 +8,25 @@ import orbit
 def load_body(bodies, data, name):
     """Load body `name` from `data` to `bodies` and return it
 
-    `data` maps names to physical and orbital data
+    `data` maps names of celestial bodies to physical and orbital data
     `bodies` maps names to CelestialBody instances
     """
     if name in bodies:
         return bodies[name]
 
-    b = data[name]
+    body_data = data[name]
 
     # load orbit
     try:
-        o = b["orbit"]
+        orbit_data = body_data["orbit"]
     except KeyError:
-        b["orbit"] = None
+        body_data["orbit"] = None
     else:
-        o["primary"] = load_body(bodies, data, o["primary"])
-        b["orbit"] = orbit.Orbit(**o)
+        orbit_data["primary"] = load_body(bodies, data, orbit_data["primary"])
+        body_data["orbit"] = orbit.Orbit(**orbit_data)
 
-    b = bodies[name] = body.CelestialBody(name, **b)
-    return b
+    bodies[name] = body.CelestialBody(name, **body_data)
+    return bodies[name]
 
 
 def load_bodies(filename):

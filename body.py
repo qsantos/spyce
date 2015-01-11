@@ -46,17 +46,17 @@ class CelestialBody:
         """Cast to string using the name"""
         return self.name
 
-    def gravity(self, a=0):
+    def gravity(self, altitude=0):
         """Gravity at given altitude (m/s^2)
 
         Defaults to surface gravity
         """
         # see https://en.wikipedia.org/wiki/Shell_theorem
-        r = self.radius+a
+        distance = self.radius + altitude
         mu = self.gravitational_parameter
-        if a < 0:
-            mu *= r**3/self.radius**3
-        return mu / r**2
+        if altitude < 0:
+            mu *= distance**3/self.radius**3
+        return mu / distance**2
 
     def sphere_of_influence(self):
         """Radius of the sphere of influence (m)"""
@@ -69,11 +69,12 @@ class CelestialBody:
 
     def solar_day(self):
         """Duration of the solar day (s)"""
-        d = self.rotational_period
-        y = self.orbit.period
-        return d * y/(y-d)
+        sidereal_day = self.rotational_period
+        sidereal_year = self.orbit.period
+        solar_year = sidereal_year - sidereal_day
+        return sidereal_day * sidereal_year/solar_year
 
-    def time2str(self, s):
+    def time2str(self, seconds):
         """Convert a duration (s) to a human-readable string
 
         The string will use conventional minutes and hours,
@@ -82,27 +83,27 @@ class CelestialBody:
 
         See str2time()
         """
-        n = s < 0
-        s = abs(float(s))
-        y, s = divmod(s, self.orbit.period)
-        d, s = divmod(s, self.rotational_period)
-        h, s = divmod(s, 3600)
-        m, s = divmod(s, 60)
-        return "%s%uy, %ud, %u:%u:%.1f" % ("-" if n else "+", y, d, h, m, s)
+        sign = "-" if seconds < 0 else "+"
+        seconds = abs(float(seconds))
+        y, seconds = divmod(seconds, self.orbit.period)
+        d, seconds = divmod(seconds, self.rotational_period)
+        h, seconds = divmod(seconds, 3600)
+        m, seconds = divmod(seconds, 60)
+        return sign + "%uy, %ud, %u:%u:%.1f" % (y, d, h, m, seconds)
 
-    def str2time(self, t):
-        """Convert a string formated time to a duration (s)
+    def str2time(self, formatted_time):
+        """Extract a duration (s) from formated time
 
         See time2str()
         """
-        x = re.search("([0-9]*)y", t)
+        x = re.search("([0-9]*)y", formatted_time)
         y = 0 if x is None else int(x.group(1))
 
-        x = re.search("([0-9]*)d", t)
+        x = re.search("([0-9]*)d", formatted_time)
         d = 0 if x is None else int(x.group(1))
 
         time_re = "((([0-9]{1,2}):)?([0-9]{1,2}):)?([0-9]{1,2}(\.[0-9]*)?)$"
-        x = re.search(time_re, t)
+        x = re.search(time_re, formatted_time)
         h = 0 if x is None else int(x.group(3))
         m = 0 if x is None else int(x.group(4))
         s = 0 if x is None else float(x.group(5))
@@ -112,7 +113,7 @@ class CelestialBody:
         s += h * 3600
         s += m * 60
 
-        if t[0] == "-":
+        if formatted_time[0] == "-":
             s = -s
 
         return s

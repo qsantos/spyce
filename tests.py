@@ -91,24 +91,34 @@ def check_fromstate(o):
     check_orbit(o, orbit.Orbit.from_state(b, o.position(7), o.velocity(7)))
 
 for _ in range(10):
-    a = random.uniform(1e07, 1e09)
-    e = random.uniform(0.1,  0.9)
-    inc = random.uniform(0, math.pi)
-    lan = random.uniform(-math.pi, math.pi)
-    aop = random.uniform(-math.pi, math.pi)
-    o = orbit.Orbit(b, a, e, 0, inc, lan, aop)
-    assert abs((o.apoapsis+o.periapsis)/2 - a) < 1e-3
+    semi_major_axis = random.uniform(1e07, 1e09)
+    eccentricity = random.uniform(0.1,  0.9)
+    o = orbit.Orbit(
+        primary=b,
+        semi_major_axis=semi_major_axis,
+        eccentricity=eccentricity,
+        mean_anomaly_at_epoch=0,
+        inclination=random.uniform(0, math.pi),
+        longitude_of_ascending_node=random.uniform(-math.pi, math.pi),
+        argument_of_periapsis=random.uniform(-math.pi, math.pi),
+    )
+    assert abs((o.apoapsis+o.periapsis)/2 - semi_major_axis) < 1e-3
     check_fromstate(o)
 
 for _ in range(10):
     period = random.uniform(1e07, 1e10)
-    a = random.uniform(1e07, 1e09)
-    inc = random.uniform(0, math.pi)
-    lan = random.uniform(-math.pi, math.pi)
-    aop = random.uniform(-math.pi, math.pi)
-    o = orbit.Orbit.from_period_apsis(b, period, a, 0, inc, lan, aop)
+    apsis = random.uniform(1e07, 1e09)
+    o = orbit.Orbit.from_period_apsis(
+        primary=b,
+        period=period,
+        apsis=apsis,
+        mean_anomaly_at_epoch=0,
+        inclination=random.uniform(0, math.pi),
+        longitude_of_ascending_node=random.uniform(-math.pi, math.pi),
+        argument_of_periapsis=random.uniform(-math.pi, math.pi),
+    )
     assert o.period - period < 1e-5
-    assert abs(o.apoapsis - a) < 1e-3 or abs(o.periapsis - a) < 1e-3
+    assert abs(o.apoapsis - apsis) < 1e-3 or abs(o.periapsis - apsis) < 1e-3
     check_fromstate(o)
 
 
