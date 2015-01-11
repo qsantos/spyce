@@ -38,10 +38,10 @@ public class Modump : UnityEngine.MonoBehaviour
             json += "\n\t\t\t\"primary\": \"" + primary + "\"";
             json += string.Format(",\n\t\t\t\"semi_major_axis\": {0:g16}",             orbit.semiMajorAxis);
             json += string.Format(",\n\t\t\t\"eccentricity\": {0:g7}",                 orbit.eccentricity);
-            json += string.Format(",\n\t\t\t\"mean_anomaly_at_epoch\": {0:g7}",        orbit.meanAnomalyAtEpoch);
             json += string.Format(",\n\t\t\t\"inclination\": {0:g16}",                 orbit.inclination         * System.Math.PI / 180);
             json += string.Format(",\n\t\t\t\"longitude_of_ascending_node\": {0:g16}", orbit.LAN                 * System.Math.PI / 180);
             json += string.Format(",\n\t\t\t\"argument_of_periapsis\": {0:g16}",       orbit.argumentOfPeriapsis * System.Math.PI / 180);
+            json += string.Format(",\n\t\t\t\"mean_anomaly_at_epoch\": {0:g7}",        orbit.meanAnomalyAtEpoch);
             json += "\n\t\t}";
         }
         json += "\n\t}";

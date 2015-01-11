@@ -13,10 +13,10 @@
 			"primary": "Kerbol",
 			"semi_major_axis": 5263138304,
 			"eccentricity": 0.2,
-			"mean_anomaly_at_epoch": 3.14,
 			"inclination": 0.1221730476396031,
 			"longitude_of_ascending_node": 1.221730476396031,
-			"argument_of_periapsis": 0.2617993877991494
+			"argument_of_periapsis": 0.2617993877991494,
+			"mean_anomaly_at_epoch": 3.14
 		}
 	},
 
@@ -30,10 +30,10 @@
 			"primary": "Kerbol",
 			"semi_major_axis": 9832684544,
 			"eccentricity": 0.01,
-			"mean_anomaly_at_epoch": 3.14,
 			"inclination": 0.03665191262740527,
 			"longitude_of_ascending_node": 0.2617993877991494,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 3.14
 		}
 	},
 
@@ -45,10 +45,10 @@
 			"primary": "Eve",
 			"semi_major_axis": 31500000,
 			"eccentricity": 0.55,
-			"mean_anomaly_at_epoch": 0.9,
 			"inclination": 0.2094395102393195,
 			"longitude_of_ascending_node": 1.396263401595464,
-			"argument_of_periapsis": 0.174532925199433
+			"argument_of_periapsis": 0.174532925199433,
+			"mean_anomaly_at_epoch": 0.9
 		}
 	},
 
@@ -62,10 +62,10 @@
 			"primary": "Kerbol",
 			"semi_major_axis": 13599840256,
 			"eccentricity": 0,
-			"mean_anomaly_at_epoch": 3.14,
 			"inclination": 0,
 			"longitude_of_ascending_node": 0,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 3.14
 		}
 	},
 
@@ -76,10 +76,10 @@
 			"primary": "Kerbin",
 			"semi_major_axis": 12000000,
 			"eccentricity": 0,
-			"mean_anomaly_at_epoch": 1.7,
 			"inclination": 0,
 			"longitude_of_ascending_node": 0,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 1.7
 		}
 	},
 
@@ -91,10 +91,10 @@
 			"primary": "Kerbin",
 			"semi_major_axis": 47000000,
 			"eccentricity": 0,
-			"mean_anomaly_at_epoch": 0.9,
 			"inclination": 0.1047197551196598,
 			"longitude_of_ascending_node": 1.361356816555577,
-			"argument_of_periapsis": 0.6632251157578452
+			"argument_of_periapsis": 0.6632251157578452,
+			"mean_anomaly_at_epoch": 0.9
 		}
 	},
 
@@ -108,10 +108,10 @@
 			"primary": "Kerbol",
 			"semi_major_axis": 20726155264,
 			"eccentricity": 0.051,
-			"mean_anomaly_at_epoch": 3.14,
 			"inclination": 0.001047197527789909,
 			"longitude_of_ascending_node": 2.364921136452316,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 3.14
 		}
 	},
 
@@ -122,10 +122,10 @@
 			"primary": "Duna",
 			"semi_major_axis": 3200000,
 			"eccentricity": 0.03,
-			"mean_anomaly_at_epoch": 1.7,
 			"inclination": 0.00349065855600352,
 			"longitude_of_ascending_node": 0,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 1.7
 		}
 	},
 
@@ -137,10 +137,10 @@
 			"primary": "Kerbol",
 			"semi_major_axis": 40839348203,
 			"eccentricity": 0.145,
-			"mean_anomaly_at_epoch": 3.14,
 			"inclination": 0.08726646259971647,
 			"longitude_of_ascending_node": 4.886921905584122,
-			"argument_of_periapsis": 1.570796326794897
+			"argument_of_periapsis": 1.570796326794897,
+			"mean_anomaly_at_epoch": 3.14
 		}
 	},
 
@@ -154,10 +154,10 @@
 			"primary": "Kerbol",
 			"semi_major_axis": 68773560320,
 			"eccentricity": 0.05,
-			"mean_anomaly_at_epoch": 0.1,
 			"inclination": 0.02275909379554594,
 			"longitude_of_ascending_node": 0.9075712110370514,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 0.1
 		}
 	},
 
@@ -170,10 +170,10 @@
 			"primary": "Jool",
 			"semi_major_axis": 27184000,
 			"eccentricity": 0,
-			"mean_anomaly_at_epoch": 3.14,
 			"inclination": 0,
 			"longitude_of_ascending_node": 0,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 3.14
 		}
 	},
 
@@ -184,10 +184,10 @@
 			"primary": "Jool",
 			"semi_major_axis": 43152000,
 			"eccentricity": 0,
-			"mean_anomaly_at_epoch": 0.9,
 			"inclination": 0,
 			"longitude_of_ascending_node": 0,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 0.9
 		}
 	},
 
@@ -198,10 +198,10 @@
 			"primary": "Jool",
 			"semi_major_axis": 68500000,
 			"eccentricity": 0,
-			"mean_anomaly_at_epoch": 3.14,
 			"inclination": 0.00043633231950044,
 			"longitude_of_ascending_node": 0,
-			"argument_of_periapsis": 0
+			"argument_of_periapsis": 0,
+			"mean_anomaly_at_epoch": 3.14
 		}
 	},
 
@@ -212,10 +212,10 @@
 			"primary": "Jool",
 			"semi_major_axis": 128500000,
 			"eccentricity": 0.235,
-			"mean_anomaly_at_epoch": 0.9,
 			"inclination": 0.2617993877991494,
 			"longitude_of_ascending_node": 0.174532925199433,
-			"argument_of_periapsis": 0.4363323129985824
+			"argument_of_periapsis": 0.4363323129985824,
+			"mean_anomaly_at_epoch": 0.9
 		}
 	},
 
@@ -226,10 +226,10 @@
 			"primary": "Jool",
 			"semi_major_axis": 179890000,
 			"eccentricity": 0.17085,
-			"mean_anomaly_at_epoch": 0.9,
 			"inclination": 0.07417649320975901,
 			"longitude_of_ascending_node": 0.03490658503988659,
-			"argument_of_periapsis": 0.2617993877991494
+			"argument_of_periapsis": 0.2617993877991494,
+			"mean_anomaly_at_epoch": 0.9
 		}
 	},
 
@@ -241,10 +241,10 @@
 			"primary": "Kerbol",
 			"semi_major_axis": 90118820000,
 			"eccentricity": 0.26,
-			"mean_anomaly_at_epoch": 3.14,
 			"inclination": 0.1073377489976513,
 			"longitude_of_ascending_node": 0.8726646259971648,
-			"argument_of_periapsis": 4.537856055185257
+			"argument_of_periapsis": 4.537856055185257,
+			"mean_anomaly_at_epoch": 3.14
 		}
 	}
 }

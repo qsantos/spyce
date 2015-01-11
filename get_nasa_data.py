@@ -107,15 +107,15 @@ def get_planets_orbits(bodies):
 
         body = bodies.setdefault(name, {})
         body["orbit"] = {
-            "epoch": epoch,
             "primary": "Sun",
             "semi_major_axis": semi_major_axis * physics.au,
             "eccentricity": eccentricity,
-            "mean_anomaly_at_epoch": math.radians(mean_anomaly % 360),
             "inclination": math.radians(inclination % 360),
             "longitude_of_ascending_node":
                 math.radians(longitude_of_ascending_node % 360),
             "argument_of_periapsis": math.radians(argument_of_periapsis % 360),
+            "epoch": epoch,
+            "mean_anomaly_at_epoch": math.radians(mean_anomaly % 360),
         }
 
 
@@ -191,17 +191,17 @@ def get_moons_orbits(bodies):
 
                 body = bodies.setdefault(name, {})
                 body["orbit"] = {
-                    "epoch": epoch,
                     "primary": primary,
                     "semi_major_axis": float(semi_major_axis)*1e3,
                     "eccentricity": float(eccentricity),
-                    "mean_anomaly_at_epoch":
-                        math.radians(float(mean_anomaly_at_epoch)),
                     "inclination": math.radians(float(inclination)),
                     "longitude_of_ascending_node":
                         math.radians(float(longitude_of_ascending_node)),
                     "argument_of_periapsis":
                         math.radians(float(argument_of_periapsis)),
+                    "epoch": epoch,
+                    "mean_anomaly_at_epoch":
+                        math.radians(float(mean_anomaly_at_epoch)),
                 }
 
 
@@ -239,14 +239,14 @@ def get_dwarf_planet_data(bodies, name):
     elements = dict(matches)
 
     body["orbit"] = {
-        "epoch": float(epoch) * 86400,
         "primary": "Sun",
         "semi_major_axis": float(elements["a"]) * physics.au,
         "eccentricity": float(elements["e"]),
-        "mean_anomaly_at_epoch": math.radians(float(elements["M"])),
         "inclination": math.radians(float(elements["i"])),
         "longitude_of_ascending_node": math.radians(float(elements["node"])),
         "argument_of_periapsis": math.radians(float(elements["peri"])),
+        "epoch": float(epoch) * 86400,
+        "mean_anomaly_at_epoch": math.radians(float(elements["M"])),
     }
 
 if __name__ == "__main__":
