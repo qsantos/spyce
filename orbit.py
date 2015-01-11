@@ -212,11 +212,12 @@ class Orbit:
         return v
 
     def mean_anomaly(self, time):
-        """Computes the mean anomaly at a given time since epoch (s)"""
-        return self.mean_anomaly_at_epoch + self.mean_motion * time
+        """Computes the mean anomaly at a given time (s)"""
+        time_since_epoch = time - self.epoch
+        return self.mean_anomaly_at_epoch + self.mean_motion * time_since_epoch
 
     def eccentric_anomaly(self, time):
-        """Computes the eccentric anomaly at a given time since epoch (s)"""
+        """Computes the eccentric anomaly at a given time (s)"""
         M = self.mean_anomaly(time)
         e = self.eccentricity
         E = M if e < 0.8 else math.pi
@@ -228,7 +229,7 @@ class Orbit:
         return E
 
     def true_anomaly(self, time):
-        """Computes the true anomaly at a given time since epoch (s)"""
+        """Computes the true anomaly at a given time (s)"""
         E = self.eccentric_anomaly(time)
         x = math.sqrt(1+self.eccentricity)*math.sin(E/2)
         y = math.sqrt(1-self.eccentricity)*math.cos(E/2)
@@ -236,9 +237,9 @@ class Orbit:
         return true_anomaly
 
     def position_t(self, time):
-        """Computes the position vector at a given time since epoch (s)"""
+        """Computes the position vector at a given time (s)"""
         return self.position(self.true_anomaly(time))
 
     def velocity_t(self, time):
-        """Computes the velocity vector at a given time since epoch (s)"""
+        """Computes the velocity vector at a given time (s)"""
         return self.velocity(self.true_anomaly(time))
