@@ -1,3 +1,4 @@
+import re
 import math
 
 import physics
@@ -94,9 +95,6 @@ class CelestialBody:
 
         See time2str()
         """
-        n = t[0] == "-"
-        import re
-
         x = re.search("([0-9]*)y", t)
         y = 0 if x is None else int(x.group(1))
 
@@ -113,6 +111,10 @@ class CelestialBody:
         s += d * self.rotational_period
         s += h * 3600
         s += m * 60
+
+        if t[0] == "-":
+            s = -s
+
         return s
 
     def escape_velocity(self, distance):
