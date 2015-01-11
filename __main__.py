@@ -1,27 +1,11 @@
 import os
-import atexit
 import readline
 import rlcompleter
 import code
-import math
 
-import load
-import orbit
-import physics
+import interact
 
-namespace = {
-    "Orbit": orbit.Orbit,
-    "math": math,
-    "physics": physics,
-    "kerbol": load.kerbol,
-    "solar": load.solar,
-}
-namespace.update(math.__dict__)
-namespace.update(physics.__dict__)
-namespace.update(load.kerbol)
-namespace.update(load.solar)
-
-completer = rlcompleter.Completer(namespace)
+completer = rlcompleter.Completer(interact.namespace)
 readline.set_completer(completer.complete)
 readline.parse_and_bind("tab: complete")
 
@@ -30,7 +14,6 @@ try:
     readline.read_history_file(histfile)
 except Exception:
     pass
-atexit.register(readline.write_history_file, histfile)
 
 banner = """===== Welcome to Spyce! =====
 Session example:
@@ -48,4 +31,7 @@ Session example:
     6960000000.0
     >>> help(Orbit)
 """
-code.interact(banner=banner, local=namespace)
+
+code.interact(banner=banner, local=interact.namespace)
+
+readline.write_history_file(histfile)
