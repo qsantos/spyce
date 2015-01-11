@@ -3,28 +3,21 @@ import atexit
 import readline
 import rlcompleter
 import code
-import textwrap
+import math
 
 import load
 import orbit
+import physics
 
-
-def spyce_help(object=None):
-    if object is not None:
-        help(object)
-        return
-
-    print("The Sun, Kerbol and others bodies are available in global scope:")
-    print("* `Sun.radius` shows the Sun's radius (in meters)")
-    print("* `Kerbin.orbit.period` shows Kerbin's orbital period (in seconds)")
-    print("")
-    print("List of defined bodies from the Kerbol System:")
-    print("\n".join(textwrap.wrap(", ".join(load.kerbol))))
-    print("")
-    print("List of defined bodies from the Solar System:")
-    print("\n".join(textwrap.wrap(", ".join(load.solar))))
-
-namespace = {"help2": spyce_help, "Orbit": orbit.Orbit}
+namespace = {
+    "Orbit": orbit.Orbit,
+    "math": math,
+    "physics": physics,
+    "kerbol": load.kerbol,
+    "solar": load.solar,
+}
+namespace.update(math.__dict__)
+namespace.update(physics.__dict__)
 namespace.update(load.kerbol)
 namespace.update(load.solar)
 
@@ -40,6 +33,19 @@ except Exception:
 atexit.register(readline.write_history_file, histfile)
 
 banner = """===== Welcome to Spyce! =====
-This is a Python interpretter with autocompletion enabled
-Run "help()" for help about Python, "help2()" for help about Spyce"""
+Session example:
+    >>> help(math)
+    >>> pi
+    3.141592653589793
+    >>> help(physics)
+    >>> G
+    6.67384e-11
+    >>> kerbol
+    >>> Kerbin.orbit.period
+    9203544.617501413
+    >>> solar
+    >>> Sun.radius
+    6960000000.0
+    >>> help(Orbit)
+"""
 code.interact(banner=banner, local=namespace)
