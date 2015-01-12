@@ -156,12 +156,19 @@ def get_moons_orbits(bodies):
     matches = re.findall(pattern, html)
 
     for primary, data in matches:
-        pattern = '''Epoch (.*) TD?T<BR>
+        # find orbit sets
+        pattern = '''(<td colspan="2">|<HR>)
+<H3>([\s\S]*?)</H3>(
+Epoch (.*) TD?T<BR>)?
 ([\s\S]*?)
 </TABLE>'''
         matches = re.findall(pattern, data)
 
-        for epoch, data in matches:
+        for _, comment, _, epoch, data in matches:
+            # missing epoch
+            if not epoch and primary == "Pluto":
+                epoch = "2013 Jan. 1.00"
+
             # convert epoch to J2000
             pattern = "^([0-9]{4})\s*([A-Z][a-z]{2})\.\s*([0-9]{1,2}\.[0-9]*)$"
             m = re.match(pattern, epoch)
