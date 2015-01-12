@@ -94,7 +94,7 @@ def get_planets_orbits(bodies):
             name = "Earth"
 
         # see aprx_pos_planets.md
-        t = epoch / 86400 / 36525
+        t = float(epoch) / 86400 / 36525
         elements = [float(x0) + float(dx)*t
                     for x0, dx in zip(elements, changes)]
 
