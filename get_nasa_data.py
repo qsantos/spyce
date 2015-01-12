@@ -62,7 +62,7 @@ def get_planets_physics(bodies):
     # to derive the mass from the gravitational parameter
     G = 6.67428e-11
 
-    for (name, data) in matches:
+    for name, data in matches:
         pattern = '<td align="right" nowrap>(.*)<br>'
         matches = re.findall(pattern, data)
 
@@ -96,7 +96,7 @@ def get_planets_orbits(bodies):
         # see aprx_pos_planets.md
         t = epoch / 86400 / 36525
         elements = [float(x0) + float(dx)*t
-                    for (x0, dx) in zip(elements, changes)]
+                    for x0, dx in zip(elements, changes)]
 
         (semi_major_axis, eccentricity, inclination, mean_longitude,
             longitude_of_periapsis, longitude_of_ascending_node) = elements
@@ -133,7 +133,7 @@ def get_moons_physics(bodies):
     matches = re.findall(pattern, html)
 
     # save data
-    for (name, mu, _, radius, _) in matches:
+    for name, mu, _, radius, _ in matches:
         bodies[name] = {
             "gravitational_parameter": float(mu)*1e9,
             "radius": float(radius)*1e3,
@@ -155,13 +155,13 @@ def get_moons_orbits(bodies):
 </table>'''
     matches = re.findall(pattern, html)
 
-    for (primary, data) in matches:
+    for primary, data in matches:
         pattern = '''Epoch (.*) TD?T<BR>
 ([\s\S]*?)
 </TABLE>'''
         matches = re.findall(pattern, data)
 
-        for (epoch, data) in matches:
+        for epoch, data in matches:
             # convert epoch to J2000
             pattern = "^([0-9]{4})\s*([A-Z][a-z]{2})\.\s*([0-9]{1,2}\.[0-9]*)$"
             m = re.match(pattern, epoch)
@@ -180,10 +180,9 @@ def get_moons_orbits(bodies):
             matches = re.findall(pattern, data)
 
             # save data
-            for match in matches:
-                name, semi_major_axis, eccentricity, argument_of_periapsis, \
-                    mean_anomaly_at_epoch, inclination, \
-                    longitude_of_ascending_node = match
+            for (name, semi_major_axis, eccentricity, argument_of_periapsis,
+                 mean_anomaly_at_epoch, inclination,
+                 longitude_of_ascending_node) in matches:
 
                 # S/2003 J1 -> S/2003J1
                 if re.match("^S/[0-9]{4} [A-Z] [0-9]*$", name):
@@ -221,7 +220,7 @@ def get_dwarf_planet_data(bodies, name):
   <td.*>(.*)</font></td>'''
     matches = re.findall(pattern, html)
 
-    for (name, value) in matches:
+    for name, value in matches:
         if name == "diameter":
             body["radius"] = float(value)*500
         elif name == "GM":
