@@ -3,6 +3,10 @@ import math
 import vector
 
 
+class InvalidElements(Exception):
+    pass
+
+
 class Orbit:
     """Kepler orbit
 
@@ -36,17 +40,22 @@ class Orbit:
         self.epoch = float(epoch)
         self.mean_anomaly_at_epoch = float(mean_anomaly_at_epoch)
 
-        self.semi_major_axis = self.periapsis / (1 - self.eccentricity)
-        self.apoapsis = self.semi_major_axis * (1 + self.eccentricity)
-
-        e2 = 1-self.eccentricity**2
-        self.semi_latus_rectum = self.periapsis * (1 + self.eccentricity)
-        self.semi_minor_axis = self.semi_major_axis * math.sqrt(e2)
-        self.focus = self.semi_major_axis * self.eccentricity
-
         mu = self.primary.gravitational_parameter
-        self.mean_motion = math.sqrt(mu / self.semi_major_axis**3)
-        self.period = 2*math.pi / self.mean_motion
+
+        if self.eccentricity == 1:  # parabolic trajectory
+            self.semi_major_axis = float("inf")
+            self.mean_motion = 0
+            self.period = float("inf")
+        else:
+            self.semi_major_axis = self.periapsis / (1 - self.eccentricity)
+            self.mean_motion = math.sqrt(mu / abs(self.semi_major_axis)**3)
+            self.period = 2*math.pi / self.mean_motion
+
+        self.apoapsis = self.semi_major_axis * (1 + self.eccentricity)
+        self.semi_latus_rectum = self.periapsis * (1 + self.eccentricity)
+        e2 = 1-self.eccentricity**2
+        self.semi_minor_axis = self.semi_major_axis * math.sqrt(abs(e2))
+        self.focus = self.semi_major_axis * self.eccentricity
 
         m = vector.Matrix.identity()
         m = vector.Matrix.rotation(self.argument_of_periapsis,       0, 0, 1)*m
@@ -61,6 +70,11 @@ class Orbit:
         epoch=0, mean_anomaly_at_epoch=0, **_
     ):
         """Defines an orbit from semi-major axis (m) and eccentricity (-)"""
+
+        if eccentricity < 1 and semi_major_axis <= 0:
+            raise InvalidElements("eccentricity < 1 but semi-major axis <= 0")
+        if eccentricity > 1 and semi_major_axis >= 0:
+            raise InvalidElements("eccentricity > 1 but semi-major axis >= 0")
 
         periapsis = semi_major_axis * (1 - eccentricity)
 
@@ -79,7 +93,7 @@ class Orbit:
         """Defines an orbit from periapsis (m) and apoapsis (m)"""
 
         periapsis = min(apsis1, apsis2)
-        eccentricity = abs(apsis1 - apsis2) / (apsis1 + apsis2)
+        eccentricity = abs(apsis1 - apsis2) / abs(apsis1 + apsis2)
 
         return cls(
             primary, periapsis, eccentricity,
