@@ -16,6 +16,11 @@ namespace.update(physics.__dict__)
 namespace.update(load.kerbol)
 namespace.update(load.solar)
 
+# filtering out symbols starting with "_"
+for k in list(namespace.keys()):
+    if k.startswith("_"):
+        del namespace[k]
+
 
 def ask(prompt, default=None):
     """Interactively asks for a value or evaluable expression"""
