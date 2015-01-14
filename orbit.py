@@ -9,9 +9,11 @@ class Orbit:
     Allow to define an orbit in a number of way (see class methods)
     and to retrieve the position and velocity from various parameters.
     """
-    def __init__(self, primary, semi_major_axis, eccentricity=0, inclination=0,
-                 longitude_of_ascending_node=0, argument_of_periapsis=0,
-                 epoch=0, mean_anomaly_at_epoch=0, **_):
+    def __init__(
+        self, primary, semi_major_axis, eccentricity=0,
+        inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
+        epoch=0, mean_anomaly_at_epoch=0, **_
+    ):
         """Definition of an orbit from the usual orbital parameters
 
         Arguments:
@@ -53,9 +55,11 @@ class Orbit:
         self.transform = m
 
     @classmethod
-    def from_apses(cls, primary, apsis1, apsis2, inclination=0,
-                   longitude_of_ascending_node=0, argument_of_periapsis=0,
-                   epoch=0, mean_anomaly_at_epoch=0, **_):
+    def from_apses(
+        cls, primary, apsis1, apsis2,
+        inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
+        epoch=0, mean_anomaly_at_epoch=0, **_
+    ):
         """Defines an orbit from periapsis (m) and apoapsis (m)"""
 
         apsis1 = float(apsis1)
@@ -63,14 +67,18 @@ class Orbit:
         semi_major_axis = (apsis1 + apsis2) / 2
         eccentricity = abs(apsis1 - apsis2) / (apsis1 + apsis2)
 
-        return cls(primary, semi_major_axis, eccentricity, inclination,
-                   longitude_of_ascending_node, argument_of_periapsis,
-                   epoch, mean_anomaly_at_epoch)
+        return cls(
+            primary, semi_major_axis, eccentricity,
+            inclination, longitude_of_ascending_node, argument_of_periapsis,
+            epoch, mean_anomaly_at_epoch
+        )
 
     @classmethod
-    def from_period(cls, primary, period, eccentricity=0, inclination=0,
-                    longitude_of_ascending_node=0, argument_of_periapsis=0,
-                    epoch=0, mean_anomaly_at_epoch=0, **_):
+    def from_period(
+        cls, primary, period, eccentricity=0,
+        inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
+        epoch=0, mean_anomaly_at_epoch=0, **_
+    ):
         """Defines an orbit from orbital period (s)"""
 
         period = float(period)
@@ -78,15 +86,18 @@ class Orbit:
         mean_motion = period / (2*math.pi)
         semi_major_axis = (mean_motion**2 * mu)**(1./3)
 
-        return cls(primary, semi_major_axis, eccentricity, inclination,
-                   longitude_of_ascending_node, argument_of_periapsis,
-                   epoch, mean_anomaly_at_epoch)
+        return cls(
+            primary, semi_major_axis, eccentricity,
+            inclination, longitude_of_ascending_node, argument_of_periapsis,
+            epoch, mean_anomaly_at_epoch
+        )
 
     @classmethod
-    def from_period_apsis(cls, primary, period, apsis, inclination=0,
-                          longitude_of_ascending_node=0,
-                          argument_of_periapsis=0,
-                          epoch=0, mean_anomaly_at_epoch=0, **_):
+    def from_period_apsis(
+        cls, primary, period, apsis,
+        inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
+        epoch=0, mean_anomaly_at_epoch=0, **_
+    ):
         """Defines an orbit from orbital period (s) and one apsis (m)"""
 
         period = float(period)
@@ -95,9 +106,11 @@ class Orbit:
         semi_major_axis = (mean_motion**2 * mu)**(1./3)
         eccentricity = abs(apsis/semi_major_axis - 1)
 
-        return cls(primary, semi_major_axis, eccentricity, inclination,
-                   longitude_of_ascending_node, argument_of_periapsis,
-                   epoch, mean_anomaly_at_epoch)
+        return cls(
+            primary, semi_major_axis, eccentricity,
+            inclination, longitude_of_ascending_node, argument_of_periapsis,
+            epoch, mean_anomaly_at_epoch
+        )
 
     # inspired from https://space.stackexchange.com/questions/1904/#1919
     @classmethod
@@ -150,9 +163,11 @@ class Orbit:
             if orbital_plane_normal_vector[2] < 0:
                 argument_of_periapsis = -argument_of_periapsis
 
-        return cls(primary, semi_major_axis, eccentricity, inclination,
-                   longitude_of_ascending_node, argument_of_periapsis,
-                   epoch, mean_anomaly_at_epoch)
+        return cls(
+            primary, semi_major_axis, eccentricity,
+            inclination, longitude_of_ascending_node, argument_of_periapsis,
+            epoch, mean_anomaly_at_epoch
+        )
 
     def visviva(self, distance):
         """Computes the orbital speed at a given distance from the focus
