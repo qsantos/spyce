@@ -78,7 +78,7 @@ def check_val(a, b):
 
 
 def check_orbit(a, b):
-    check_val(a.semi_major_axis, b.semi_major_axis)
+    check_val(a.periapsis, b.periapsis)
     check_val(a.eccentricity, b.eccentricity)
     check_val(a.inclination, b.inclination)
     if a.inclination != 0:
@@ -91,17 +91,16 @@ def check_fromstate(o):
     check_orbit(o, orbit.Orbit.from_state(b, o.position(7), o.velocity(7)))
 
 for _ in range(10):
-    semi_major_axis = random.uniform(1e07, 1e09)
+    periapsis = random.uniform(1e07, 1e09)
     eccentricity = random.uniform(0.1,  0.9)
     o = orbit.Orbit(
         primary=b,
-        semi_major_axis=semi_major_axis,
+        periapsis=periapsis,
         eccentricity=eccentricity,
         inclination=random.uniform(0, math.pi),
         longitude_of_ascending_node=random.uniform(-math.pi, math.pi),
         argument_of_periapsis=random.uniform(-math.pi, math.pi),
     )
-    assert abs((o.apoapsis+o.periapsis)/2 - semi_major_axis) < 1e-3
     check_fromstate(o)
 
 for _ in range(10):

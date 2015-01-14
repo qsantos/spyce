@@ -23,7 +23,7 @@ def load_body(bodies, data, name):
         body_data["orbit"] = None
     else:
         orbit_data["primary"] = load_body(bodies, data, orbit_data["primary"])
-        body_data["orbit"] = orbit.Orbit(**orbit_data)
+        body_data["orbit"] = orbit.Orbit.from_semi_major_axis(**orbit_data)
 
     bodies[name] = body.CelestialBody(name, **body_data)
     return bodies[name]

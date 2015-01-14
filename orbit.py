@@ -10,7 +10,7 @@ class Orbit:
     and to retrieve the position and velocity from various parameters.
     """
     def __init__(
-        self, primary, semi_major_axis, eccentricity=0,
+        self, primary, periapsis, eccentricity=0,
         inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
         epoch=0, mean_anomaly_at_epoch=0, **_
     ):
@@ -18,7 +18,7 @@ class Orbit:
 
         Arguments:
         primary                     object with a "gravitational_parameter"
-        semi_major_axis             m
+        periapsis                   m
         eccentricity                -, optional
         inclination                 rad, optional
         longitude_of_ascending_node rad, optional
@@ -28,7 +28,7 @@ class Orbit:
         """
 
         self.primary = primary
-        self.semi_major_axis = float(semi_major_axis)
+        self.periapsis = float(periapsis)
         self.eccentricity = float(eccentricity)
         self.inclination = float(inclination)
         self.longitude_of_ascending_node = float(longitude_of_ascending_node)
@@ -36,11 +36,11 @@ class Orbit:
         self.epoch = float(epoch)
         self.mean_anomaly_at_epoch = float(mean_anomaly_at_epoch)
 
-        self.periapsis = self.semi_major_axis * (1-self.eccentricity)
-        self.apoapsis = self.semi_major_axis * (1+self.eccentricity)
+        self.semi_major_axis = self.periapsis / (1 - self.eccentricity)
+        self.apoapsis = self.semi_major_axis * (1 + self.eccentricity)
 
         e2 = 1-self.eccentricity**2
-        self.semi_latus_rectum = self.semi_major_axis * e2
+        self.semi_latus_rectum = self.periapsis * (1 + self.eccentricity)
         self.semi_minor_axis = self.semi_major_axis * math.sqrt(e2)
         self.focus = self.semi_major_axis * self.eccentricity
 
@@ -55,6 +55,22 @@ class Orbit:
         self.transform = m
 
     @classmethod
+    def from_semi_major_axis(
+        cls, primary, semi_major_axis, eccentricity,
+        inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
+        epoch=0, mean_anomaly_at_epoch=0, **_
+    ):
+        """Defines an orbit from semi-major axis (m) and eccentricity (-)"""
+
+        periapsis = semi_major_axis * (1 - eccentricity)
+
+        return cls(
+            primary, periapsis, eccentricity,
+            inclination, longitude_of_ascending_node, argument_of_periapsis,
+            epoch, mean_anomaly_at_epoch
+        )
+
+    @classmethod
     def from_apses(
         cls, primary, apsis1, apsis2,
         inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
@@ -62,13 +78,11 @@ class Orbit:
     ):
         """Defines an orbit from periapsis (m) and apoapsis (m)"""
 
-        apsis1 = float(apsis1)
-        apsis2 = float(apsis2)
-        semi_major_axis = (apsis1 + apsis2) / 2
+        periapsis = min(apsis1, apsis2)
         eccentricity = abs(apsis1 - apsis2) / (apsis1 + apsis2)
 
         return cls(
-            primary, semi_major_axis, eccentricity,
+            primary, periapsis, eccentricity,
             inclination, longitude_of_ascending_node, argument_of_periapsis,
             epoch, mean_anomaly_at_epoch
         )
@@ -87,7 +101,7 @@ class Orbit:
         semi_major_axis = (mean_motion**2 * mu)**(1./3)
 
         return cls(
-            primary, semi_major_axis, eccentricity,
+            primary, periapsis, eccentricity,
             inclination, longitude_of_ascending_node, argument_of_periapsis,
             epoch, mean_anomaly_at_epoch
         )
@@ -106,7 +120,7 @@ class Orbit:
         semi_major_axis = (mean_motion**2 * mu)**(1./3)
         eccentricity = abs(apsis/semi_major_axis - 1)
 
-        return cls(
+        return cls.from_semi_major_axis(
             primary, semi_major_axis, eccentricity,
             inclination, longitude_of_ascending_node, argument_of_periapsis,
             epoch, mean_anomaly_at_epoch
@@ -163,7 +177,7 @@ class Orbit:
             if orbital_plane_normal_vector[2] < 0:
                 argument_of_periapsis = -argument_of_periapsis
 
-        return cls(
+        return cls.from_semi_major_axis(
             primary, semi_major_axis, eccentricity,
             inclination, longitude_of_ascending_node, argument_of_periapsis,
             epoch, mean_anomaly_at_epoch

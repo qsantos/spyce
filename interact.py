@@ -35,26 +35,31 @@ def ask_orbit(cls):
     args["primary"] = ask("Primary [Kerbin]: ", load.kerbol["Kerbin"])
 
     print("== Orbit shape ==")
-    print("   1 Semi-major axis and eccentricity")
-    print("   2 Periapsis and apoapsis")
-    print("   3 Period and eccentricity")
-    print("   4 Period and an apsis")
-    print("   5 Position and velocity")
+    print("   1 Periapsis and eccentricity")
+    print("   2 Semi-major axis and eccentricity")
+    print("   3 Periapsis and apoapsis")
+    print("   4 Period and eccentricity")
+    print("   5 Period and an apsis")
+    print("   6 Position and velocity")
     choice = ask("Choose a method [1]: ", 1)
 
     if choice == 1:
         constructor = cls
+        args["periapsis"] = ask("Periapsis: ")
+        args["eccentricity"] = ask("Eccentricity [0]: ", 0)
+    if choice == 2:
+        constructor = cls.from_semi_major_axis
         args["semi_major_axis"] = ask("Semi-major axis: ")
         args["eccentricity"] = ask("Eccentricity [0]: ", 0)
-    elif choice == 2:
+    elif choice == 3:
         constructor = cls.from_apses
         args["apsis1"] = ask("First apsis: ", 0)
         args["apsis2"] = ask("Second apsis: ", 0)
-    elif choice == 3:
+    elif choice == 4:
         constructor = cls.from_period
         args["period"] = ask("Period: ")
         args["eccentricity"] = ask("Eccentricity [0]: ", 0)
-    elif choice == 4:
+    elif choice == 5:
         constructor = cls.from_period
         args["period"] = ask("Period: ")
         args["apsis"] = ask("One apsis: ", 0)
