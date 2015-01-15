@@ -90,7 +90,9 @@ def check_orbit(a, b):
 
 
 def check_fromstate(o):
-    check_orbit(o, orbit.Orbit.from_state(b, o.position(7), o.velocity(7)))
+    instant = random.uniform(0, o.period)
+    p, v = o.position_t(instant), o.velocity_t(instant)
+    check_orbit(o, orbit.Orbit.from_state(b, p, v, instant))
 
 for _ in range(10):
     periapsis = random.uniform(1e07, 1e09)
