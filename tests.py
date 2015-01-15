@@ -65,7 +65,9 @@ import orbit
 
 
 class Object:
-    pass
+    def __repr__(self):
+        return "<TestBody>"
+
 b = Object()
 b.gravitational_parameter = 1e20
 

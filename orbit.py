@@ -63,6 +63,14 @@ class Orbit:
         m = vector.Matrix.rotation(self.longitude_of_ascending_node, 0, 0, 1)*m
         self.transform = m
 
+    def __repr__(self):
+        return (
+            "Orbit(%(primary)s, %(periapsis)g, %(eccentricity)g, "
+            "%(inclination)g, %(longitude_of_ascending_node)g, "
+            "%(argument_of_periapsis)g, %(epoch)g, %(mean_anomaly_at_epoch)g)"
+            % self.__dict__
+        )
+
     @classmethod
     def from_semi_major_axis(
         cls, primary, semi_major_axis, eccentricity,
