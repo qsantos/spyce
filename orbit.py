@@ -174,10 +174,10 @@ class Orbit:
 
         orbital_plane_normal_vector = vector.cross(position, velocity)
 
-        # https://en.wikipedia.org/wiki/Eccentricity_vector
-        v_cross_h = vector.cross(velocity, orbital_plane_normal_vector)
+        rv = vector.dot(position, velocity)
         eccentricity_vector = [
-            v_cross_h[i]/mu - position[i]/distance for i in range(3)
+            (speed**2 * p - rv*v)/mu - p/distance
+            for p, v in zip(position, velocity)
         ]
 
         eccentricity = vector.norm(eccentricity_vector)
