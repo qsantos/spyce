@@ -163,10 +163,7 @@ class Orbit:
 
         distance = vector.norm(position)
         speed = vector.norm(velocity)
-
-        # from the vis-viva equation
         mu = primary.gravitational_parameter
-        semi_major_axis = 1 / (2/distance - speed**2/mu)
 
         orbital_plane_normal_vector = vector.cross(position, velocity)
 
@@ -177,6 +174,10 @@ class Orbit:
         ]
 
         eccentricity = vector.norm(eccentricity_vector)
+
+        # from r(t) = 1 / mu * h / (1 + e cos t)
+        specific_angular_momentum = vector.norm(orbital_plane_normal_vector)
+        periapsis = specific_angular_momentum**2 / mu / (1 + eccentricity)
 
         # the eccentricity vector points to the periapsis
         mean_anomaly_at_epoch = vector.angle(eccentricity_vector, position)
@@ -199,8 +200,8 @@ class Orbit:
             if orbital_plane_normal_vector[2] < 0:
                 argument_of_periapsis = -argument_of_periapsis
 
-        return cls.from_semi_major_axis(
-            primary, semi_major_axis, eccentricity,
+        return cls(
+            primary, periapsis, eccentricity,
             inclination, longitude_of_ascending_node, argument_of_periapsis,
             epoch, mean_anomaly_at_epoch
         )
