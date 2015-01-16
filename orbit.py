@@ -190,7 +190,25 @@ class Orbit:
         z_axis = [0, 0, 1]
 
         periapsis_direction = eccentricity_vector if eccentricity else x_axis
-        mean_anomaly_at_epoch = vector.angle(periapsis_direction, position)
+        true_anomaly_at_epoch = vector.angle(periapsis_direction, position)
+
+        v = true_anomaly_at_epoch
+        if orbital_plane_normal_vector[2] < 0:
+            v = - v
+
+        if eccentricity < 1:  # circular or elliptic orbit
+            x = math.sqrt(1+eccentricity)*math.cos(v/2)
+            y = math.sqrt(1-eccentricity)*math.sin(v/2)
+            E = 2 * math.atan2(y, x)
+            M = E - eccentricity * math.sin(E)
+        elif eccentricity == 1:  # parabolic trajectory
+            M = 0
+        else:  # hyperbolic trajectory
+            x = math.sqrt(eccentricity+1)*math.cos(v/2)
+            y = math.sqrt(eccentricity-1)*math.sin(v/2)
+            E = 2 * math.atanh(y / x)
+            M = eccentricity * math.sinh(E) - E
+        mean_anomaly_at_epoch = M
 
         # orbital plane
         inclination = vector.angle(orbital_plane_normal_vector, z_axis)
