@@ -90,22 +90,30 @@ def check_orbit(a, b):
 
 
 def check_fromstate(o):
-    instant = random.uniform(0, o.period)
+    instant = random.uniform(-1e6, 1e6)
     p, v = o.position_t(instant), o.velocity_t(instant)
     check_orbit(o, orbit.Orbit.from_state(b, p, v, instant))
 
+
+def check_eccentricity(eccentricity):
+    for _ in range(10):
+        periapsis = random.uniform(1e07, 1e09)
+        o = orbit.Orbit(
+            primary=b,
+            periapsis=periapsis,
+            eccentricity=eccentricity,
+            inclination=random.uniform(0, math.pi),
+            longitude_of_ascending_node=random.uniform(-math.pi, math.pi),
+            argument_of_periapsis=random.uniform(-math.pi, math.pi),
+        )
+        assert abs(o.true_anomaly(0)) < 1e-24
+        check_fromstate(o)
+
+check_eccentricity(0)
+check_eccentricity(1)
 for _ in range(10):
-    periapsis = random.uniform(1e07, 1e09)
-    eccentricity = random.uniform(0.1,  0.9)
-    o = orbit.Orbit(
-        primary=b,
-        periapsis=periapsis,
-        eccentricity=eccentricity,
-        inclination=random.uniform(0, math.pi),
-        longitude_of_ascending_node=random.uniform(-math.pi, math.pi),
-        argument_of_periapsis=random.uniform(-math.pi, math.pi),
-    )
-    check_fromstate(o)
+    eccentricity = random.uniform(0,  2)
+    check_eccentricity(eccentricity)
 
 for _ in range(10):
     period = random.uniform(1e07, 1e10)
