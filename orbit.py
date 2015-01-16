@@ -100,8 +100,12 @@ class Orbit:
     ):
         """Defines an orbit from periapsis (m) and apoapsis (m)"""
 
-        periapsis = min(apsis1, apsis2)
-        eccentricity = abs(apsis1 - apsis2) / abs(apsis1 + apsis2)
+        periapsis = min(abs(apsis1), abs(apsis2))
+
+        if float("inf") in (apsis1, apsis2):  # parabolic trajectory
+            eccentricity = 1
+        else:
+            eccentricity = abs(apsis1 - apsis2) / abs(apsis1 + apsis2)
 
         return cls(
             primary, periapsis, eccentricity,
@@ -122,8 +126,11 @@ class Orbit:
         mean_motion = period / (2*math.pi)
         semi_major_axis = (mean_motion**2 * mu)**(1./3)
 
-        return cls(
-            primary, periapsis, eccentricity,
+        if eccentricity > 1:
+            semi_major_axis = -semi_major_axis
+
+        return cls.from_semi_major_axis(
+            primary, semi_major_axis, eccentricity,
             inclination, longitude_of_ascending_node, argument_of_periapsis,
             epoch, mean_anomaly_at_epoch
         )
