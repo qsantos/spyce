@@ -269,22 +269,43 @@ class Orbit:
 
     def eccentric_anomaly(self, time):
         """Computes the eccentric anomaly at a given time (s)"""
-        M = self.mean_anomaly(time)
+        M = self.mean_anomaly(time) % (2*math.pi)
         e = self.eccentricity
         E = M if e < 0.8 else math.pi
         while True:
-            old_E = E
-            E -= (E - e*math.sin(E) - M) / (1 - e*math.cos(E))
-            if (old_E - E)/2 <= 2**-51:
+            if e < 1:
+                # M = E - e sin E
+                # Newton's method on f(x) = x - e sin x - M
+                # f'(x) = 1 - e cos x
+                delta = (E - e*math.sin(E) - M) / (1 - e*math.cos(E))
+            else:
+                # M = e sinh E - E
+                # Newton's method on f(x) = e sinh x - x - M
+                # f'(x) = e cosh x - 1
+                delta = (e*math.sinh(E) - E - M) / (e*math.cosh(E) - 1)
+            E -= delta
+            if delta <= 2**-52:
                 break
         return E
 
     def true_anomaly(self, time):
         """Computes the true anomaly at a given time (s)"""
-        E = self.eccentric_anomaly(time)
-        x = math.sqrt(1+self.eccentricity)*math.sin(E/2)
-        y = math.sqrt(1-self.eccentricity)*math.cos(E/2)
-        true_anomaly = 2 * math.atan2(x, y)
+        if self.eccentricity < 1:  # circular or elliptic orbit
+            E = self.eccentric_anomaly(time)
+            x = math.sqrt(1+self.eccentricity)*math.sin(E/2)
+            y = math.sqrt(1-self.eccentricity)*math.cos(E/2)
+            true_anomaly = 2 * math.atan2(x, y)
+        elif self.eccentricity == 1:  # parabolic trajectory
+            time_since_epoch = time - self.epoch
+            mu = self.primary.gravitational_parameter
+            W = math.sqrt(mu / (2*self.periapsis**3)) * 3/2 * time_since_epoch
+            y = (W + math.sqrt(W**2+1))**(1./3)
+            true_anomaly = 2 * math.atan(y - 1/y)
+        else:  # hyperbolic trajectory
+            E = self.eccentric_anomaly(time)
+            x = math.sqrt(self.eccentricity+1)*math.sinh(E/2)
+            y = math.sqrt(self.eccentricity-1)*math.cosh(E/2)
+            true_anomaly = 2 * math.atan2(x, y)
         return true_anomaly
 
     def position_t(self, time):
