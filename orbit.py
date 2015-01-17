@@ -166,6 +166,7 @@ class Orbit:
         primary:  orbited body, object with a "gravitational_parameter"
         position: position vector of the vessel (m)
         velocity: velocity vector of the vessel (m/s)
+        epoch:    time of the position and velocity (s)
         """
 
         distance = vector.norm(position)
