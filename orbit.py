@@ -306,20 +306,20 @@ class Orbit:
         """Computes the true anomaly at a given time (s)"""
         if self.eccentricity < 1:  # circular or elliptic orbit
             E = self.eccentric_anomaly(time)
-            x = math.sqrt(1+self.eccentricity)*math.sin(E/2)
-            y = math.sqrt(1-self.eccentricity)*math.cos(E/2)
-            true_anomaly = 2 * math.atan2(x, y)
+            x = math.sqrt(1-self.eccentricity)*math.cos(E/2)
+            y = math.sqrt(1+self.eccentricity)*math.sin(E/2)
+            true_anomaly = 2 * math.atan2(y, x)
         elif self.eccentricity == 1:  # parabolic trajectory
             time_since_epoch = time - self.epoch
             mu = self.primary.gravitational_parameter
             W = math.sqrt(mu / (2*self.periapsis**3)) * 3/2 * time_since_epoch
             y = (W + math.sqrt(W**2+1))**(1./3)
-            true_anomaly = 2 * math.atan(y - 1/y)
+            true_anomaly = 2 * math.atan(y - 1/y) if y else - math.pi/2
         else:  # hyperbolic trajectory
             E = self.eccentric_anomaly(time)
-            x = math.sqrt(self.eccentricity+1)*math.sinh(E/2)
-            y = math.sqrt(self.eccentricity-1)*math.cosh(E/2)
-            true_anomaly = 2 * math.atan2(x, y)
+            x = math.sqrt(self.eccentricity-1)*math.cosh(E/2)
+            y = math.sqrt(self.eccentricity+1)*math.sinh(E/2)
+            true_anomaly = 2 * math.atan2(y, x)
         return true_anomaly
 
     def position_t(self, time):
