@@ -73,10 +73,8 @@ b.gravitational_parameter = 1e20
 
 
 def check_val(a, b):
-    if a == 0:
-        assert b < 1e-6
-    else:
-        assert abs(a-b) / a < 1e-6
+    err = (a-b) / a if a else a-b
+    assert abs(err) < 2**-21, err
 
 
 def check_orbit(a, b):
@@ -92,7 +90,7 @@ def check_orbit(a, b):
         err = (a.mean_anomaly(instant) - b.mean_anomaly(instant)) % (2*math.pi)
         if err > math.pi:
             err = 2*math.pi - err
-        assert err < 2**-12
+        assert err < 2**-12, (a, err)
 
 
 def check_eccentricity(eccentricity):
