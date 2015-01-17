@@ -99,7 +99,12 @@ def check_eccentricity(eccentricity):
         longitude_of_ascending_node=random.uniform(-math.pi, math.pi),
         argument_of_periapsis=random.uniform(-math.pi, math.pi),
     )
-    assert abs(o.true_anomaly(0)) < 1e-24
+
+    # check true anomaly at periapsis and apoapsis
+    assert abs(o.true_anomaly(0)) < 2**-95
+    if o.eccentricity < 1:
+        apoapsis_time = (math.pi - o.mean_anomaly_at_epoch) / o.mean_motion
+        assert abs(o.true_anomaly(apoapsis_time) - math.pi) < 2**-44
 
     args = o.__dict__
     args["apsis"] = o.periapsis if random.randrange(2) else o.apoapsis
