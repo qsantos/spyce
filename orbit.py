@@ -300,28 +300,33 @@ class Orbit:
 
     def eccentric_anomaly(self, time):
         """Computes the eccentric anomaly at a given time (s)"""
-        M = self.mean_anomaly(time) % (2*math.pi)
+        M = self.mean_anomaly(time)
         e = self.eccentricity
 
         if e < 1:
+            M %= (2*math.pi)
+            E = math.pi
             # M = E - e sin E
             f = lambda E: E - e*math.sin(E) - M
             fprime = lambda E: 1 - e*math.cos(E)
         else:
+            E = math.asinh(M)
             # M = e sinh E - E
             f = lambda E: e*math.sinh(E) - E - M
             fprime = lambda E: e*math.cosh(E) - 1
 
         # Newton's method
-        E = math.pi
         previous_E = 0
-        for _ in range(30):
+        for _ in range(50):
             previous_previous_E, previous_E = previous_E, E
             E -= f(E) / fprime(E)
             if E in (previous_E, previous_previous_E):
                 break
 
-        assert abs(f(E)) < 2**-47
+        if abs(M) < 1:
+            assert abs(f(E)) < 2**-47
+        else:
+            assert abs(f(E))/M < 2**-47
 
         return E
 
