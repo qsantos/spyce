@@ -87,6 +87,12 @@ def check_orbit(a, b):
         check_val(a.longitude_of_ascending_node, b.longitude_of_ascending_node)
     if a.eccentricity != 0:
         check_val(a.argument_of_periapsis, b.argument_of_periapsis)
+    if 0 < a.eccentricity < 1:
+        instant = random.uniform(-1e6, 1e6)
+        err = (a.mean_anomaly(instant) - b.mean_anomaly(instant)) % (2*math.pi)
+        if err > math.pi:
+            err = 2*math.pi - err
+        assert err < 2**-12
 
 
 def check_eccentricity(eccentricity):
