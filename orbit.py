@@ -207,7 +207,11 @@ class Orbit:
         else:  # hyperbolic trajectory
             x = math.sqrt(eccentricity+1)*math.cos(v/2)
             y = math.sqrt(eccentricity-1)*math.sin(v/2)
-            E = 2 * math.atanh(y / x)
+            ratio = y / x
+            if abs(ratio) <= 1:
+                E = 2 * math.atanh(ratio)
+            else:
+                E = math.copysign(float("-inf"), ratio)
             M = eccentricity * math.sinh(E) - E
         mean_anomaly_at_epoch = M
 
