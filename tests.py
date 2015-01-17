@@ -94,10 +94,9 @@ def check_orbit(a, b):
 
 
 def check_eccentricity(eccentricity):
-    periapsis = random.uniform(1e07, 1e09)
     o = orbit.Orbit(
         primary=b,
-        periapsis=periapsis,
+        periapsis=random.expovariate(1e-9),
         eccentricity=eccentricity,
         inclination=random.uniform(0, math.pi),
         longitude_of_ascending_node=random.uniform(-math.pi, math.pi),
@@ -128,17 +127,25 @@ def check_eccentricity(eccentricity):
     if o.eccentricity < 1:  # can't tell hyperbolic from elliptic
         check_orbit(o, orbit.Orbit.from_period_apsis(**args))
 
-    instant = random.uniform(-1e6, 1e6)
+    instant = random.expovariate(1e-6) * random.choice([-1, 1])
     p, v = o.position_t(instant), o.velocity_t(instant)
     check_orbit(o, orbit.Orbit.from_state(b, p, v, instant))
 
+# circular orbits
 for _ in range(100):
     check_eccentricity(0)
+
+# elliptic orbits
+for _ in range(100):
+    check_eccentricity(random.uniform(0, 1))
+
+# parabolic trajectories
 for _ in range(100):
     check_eccentricity(1)
+
+# hyperbolic trajectories
 for _ in range(100):
-    eccentricity = random.uniform(0, 2)
-    check_eccentricity(eccentricity)
+    check_eccentricity(1 + random.expovariate(.25))
 
 
 import body
