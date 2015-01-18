@@ -72,19 +72,20 @@ b = Object()
 b.gravitational_parameter = 1e20
 
 
-def check_val(a, b):
-    err = (a-b) / a if a else a-b
-    assert abs(err) < 2**-21, err
+def check(a, b, prec):
+    err = abs(a-b) / a if abs(a)/2 < abs(b) < 2*abs(a) else abs(a-b)
+    assert err < 2**-prec, \
+        "%.17g != %.17g, log2(err) = %g" % (a, b, math.log(err, 2))
 
 
 def check_orbit(a, b):
-    check_val(a.periapsis, b.periapsis)
-    check_val(a.eccentricity, b.eccentricity)
-    check_val(a.inclination, b.inclination)
+    check(a.periapsis, b.periapsis, 19)
+    check(a.eccentricity, b.eccentricity, 26)
+    check(a.inclination, b.inclination, 29)
     if a.inclination != 0:
-        check_val(a.longitude_of_ascending_node, b.longitude_of_ascending_node)
+        check(a.longitude_of_ascending_node, b.longitude_of_ascending_node, 22)
     if a.eccentricity != 0:
-        check_val(a.argument_of_periapsis, b.argument_of_periapsis)
+        check(a.argument_of_periapsis, b.argument_of_periapsis, 22)
     if 0 < a.eccentricity < 1:
         instant = random.uniform(-1e6, 1e6)
         err = (a.mean_anomaly(instant) - b.mean_anomaly(instant)) % (2*math.pi)
