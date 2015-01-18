@@ -90,8 +90,12 @@ def check_orbit(a, b):
     check(a.periapsis, b.periapsis, 19)
     check(a.eccentricity, b.eccentricity, 26)
     check(a.inclination, b.inclination, 29)
+
+    # longitude of ascending node
     if a.inclination != 0:
         check(a.longitude_of_ascending_node, b.longitude_of_ascending_node, 22)
+
+    # argument of periapsis
     if a.eccentricity != 0:
         angle_a = a.argument_of_periapsis
         angle_b = b.argument_of_periapsis
@@ -99,6 +103,8 @@ def check_orbit(a, b):
             angle_a += a.longitude_of_ascending_node
             angle_b += b.longitude_of_ascending_node
         check_angles(angle_a, angle_b, 22)
+
+    # mean anomaly
     if 0 < a.eccentricity < 1:
         instant = random.uniform(-1e6, 1e6)
         err = (a.mean_anomaly(instant) - b.mean_anomaly(instant)) % (2*math.pi)
