@@ -307,26 +307,59 @@ class Orbit:
             M %= (2*math.pi)
             E = math.pi
             # M = E - e sin E
-            f = lambda E: E - e*math.sin(E) - M
+            f = lambda E: math.fsum([E, -e*math.sin(E), -M])
             fprime = lambda E: 1 - e*math.cos(E)
         else:
             E = math.asinh(M)
             # M = e sinh E - E
-            f = lambda E: e*math.sinh(E) - E - M
+            f = lambda E: math.fsum([e*math.sinh(E), -E, -M])
             fprime = lambda E: e*math.cosh(E) - 1
+
+        # sin(E) = E -> M = (1 - e) E
+        if abs(M) < 2**-26:
+            return M / (1 - e)
 
         # Newton's method
         previous_E = 0
-        for _ in range(50):
+        for _ in range(30):
             previous_previous_E, previous_E = previous_E, E
             E -= f(E) / fprime(E)
             if E in (previous_E, previous_previous_E):
                 break
 
-        if abs(M) < 1:
-            assert abs(f(E)) < 2**-47
-        else:
-            assert abs(f(E))/M < 2**-47
+        if E == previous_E:
+            return E
+
+        # binary search
+        min_E, max_E = E - abs(E)*2**-45, E + abs(E)*2**-45
+        for _ in range(10):
+            E = min_E + (max_E - min_E) / 2
+
+            # check for close bounds
+            if E in (min_E, max_E):
+                E = min_E if abs(f(min_E)) < abs(f(max_E)) else max_E
+                break
+
+            delta = f(E)
+            if delta == 0:
+                break
+            elif delta < 0:
+                min_E = E
+            else:
+                max_E = E
+
+        # check neighbourhood: f may not be exactly
+        # monotonic due to floating point rounding errors
+        best_E = E
+        l = [-2**-53*i for i in range(4)] + [0] + [2**-53*i for i in range(4)]
+        for epsilon in l:
+            neighbour = E + E*epsilon
+            if abs(f(neighbour)) < abs(f(best_E)):
+                best_E = neighbour
+        E = best_E
+
+        err = f(E)/M if abs(M) > 1 else f(E)
+        assert abs(err) < 2**-45
 
         return E
 
