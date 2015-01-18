@@ -78,6 +78,14 @@ def check(a, b, prec):
         "%.17g != %.17g, log2(err) = %g" % (a, b, math.log(err, 2))
 
 
+def check_angles(a, b, prec):
+    err = (a-b) % (2*math.pi)
+    if err > math.pi:
+        err = 2*math.pi - err
+    assert err < 2**-prec, \
+        "%.17f rad != %.17f rad, log2(err) = %g" % (a, b, math.log(err, 2))
+
+
 def check_orbit(a, b):
     check(a.periapsis, b.periapsis, 19)
     check(a.eccentricity, b.eccentricity, 26)
@@ -85,7 +93,12 @@ def check_orbit(a, b):
     if a.inclination != 0:
         check(a.longitude_of_ascending_node, b.longitude_of_ascending_node, 22)
     if a.eccentricity != 0:
-        check(a.argument_of_periapsis, b.argument_of_periapsis, 22)
+        angle_a = a.argument_of_periapsis
+        angle_b = b.argument_of_periapsis
+        if a.inclination == 0:
+            angle_a += a.longitude_of_ascending_node
+            angle_b += b.longitude_of_ascending_node
+        check_angles(angle_a, angle_b, 22)
     if 0 < a.eccentricity < 1:
         instant = random.uniform(-1e6, 1e6)
         err = (a.mean_anomaly(instant) - b.mean_anomaly(instant)) % (2*math.pi)
