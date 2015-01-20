@@ -191,7 +191,8 @@ class Orbit:
         z_axis = [0, 0, 1]
 
         periapsis_direction = eccentricity_vector if eccentricity else x_axis
-        true_anomaly_at_epoch = vector.angle(periapsis_direction, position)
+        true_anomaly_at_epoch = vector.oriented_angle(periapsis_direction,
+                                                      position)
 
         v = true_anomaly_at_epoch
         if orbital_plane_normal_vector[2] < 0:
@@ -222,9 +223,10 @@ class Orbit:
             argument_of_periapsis = vector.angle(x_axis, periapsis_direction)
         else:
             line_of_nodes = vector.cross(z_axis, orbital_plane_normal_vector)
-            longitude_of_ascending_node = vector.angle(x_axis, line_of_nodes)
-            argument_of_periapsis = vector.angle(line_of_nodes,
-                                                 periapsis_direction)
+            longitude_of_ascending_node = vector.oriented_angle(x_axis,
+                                                                line_of_nodes)
+            argument_of_periapsis = vector.oriented_angle(line_of_nodes,
+                                                          periapsis_direction)
 
             # picking right orientation
             if orbital_plane_normal_vector[2] < 0:

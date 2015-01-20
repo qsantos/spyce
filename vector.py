@@ -36,13 +36,16 @@ def angle(u, v):
     """Angle formed by two vectors"""
     r = dot(u, v)/norm(u)/norm(v)
     r = max(-1, min(1, r))
-    angle = math.acos(r)
-    # we need to check the orientation of the cross-product
-    # relatively to (0,0,1), i.e. dot([0,0,1],cross(u,v)), or:
-    if cross(u, v)[2] < 0:
-        return -angle
+    return math.acos(r)
+
+
+def oriented_angle(u, v, normal=[0, 0, 1]):
+    """Angle formed by two vectors"""
+    geometric_angle = angle(u, v)
+    if dot(normal, cross(u, v)) < 0:
+        return -geometric_angle
     else:
-        return angle
+        return geometric_angle
 
 
 class Matrix(list):

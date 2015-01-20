@@ -8,14 +8,17 @@ import vector
 assert vector.dot([1, 0, 0], [0, 1, 1]) == 0
 assert vector.norm([8, 9, 12]) == 17
 assert vector.cross([0, 1, 0], [1, 0, 0]) == [0, 0, -1]
-assert vector.angle([0, 1, 0], [1, 0, 0]) == -math.pi/2
+assert vector.angle([0, 1, 0], [1, 0, 0]) == math.pi/2
+assert vector.oriented_angle([0, 1, 0], [1, 0, 0]) == -math.pi/2
 
 # initial results
 assert vector.dot([1, 4, 7], [2, 5, 8]) == 78
 assert vector.norm([4, 5, 6]) == 8.774964387392123
 assert vector.cross([9, 8, 7], [2, 3, 1]) == [-13, 5, 11]
-assert vector.angle([4, 7, 5], [3, 5, 8]) == -0.3861364787976416
-assert vector.angle([4, 5, 7], [3, 8, 5]) == +0.3861364787976416
+assert vector.angle([4, 7, 5], [3, 5, 8]) == 0.3861364787976416
+assert vector.angle([4, 7, 5], [3, 5, 8]) == 0.3861364787976416
+assert vector.oriented_angle([4, 7, 5], [3, 5, 8]) == -0.3861364787976416
+assert vector.oriented_angle([4, 5, 7], [3, 8, 5]) == +0.3861364787976416
 
 
 def checkdiff(A, B):
