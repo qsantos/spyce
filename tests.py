@@ -71,8 +71,8 @@ class Object:
     def __repr__(self):
         return "<TestBody>"
 
-b = Object()
-b.gravitational_parameter = 1e20
+primary = Object()
+primary.gravitational_parameter = 1e20
 
 
 def check_error(orbit, value_name, precision, value1, value2, error):
@@ -126,14 +126,23 @@ def check_orbit(a, b):
                      a.mean_anomaly(instant),  b.mean_anomaly(instant))
 
 
+def random_angle():
+    if random.randrange(2):
+        return random.choice([-1, 1]) * random.choice(
+            [0, math.pi/4, math.pi/2, math.pi])
+    else:
+        return random.uniform(-math.pi, math.pi)
+
+
 def check_eccentricity(eccentricity):
+    periapsis = random.expovariate(1e-9)
+    inclination = abs(random_angle())
+    longitude_of_ascending_node = random_angle()
+    argument_of_periapsis = random_angle()
+
     o = orbit.Orbit(
-        primary=b,
-        periapsis=random.expovariate(1e-9),
-        eccentricity=eccentricity,
-        inclination=random.uniform(0, math.pi),
-        longitude_of_ascending_node=random.uniform(-math.pi, math.pi),
-        argument_of_periapsis=random.uniform(-math.pi, math.pi),
+        primary, periapsis, eccentricity,
+        inclination, longitude_of_ascending_node, argument_of_periapsis,
     )
 
     # check true anomaly at periapsis and apoapsis
@@ -162,7 +171,7 @@ def check_eccentricity(eccentricity):
 
     instant = random.expovariate(1e-6) * random.choice([-1, 1])
     p, v = o.position_t(instant), o.velocity_t(instant)
-    check_orbit(o, orbit.Orbit.from_state(b, p, v, instant))
+    check_orbit(o, orbit.Orbit.from_state(primary, p, v, instant))
 
 # circular orbits
 for _ in range(100):
