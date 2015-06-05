@@ -24,7 +24,10 @@ for k in list(namespace.keys()):
 
 def ask(prompt, default=None):
     """Interactively asks for a value or evaluable expression"""
-    line = input(prompt)
+    try:  # Python 2
+        line = raw_input(prompt)
+    except NameError:  # Python 3
+        line = input(prompt)
     return eval(line, namespace) if line else default
 
 
