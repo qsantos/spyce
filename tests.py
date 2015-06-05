@@ -1,7 +1,6 @@
 import math
 import random
 
-
 import vector
 
 # easily verified
@@ -75,38 +74,25 @@ primary = Object()
 primary.gravitational_parameter = 1e20
 
 
-def check_error(orbit, value_name, precision, value1, value2, error):
-    if abs(error) > 2**-precision:
-        print("Failed at:  %s" % value_name)
-        print("Orbit was:  %s" % orbit)
-        print("Values are: %.17f != %.17f" % (value1, value2))
-        print("Valid bits: %g" % math.floor(-math.log(abs(error), 2)))
-        exit(1)
+def test_almost_equal(value_name, a, b, rel_tol=2**-24, abs_tol=2**-24):
+    is_close = abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+    assert is_close, "%.17f != %.17f (%s)" % (a, b, value_name)
 
 
-def check_values(orbit, value_name, precision, value1, value2):
-    error = value2 - value1
-    if abs(value1)/2 < abs(value2) < 2*abs(value1):
-        error /= value1
-    check_error(orbit, value_name, precision, value1, value2, error)
+def test_almost_equal_angle(value_name, a, b, abs_tol=2**-24):
+    is_close = abs((a-b + math.pi) % (2*math.pi) - math.pi) <= abs_tol
+    assert is_close, "%.17f != %.17f (%s)" % (a, b, value_name)
 
 
-def check_angles(orbit, value_name, precision, value1, value2):
-    error = (value1 - value2) % (2*math.pi)
-    if error > math.pi:
-        error -= 2*math.pi
-    check_error(orbit, value_name, precision, value1, value2, error)
-
-
-def check_orbit(a, b):
-    check_values(a, "periapsis", 19, a.periapsis, b.periapsis)
-    check_values(a, "eccentricity", 26, a.eccentricity, b.eccentricity)
-    check_angles(a, "inclination", 29, a.inclination, b.inclination)
+def test_almost_equal_orbit(a, b):
+    test_almost_equal("periapsis", a.periapsis, b.periapsis)
+    test_almost_equal("eccentricity", a.eccentricity, b.eccentricity)
+    test_almost_equal_angle("inclination", a.inclination, b.inclination)
 
     # longitude of ascending node
     if a.inclination != 0:
-        check_angles(
-            a, "longitude of ascending node", 22,
+        test_almost_equal_angle(
+            "longitude of ascending node",
             a.longitude_of_ascending_node, b.longitude_of_ascending_node
         )
 
@@ -117,13 +103,15 @@ def check_orbit(a, b):
         if a.inclination == 0:
             angle_a += a.longitude_of_ascending_node
             angle_b += b.longitude_of_ascending_node
-        check_angles(a, "argument of periapsis", 22, angle_a, angle_b)
+        test_almost_equal_angle("argument of periapsis", angle_a, angle_b)
 
     # mean anomaly
     if 0 < a.eccentricity < 1:
         instant = random.uniform(-1e6, 1e6)
-        check_angles(a, "mean anomaly", 27,
-                     a.mean_anomaly(instant),  b.mean_anomaly(instant))
+        test_almost_equal_angle(
+            "mean anomaly",
+            a.mean_anomaly(instant),  b.mean_anomaly(instant)
+        )
 
 
 def random_angle():
@@ -134,7 +122,8 @@ def random_angle():
         return random.uniform(-math.pi, math.pi)
 
 
-def check_eccentricity(eccentricity):
+def test_random_orbit(eccentricity):
+    # generate a random orbit with given eccentricity
     periapsis = random.expovariate(1e-9)
     inclination = abs(random_angle())
     longitude_of_ascending_node = random_angle()
@@ -151,6 +140,7 @@ def check_eccentricity(eccentricity):
         apoapsis_time = (math.pi - o.mean_anomaly_at_epoch) / o.mean_motion
         assert abs(o.true_anomaly(apoapsis_time) - math.pi) < 2**-44
 
+    # gather orbit characteristics
     args = o.__dict__
     args["apsis"] = o.periapsis if random.randrange(2) else o.apoapsis
     if random.randrange(2):
@@ -158,36 +148,42 @@ def check_eccentricity(eccentricity):
     else:
         args["apsis1"], args["apsis2"] = o.apoapsis, o.periapsis
 
-    if o.eccentricity != 1:  # semi-major_axis is infinite
-        check_orbit(o, orbit.Orbit.from_semi_major_axis(**args))
+    # re-generate from semi-major axis
+    if o.eccentricity != 1:  # semi-major axis is infinite
+        test_almost_equal_orbit(o, orbit.Orbit.from_semi_major_axis(**args))
 
-    check_orbit(o, orbit.Orbit.from_apses(**args))
+    # re-generate from apses
+    test_almost_equal_orbit(o, orbit.Orbit.from_apses(**args))
 
+    # re-generate from orbital period
     if o.eccentricity != 1:  # no period
-        check_orbit(o, orbit.Orbit.from_period(**args))
+        test_almost_equal_orbit(o, orbit.Orbit.from_period(**args))
 
+    # re-generate from orbital period and apsis
     if o.eccentricity < 1:  # can't tell hyperbolic from elliptic
-        check_orbit(o, orbit.Orbit.from_period_apsis(**args))
+        test_almost_equal_orbit(o, orbit.Orbit.from_period_apsis(**args))
 
+    # re-generate from state point
     instant = random.expovariate(1e-6) * random.choice([-1, 1])
     p, v = o.position_t(instant), o.velocity_t(instant)
-    check_orbit(o, orbit.Orbit.from_state(primary, p, v, instant))
+    test_almost_equal_orbit(o, orbit.Orbit.from_state(primary, p, v, instant))
+
 
 # circular orbits
 for _ in range(100):
-    check_eccentricity(0)
+    test_random_orbit(eccentricity=0)
 
 # elliptic orbits
 for _ in range(100):
-    check_eccentricity(random.uniform(0, 1))
+    test_random_orbit(eccentricity=random.uniform(0, 1))
 
 # parabolic trajectories
 for _ in range(100):
-    check_eccentricity(1)
+    test_random_orbit(eccentricity=1)
 
 # hyperbolic trajectories
 for _ in range(100):
-    check_eccentricity(1 + random.expovariate(.25))
+    test_random_orbit(eccentricity=1 + random.expovariate(.25))
 
 
 import body
