@@ -12,7 +12,7 @@ readline.parse_and_bind("tab: complete")
 histfile = os.path.expanduser("~/.spyce_history")
 try:
     readline.read_history_file(histfile)
-except Exception:
+except:  # FileNotFoundError in Python 3, IOError in Python 2
     pass
 
 banner = """===== Welcome to Spyce! =====
