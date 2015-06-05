@@ -215,11 +215,12 @@ assert max(b.orbit.semi_major_axis for b in Kerbol.satellites) < physics.au
 for system in (load.kerbol, load.solar):
     assert sum(1 for b in system if system[b].orbit is None) == 1
     for name in system:
-        body = system[name]
-        for b in body.satellites:
-            assert b.mass < body.mass, "%s is not satellite of %s" % (b, body)
-        if body.orbit is not None:
-            assert body.orbit.period > 3600, "%s has a short orbit" % body
+        planet = system[name]
+        for satellite in planet.satellites:
+            assert satellite.mass < planet.mass, \
+                "%s cannot be a satellite of %s" % (satellite, planet)
+        if planet.orbit is not None:
+            assert planet.orbit.period > 3600, "%s has a short orbit" % planet
 
 
 import cfg
