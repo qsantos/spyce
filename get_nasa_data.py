@@ -37,7 +37,7 @@ def get_sun_physics(bodies):
 
     bodies["Sun"] = {
         "gravitational_parameter": 1.3271244018e20,
-        "radius": 6.96e9,
+        "radius": 6.96e8,
         "rotational_period": 2192832.0
     }
 
