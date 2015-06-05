@@ -219,20 +219,20 @@ for system in (load.kerbol, load.solar):
             assert planet.orbit.period > 3600, "%s has a short orbit" % planet
 
 
-import cfg
+import ksp_cfg
 try:  # Python 2
     from StringIO import StringIO
 except ImportError:  # Python 3
     from io import StringIO
 
-assert cfg.parse(StringIO("""
+assert ksp_cfg.parse(StringIO("""
 PART
 {
 name = somepart
 }
 """)) == {"PART": {"name": "somepart"}}
 
-assert cfg.parse(StringIO("""
+assert ksp_cfg.parse(StringIO("""
 PART
 {
 MODULE
@@ -241,7 +241,7 @@ name = somemodule
 }
 }""")) == {"PART": {"MODULE": {"name": "somemodule"}}}
 
-part = cfg.parse(StringIO("""
+part = ksp_cfg.parse(StringIO("""
 PART
 {
 MODULE
@@ -257,4 +257,4 @@ name = second
 assert part == {"PART": {"MODULE": [{"name": "first"}, {"name": "second"}]}}
 
 part = part["PART"]
-assert cfg.dic_get_group(part, "MODULE", "first") == {"name": "first"}
+assert ksp_cfg.dict_get_group(part, "MODULE", "first") == {"name": "first"}
