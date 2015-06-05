@@ -8,4 +8,4 @@ echo "Running test for python3"
 python3 tests.py
 
 echo "Checking compliance with PEP 8"
-pep8 *.py
+git ls-tree -z --name-only HEAD *.py | xargs -0 pep8
