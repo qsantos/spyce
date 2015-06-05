@@ -120,7 +120,7 @@ class CelestialBody:
 
     def escape_velocity(self, distance):
         """Escape velocity at a given distance (m)"""
-        return math.sqrt(2*gravitational_parameter/distance)
+        return math.sqrt(2 * self.gravitational_parameter / distance)
 
     def angular_diameter(self, distance):
         """Angular diameter / apparent size at a given distance (m)"""
