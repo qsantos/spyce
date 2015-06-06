@@ -6,21 +6,23 @@ class RocketPart:
     """Rocket part
 
     Properties:
-    name    identifier
-    title   display name
-    mass    empty mass (kg)
-    drag    coefficient of drag (-)
-    thrust  engine's thrust (N)
-    isp     specific impulse (s)
-    propel  stored propellant (kg)
+    name
+    title
+    dry_mass             kg
+    coefficient_of_drag  -
+    thrust               N
+    specific_impulse     s
+    propellant           kg
+    exhaust_velocity     m/s
+    expulsion_rate       kg/s
     """
 
-    def __init__(self, name, title, mass, drag):
+    def __init__(self, name, title, dry_mass, coefficient_of_drag):
         """Initiate a part with default properties"""
         self.name = name
         self.title = title
-        self.mass = mass
-        self.drag = drag
+        self.dry_mass = dry_mass
+        self.coefficient_of_drag = coefficient_of_drag
         self.make_engine(0., 1.)
         self.make_tank(0.)
 
@@ -32,20 +34,20 @@ class RocketPart:
         """Cast to string using the part's title"""
         return self.title
 
-    def make_engine(self, thrust, isp):
+    def make_engine(self, thrust, specific_impulse):
         self.thrust = thrust
-        self.isp = isp
-        self.exhaust_velocity = self.isp * physics.g0
+        self.specific_impulse = specific_impulse
+        self.exhaust_velocity = self.specific_impulse * physics.g0
         self.expulsion_rate = self.thrust / self.exhaust_velocity
 
-    def make_tank(self, propel):
-        self.propel = propel
+    def make_tank(self, propellant):
+        self.propellant = propellant
 
 
 class Rocket:
     def __init__(self):
         self.parts = set()
-        self.mass = 0.
+        self.dry_mass = 0.
 
         self.position = vector.Vector([0, 0, 0])
         self.velocity = vector.Vector([0, 0, 0])
@@ -56,14 +58,14 @@ class Rocket:
 
     def simulate(self, dt):
         # propulsion
-        self.acceleration = self.prograde * (self.thrust/self.mass)
+        self.acceleration = self.prograde * (self.thrust/self.dry_mass)
 
         # update velocity and position
         self.velocity += self.acceleration * dt
         self.position += self.velocity * dt
 
     def update_parts(self):
-        self.mass = sum(part.mass for part in self.parts)
+        self.dry_mass = sum(part.dry_mass for part in self.parts)
         self.thrust = sum(part.thrust for part in self.parts)
         self.expulsion_rate = sum(part.expulsion_rate for part in self.parts)
 

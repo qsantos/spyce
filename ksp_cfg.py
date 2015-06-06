@@ -103,9 +103,9 @@ def part_from_cfg(cfg_dict):
     # general
     name = cfg_dict['name']
     title = cfg_dict.get('title', name)
-    mass = float(cfg_dict.get('mass', 100.)) * 1e3  # given in tons
-    drag = float(cfg_dict.get('maximum_drag', .2))
-    part = rocket.RocketPart(name, title, mass, drag)
+    dry_mass = float(cfg_dict.get('mass', 100.)) * 1e3  # given in tons
+    coefficient_of_drag = float(cfg_dict.get('maximum_drag', .2))
+    part = rocket.RocketPart(name, title, dry_mass, coefficient_of_drag)
 
     # engine
     r = dict_get_group(cfg_dict, 'MODULE', 'ModuleEngines') or \
@@ -114,8 +114,8 @@ def part_from_cfg(cfg_dict):
         thrust = float(r.get('maxThrust', 0.)) * 1e3  # given in kN
         a = r['atmosphereCurve']['key']
         a = a[1] if isinstance(a, list) else a
-        isp = float(a.split(' ')[1])
-        part.make_engine(thrust, isp)
+        specific_impulse = float(a.split(' ')[1])
+        part.make_engine(thrust, specific_impulse)
 
     # tank
     r = dict_get_group(cfg_dict, 'RESOURCE', 'LiquidFuel')
