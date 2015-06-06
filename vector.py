@@ -94,3 +94,8 @@ class Matrix(list):
             [y*x*(1-c)+z*s, y*y*(1-c)+c,   y*z*(1-c)-x*s],
             [z*x*(1-c)-y*s, z*y*(1-c)+x*s, z*z*(1-c)+c],
         ])
+
+    @classmethod
+    def rotation_deg(cls, angle, x, y, z):
+        """Rotation matrix of given angle (degrees) around axis (x,y,z)"""
+        return cls.rotation(math.radians(angle), x, y, z)
