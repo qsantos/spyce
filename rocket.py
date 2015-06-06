@@ -57,8 +57,13 @@ class Rocket:
         self.rotate_deg(90, 0, 1, 0)
 
     def simulate(self, dt):
+        mass = self.dry_mass + self.propellant
+        self.acceleration = vector.Vector([0, 0, 0])
+
         # propulsion
-        self.acceleration = self.prograde * (self.thrust/self.dry_mass)
+        if self.propellant > 0:
+            self.acceleration += self.prograde * (self.thrust/mass)
+            self.propellant -= self.expulsion_rate * dt
 
         # update velocity and position
         self.velocity += self.acceleration * dt
@@ -68,6 +73,7 @@ class Rocket:
         self.dry_mass = sum(part.dry_mass for part in self.parts)
         self.thrust = sum(part.thrust for part in self.parts)
         self.expulsion_rate = sum(part.expulsion_rate for part in self.parts)
+        self.propellant = sum(part.propellant for part in self.parts)
 
     def __ior__(self, parts):
         self.parts |= parts
