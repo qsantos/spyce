@@ -45,13 +45,18 @@ class RocketPart:
 
 
 class Rocket:
-    def __init__(self):
+    def __init__(self, primary=None):
         self.parts = set()
         self.dry_mass = 0.
 
-        self.position = vector.Vector([0, 0, 0])
-        self.velocity = vector.Vector([0, 0, 0])
         self.acceleration = vector.Vector([0, 0, 0])
+        if primary is None:
+            self.velocity = vector.Vector([0, 0, 0])
+            self.position = vector.Vector([0, 0, 0])
+        else:
+            self.velocity = vector.Vector([0, primary.surface_velocity(), 0])
+            self.position = vector.Vector([primary.radius, 0, 0])
+        self.primary = primary
 
         self.orientation = vector.Matrix.identity()
         self.rotate_deg(90, 0, 1, 0)
@@ -59,6 +64,12 @@ class Rocket:
     def simulate(self, dt):
         mass = self.dry_mass + self.propellant
         self.acceleration = vector.Vector([0, 0, 0])
+
+        # gravity
+        if self.primary:
+            distance = vector.norm(self.position)
+            g = self.primary.gravity_from_center(distance)
+            self.acceleration -= self.position * (g/distance)
 
         # propulsion
         if self.propellant > 0:
@@ -93,13 +104,14 @@ class Rocket:
 if __name__ == "__main__":
     import copy
 
+    from load import kerbol
     import ksp_cfg
     parts = ksp_cfg.get_parts()
 
     def make_parts(*names):
         return {copy.copy(parts[name]) for name in names}
 
-    rocket = Rocket()
+    rocket = Rocket(kerbol['Kerbin'])
 
     stage = make_parts('probeCoreOcto', 'fuelTankSmallFlat', 'liquidEngine3')
     rocket |= stage
