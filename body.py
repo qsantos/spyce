@@ -122,6 +122,10 @@ class CelestialBody:
         """Escape velocity at a given distance (m)"""
         return math.sqrt(2 * self.gravitational_parameter / distance)
 
+    def surface_velocity(self):
+        """Velocity of the surface at the equator"""
+        return 2*math.pi * self.radius / self.rotational_period
+
     def angular_diameter(self, distance):
         """Angular diameter / apparent size at a given distance (m)"""
         return math.atan(self.radius/distance)
