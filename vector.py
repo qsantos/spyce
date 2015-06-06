@@ -9,6 +9,26 @@ We only care 3D:
 import math
 
 
+class Vector(list):
+    def __mul__(self, s):
+        return Vector(x*s for x in self)
+
+    def __div__(self, s):
+        return Vector(x/s for x in self)
+
+    def __add__(self, v):
+        return Vector(x+y for x, y in zip(self, v))
+
+    def __iadd__(self, v):
+        return self + v
+
+    def __sub__(self, v):
+        return Vector(x-y for x, y in zip(self, v))
+
+    def __isub__(self, v):
+        return self - v
+
+
 def dot(u, v):
     """Dot product of vectors"""
     u1, u2, u3 = u
@@ -56,7 +76,7 @@ class Matrix(list):
             return Matrix(m*row for row in self)
         else:
             # matrix-vector multiplication
-            return [sum(a*b for a, b in zip(row, x)) for row in self]
+            return Vector(sum(a*b for a, b in zip(row, x)) for row in self)
 
     @classmethod
     def identity(cls):
