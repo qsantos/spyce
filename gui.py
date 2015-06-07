@@ -89,6 +89,60 @@ class GUI:
         glVertex3f(*orbit.position(math.pi))
         glEnd()
 
+    def draw_nice_orbit(self, body):
+        # issues when drawing the orbit a focused body:
+        # 1. moving to system center and back close to camera induces
+        #    loss of significance and produces jitter
+        # 2. drawing the orbit as segments may put the body visibly out
+        #    of the line when zooming in
+        # 3. line breaks may be visible close to the camera
+
+        # detect whether `body` is the focused body (or one of its satellites)
+        b = self.focus
+        while b.orbit is not None:
+            if b == body:
+                break
+            b = b.orbit.primary
+        else:
+            # if not, simply use the call list
+            glCallList(body.orbit.call_list)
+            return
+
+        # now, we fix the three issues mentioned above
+
+        # translating back does not induces loss of significance (1.)
+        p = body.orbit.position_t(0)
+        glPushMatrix()
+        glTranslatef(*p)
+
+        # path
+        glBegin(GL_LINE_STRIP)  # GL_LINE_LOOP glitches when n_points >= 139
+        n = 128
+        # ensure the body will be on the line (2.)
+        x = body.orbit.true_anomaly(0)
+        for i in range(n):
+            # we need more points close to the camera (3.)
+            # the function i -> 2.*i/n - 1
+            # has values in [-1, 1] and a lower slope around 0
+            theta = x + math.pi * (2.*i/n - 1)**3
+            relative_p = body.orbit.position(theta) - p
+            glVertex3f(*relative_p)
+        # manually close the loop
+        theta = x - math.pi
+        relative_p = body.orbit.position(theta) - p
+        glVertex3f(*relative_p)
+        glEnd()
+
+        # back to normal coordinates
+        glPopMatrix()
+
+        # apses (normal drawing)
+        glPointSize(5)
+        glBegin(GL_POINTS)
+        glVertex3f(*body.orbit.position(0))
+        glVertex3f(*body.orbit.position(math.pi))
+        glEnd()
+
     def draw_body(self, body):
         """Draw a CelestialBody, its orbit and its satellites"""
 
@@ -100,7 +154,7 @@ class GUI:
         if body.orbit is not None:
             # draw orbit
             glColor4f(1.0, 1.0, 0.0, 1.0)
-            glCallList(body.orbit.call_list)
+            self.draw_nice_orbit(body)
 
             # position body
             glTranslate(*body.orbit.position_t(0))
