@@ -325,5 +325,15 @@ class GUI:
         glutCloseFunc(None)
 
 if __name__ == '__main__':
-    from load import kerbol
-    GUI(kerbol['Kerbin']).main()
+    from load import kerbol, solar
+
+    if len(sys.argv) >= 2:
+        name = sys.argv[1]
+        body = kerbol.get(name) or solar.get(name)
+        if body is None:
+            sys.stderr.write("Unknwon body '%s'\n" % name)
+            sys.exit(1)
+    else:
+        body = kerbol['Kerbin']
+
+    GUI(body).main()
