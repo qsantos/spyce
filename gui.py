@@ -7,6 +7,7 @@ from OpenGL.GLUT import *
 
 import vector
 import textures
+import skybox
 
 
 class GUI:
@@ -76,6 +77,9 @@ class GUI:
                 load_body(satellite)
         glEnable(GL_TEXTURE_2D)
         load_body(self.system)
+
+        # skybox
+        self.skybox = skybox.Skybox("textures/skybox/GalaxyTex_%s.jpg")
 
         # callbacks
         glutCloseFunc(self.closeFunc)
@@ -214,6 +218,9 @@ class GUI:
         # orientation
         glRotate(self.phi,   1, 0, 0)
         glRotate(self.theta, 0, 0, 1)
+
+        # skybox
+        self.skybox.draw(1e6)
 
         # using glScalef() rather than glTranslate() avoid
         # abusing the depth buffer (see glFrustum())
