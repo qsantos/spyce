@@ -6,10 +6,11 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import vector
+import textures
 
 
 class GUI:
-    def __init__(self, focus):
+    def __init__(self, focus, texture_directory=None):
         # set to False for soft exit
         self.is_running = True
 
@@ -50,7 +51,7 @@ class GUI:
         # make it a call list for efficiency
         self.call_list_sphere = glGenLists(1)
         glNewList(self.call_list_sphere, GL_COMPILE)
-        gluSphere(sphere, 0.010, 16, 16)
+        gluSphere(sphere, 1, 64, 64)
         glEndList()
 
         # make call lists for orbits
@@ -63,6 +64,18 @@ class GUI:
             for satellite in body.satellites:
                 make_orbit_call_list(satellite)
         make_orbit_call_list(self.system)
+
+        # textures
+        def load_body(body):
+            if texture_directory is not None:
+                texture_file = "%s/%s.jpg" % (texture_directory, body.name)
+                body.texture = textures.load(texture_file)
+            else:
+                body.texture = 0
+            for satellite in body.satellites:
+                load_body(satellite)
+        glEnable(GL_TEXTURE_2D)
+        load_body(self.system)
 
         # callbacks
         glutCloseFunc(self.closeFunc)
@@ -143,6 +156,13 @@ class GUI:
         glVertex3f(*body.orbit.position(math.pi))
         glEnd()
 
+    def draw_sphere(self, radius):
+        """Draw a sphere of given radius"""
+        glPushMatrix()
+        glScalef(radius, radius, radius)
+        glCallList(self.call_list_sphere)
+        glPopMatrix()
+
     def draw_body(self, body):
         """Draw a CelestialBody, its orbit and its satellites"""
 
@@ -159,16 +179,19 @@ class GUI:
             # position body
             glTranslate(*body.orbit.position_t(0))
 
-        # point representation
+        # textured quadric (representation from close by)
+        # sphere with radius proportional to that of the body
+        textures.bind(body.texture, (0.5, 0.5, 1.0))
+        self.draw_sphere(body.radius)
+        textures.unbind()
+
+        # point (representation from far away)
         # draw sphere of constant visible radius at body position
         # see http://www.songho.ca/opengl/gl_transform.html
         modelview_matrix = glGetFloatv(GL_MODELVIEW_MATRIX)
         distance_to_camera = vector.norm(modelview_matrix[3][:3]) / self.zoom
         glColor4f(0.5, 0.5, 1.0, 0.5)
-        glPushMatrix()
-        glScalef(distance_to_camera, distance_to_camera, distance_to_camera)
-        glCallList(self.call_list_sphere)
-        glPopMatrix()
+        self.draw_sphere(distance_to_camera*.01)
 
         # recursively draw satellites
         for satellite in body.satellites:
@@ -327,13 +350,20 @@ class GUI:
 if __name__ == '__main__':
     from load import kerbol, solar
 
-    if len(sys.argv) >= 2:
+    try:
         name = sys.argv[1]
-        body = kerbol.get(name) or solar.get(name)
-        if body is None:
+    except IndexError:
+        name = 'Kerbin'
+
+    try:
+        body = kerbol[name]
+        texture_directory = 'textures/kerbol'
+    except KeyError:
+        try:
+            body = solar[name]
+            texture_directory = 'textures/solar'
+        except KeyError:
             sys.stderr.write("Unknwon body '%s'\n" % name)
             sys.exit(1)
-    else:
-        body = kerbol['Kerbin']
 
-    GUI(body).main()
+    GUI(body, texture_directory).main()
