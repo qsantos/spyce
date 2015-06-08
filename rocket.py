@@ -50,6 +50,7 @@ class Rocket:
     def __init__(self, primary=None):
         self.parts = set()
         self.dry_mass = 0.
+        self.throttle = 1.
 
         self.acceleration = vector.Vector([0, 0, 0])
         if primary is None:
@@ -76,8 +77,8 @@ class Rocket:
 
         # propulsion
         if self.propellant > 0:
-            self.acceleration += self.prograde * (self.thrust/mass)
-            self.propellant -= self.expulsion_rate * dt
+            self.acceleration += self.prograde*(self.thrust*self.throttle/mass)
+            self.propellant -= self.expulsion_rate * dt * self.throttle
 
         # update velocity and position
         self.velocity += self.acceleration * dt
