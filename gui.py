@@ -239,9 +239,35 @@ class GUI:
         # system
         self.draw_body(self.system)
 
+    def hud_print(self, string):
+        glutBitmapString(GLUT_BITMAP_HELVETICA_18, string.encode())
+
+    def draw_hud(self):
+        glColor4f(1.0, 1.0, 1.0, 1.0)
+        glRasterPos2i(10, 20)
+        self.hud_print("Zoom x%g\n" % self.zoom)
+
     def displayFunc(self):
         """Draw the screen (GLUT callback)"""
         self.draw()
+
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glOrtho(0.0, self.width, self.height, 0.0, -1.0, 10.0)
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glDisable(GL_CULL_FACE)
+        glClear(GL_DEPTH_BUFFER_BIT)
+
+        self.draw_hud()
+
+        glPopMatrix()
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
+
         glutSwapBuffers()
 
     def pick(self, x, y):
@@ -295,6 +321,8 @@ class GUI:
     def reshapeFunc(self, width, height):
         """Handle window reshapings (GLUT callback)"""
         glViewport(0, 0, width, height)
+        self.width = width
+        self.height = height
 
         # reset projection matrix
         glMatrixMode(GL_PROJECTION)
