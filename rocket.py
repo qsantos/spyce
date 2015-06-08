@@ -46,6 +46,7 @@ class RocketPart:
 
 
 class Rocket:
+    """A rocket, or a spaceship, or a duck"""
     def __init__(self, primary=None):
         self.parts = set()
         self.dry_mass = 0.
@@ -63,6 +64,7 @@ class Rocket:
         self.rotate_deg(90, 0, 1, 0)
 
     def simulate(self, dt):
+        """Run physics simulation"""
         mass = self.dry_mass + self.propellant
         self.acceleration = vector.Vector([0, 0, 0])
 
@@ -82,25 +84,30 @@ class Rocket:
         self.position += self.velocity * dt
 
     def update_parts(self):
+        """Update information about parts"""
         self.dry_mass = sum(part.dry_mass for part in self.parts)
         self.thrust = sum(part.thrust for part in self.parts)
         self.expulsion_rate = sum(part.expulsion_rate for part in self.parts)
         self.propellant = sum(part.propellant for part in self.parts)
 
     def __ior__(self, parts):
+        """Add parts"""
         self.parts |= parts
         self.update_parts()
         return self
 
     def __isub__(self, parts):
+        """Remove parts"""
         self.parts -= parts
         self.update_parts()
         return self
 
     def rotate_deg(self, angle, x, y, z):
+        """Rotate `angle` degrees along axis (x,y,z)"""
         self.orientation *= vector.Matrix.rotation_deg(angle, x, y, z)
         self.prograde = self.orientation * [0, 0, 1]
 
     def orbit(self):
+        """Current orbital trajectory"""
         return orbit.Orbit.from_state(
             self.primary, self.position, self.velocity)
