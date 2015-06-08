@@ -1,5 +1,6 @@
 import vector
 import physics
+import orbit
 
 
 class RocketPart:
@@ -99,3 +100,7 @@ class Rocket:
     def rotate_deg(self, angle, x, y, z):
         self.orientation *= vector.Matrix.rotation_deg(angle, x, y, z)
         self.prograde = self.orientation * [0, 0, 1]
+
+    def orbit(self):
+        return orbit.Orbit.from_state(
+            self.primary, self.position, self.velocity)
