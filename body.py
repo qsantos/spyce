@@ -95,7 +95,7 @@ class CelestialBody:
         d, seconds = divmod(seconds, self.rotational_period)
         h, seconds = divmod(seconds, 3600)
         m, seconds = divmod(seconds, 60)
-        return sign + "%uy, %ud, %u:%u:%.1f" % (y, d, h, m, seconds)
+        return sign + "%uy,%4ud,%3u:%02u:%04.1f" % (y, d, h, m, seconds)
 
     def str2time(self, formatted_time):
         """Extract a duration (s) from formated time
