@@ -28,6 +28,9 @@ class Vector(list):
     def __isub__(self, v):
         return self - v
 
+    def __neg__(self):
+        return Vector(-x for x in self)
+
 
 def dot(u, v):
     """Dot product of vectors"""
