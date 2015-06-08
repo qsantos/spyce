@@ -184,11 +184,16 @@ class GUI:
             # position body
             glTranslate(*body.orbit.position_t(self.time))
 
+        glPushMatrix()
+        glRotatef(360. / body.rotational_period * self.time, 0, 0, 1)
+
         # textured quadric (representation from close by)
         # sphere with radius proportional to that of the body
         textures.bind(body.texture, (0.5, 0.5, 1.0))
         self.draw_sphere(body.radius)
         textures.unbind()
+
+        glPopMatrix()
 
         # point (representation from far away)
         # draw sphere of constant visible radius at body position
