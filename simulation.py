@@ -56,9 +56,11 @@ class Simulation(gui.GUI):
             self.time += dt
 
             # rocket simulation
-            self.rocket.simulate(dt)
-            if condition():
-                condition = next(program)
+            n = 256
+            for _ in range(n):
+                self.rocket.simulate(dt / n)
+                if condition():
+                    condition = next(program)
             self.path.append(self.rocket.position)  # save rocket path
 
             self.update()
