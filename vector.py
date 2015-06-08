@@ -10,6 +10,9 @@ import math
 
 
 class Vector(list):
+    def norm(self):
+        return math.sqrt(dot(self, self))
+
     def __mul__(self, s):
         return Vector(x*s for x in self)
 

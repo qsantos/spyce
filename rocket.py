@@ -71,7 +71,7 @@ class Rocket:
 
         # gravity
         if self.primary:
-            distance = vector.norm(self.position)
+            distance = self.position.norm()
             g = self.primary.gravity_from_center(distance)
             self.acceleration -= self.position * (g/distance)
 
