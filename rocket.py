@@ -99,24 +99,3 @@ class Rocket:
     def rotate_deg(self, angle, x, y, z):
         self.orientation *= vector.Matrix.rotation_deg(angle, x, y, z)
         self.prograde = self.orientation * [0, 0, 1]
-
-
-if __name__ == "__main__":
-    import copy
-
-    from load import kerbol
-    import ksp_cfg
-    parts = ksp_cfg.get_parts()
-
-    def make_parts(*names):
-        return {copy.copy(parts[name]) for name in names}
-
-    rocket = Rocket(kerbol['Kerbin'])
-
-    stage = make_parts('probeCoreOcto', 'fuelTankSmallFlat', 'liquidEngine3')
-    rocket |= stage
-
-    print(rocket.position[0], rocket.velocity[0], rocket.acceleration[0])
-    for _ in range(10):
-        rocket.simulate(1)
-        print(rocket.position[0], rocket.velocity[0], rocket.acceleration[0])
