@@ -43,15 +43,24 @@ class Simulation(gui.GUI):
             self.timewarp *= 10.
             print("Time x%g" % self.timewarp)
 
-    def main(self):
+    def main(self, program):
+        condition = next(program)
+
         last = time.time()
         while self.is_running:
             glutMainLoopEvent()
+
+            # passage of time
             now = time.time()
             dt, last = (now - last) * self.timewarp, now
-            self.rocket.simulate(dt)
             self.time += dt
-            self.path.append(self.rocket.position)
+
+            # rocket simulation
+            self.rocket.simulate(dt)
+            if condition():
+                condition = next(program)
+            self.path.append(self.rocket.position)  # save rocket path
+
             self.update()
         glutCloseFunc(None)
 
@@ -69,6 +78,26 @@ if __name__ == "__main__":
     parts = ksp_cfg.get_parts()
     body = kerbol['Kerbin']
     rocket = rocket.Rocket(body)
-    rocket |= make_parts('Size3LargeTank', 'Size3EngineCluster')
+    rocket |= make_parts(
+        'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
+    )
 
-    Simulation(rocket, body, 'textures/kerbol').main()
+    def program():
+        # vertical ascent with progressive gravity turn
+        yield lambda: rocket.position[0] > 610e3
+        rocket.rotate_deg(-45, 1, 0, 0)
+        yield lambda: rocket.orbit().apoapsis > 675e3
+        rocket.rotate_deg(-45, 1, 0, 0)
+        yield lambda: rocket.orbit().apoapsis > 700e3
+        rocket.throttle = 0.
+
+        # circularizing
+        yield lambda: rocket.position.norm() > 699e3
+        rocket.rotate_deg(-20, 1, 0, 0)
+        rocket.throttle = 1.0
+        yield lambda: rocket.orbit().periapsis > 695e3
+        rocket.throttle = 0.0
+        yield lambda: False
+
+    sim = Simulation(rocket, body, 'textures/kerbol')
+    sim.main(program())
