@@ -195,11 +195,13 @@ class GUI:
         modelview_matrix = glGetFloatv(GL_MODELVIEW_MATRIX)
         distance_to_camera = vector.norm(modelview_matrix[3][:3]) / self.zoom
         glColor4f(0.5, 0.5, 1.0, 0.5)
-        self.draw_sphere(distance_to_camera*.01)
+        point_radius = distance_to_camera * .01
+        self.draw_sphere(point_radius)
 
         # recursively draw satellites
         for satellite in body.satellites:
-            self.draw_body(satellite)
+            if satellite.orbit.apoapsis > 3*point_radius:
+                self.draw_body(satellite)
 
         # done
         glPopName()
