@@ -18,7 +18,7 @@ class Simulation(gui.GUI):
 
         body = self.rocket.primary
         while body.orbit:
-            glTranslate(*body.orbit.position_t(0))
+            glTranslate(*body.orbit.position_t(self.time))
             body = body.orbit.primary
 
         glColor4f(1, 0, 0, 1)
@@ -45,6 +45,7 @@ class Simulation(gui.GUI):
             now = time.time()
             dt, last = (now - last) * self.timewarp, now
             self.rocket.simulate(dt)
+            self.time += dt
             self.path.append(self.rocket.position)
             self.update()
         glutCloseFunc(None)

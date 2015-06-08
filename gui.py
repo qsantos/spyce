@@ -22,6 +22,7 @@ class GUI:
         self.mouse_y = 0
         self.theta = 0
         self.phi = -90
+        self.time = 0
 
         # detect current system from focus
         self.focus = focus
@@ -128,7 +129,7 @@ class GUI:
         # now, we fix the three issues mentioned above
 
         # translating back does not induces loss of significance (1.)
-        p = body.orbit.position_t(0)
+        p = body.orbit.position_t(self.time)
         glPushMatrix()
         glTranslatef(*p)
 
@@ -136,7 +137,7 @@ class GUI:
         glBegin(GL_LINE_STRIP)  # GL_LINE_LOOP glitches when n_points >= 139
         n = 128
         # ensure the body will be on the line (2.)
-        x = body.orbit.true_anomaly(0)
+        x = body.orbit.true_anomaly(self.time)
         for i in range(n):
             # we need more points close to the camera (3.)
             # the function i -> 2.*i/n - 1
@@ -181,7 +182,7 @@ class GUI:
             self.draw_nice_orbit(body)
 
             # position body
-            glTranslate(*body.orbit.position_t(0))
+            glTranslate(*body.orbit.position_t(self.time))
 
         # textured quadric (representation from close by)
         # sphere with radius proportional to that of the body
@@ -231,7 +232,7 @@ class GUI:
         # focus
         orbit = self.focus.orbit
         while orbit is not None:
-            x, y, z = orbit.position_t(0)
+            x, y, z = orbit.position_t(self.time)
             glTranslate(-x, -y, -z)
             orbit = orbit.primary.orbit
 
