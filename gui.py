@@ -131,9 +131,22 @@ class GUI:
 
         # now, we fix the three issues mentioned above
 
-        # translating back does not induces loss of significance (1.)
-        p = body.orbit.position_t(self.time)
-        glTranslatef(*p)
+        # reset to the camera and manually offset the orbit (1.)
+        glLoadIdentity()
+        glTranslate(0, 0, -1)
+        glRotate(self.phi,   1, 0, 0)
+        glRotate(self.theta, 0, 0, 1)
+        glScalef(self.zoom, self.zoom, self.zoom)
+
+        def corrected_orbit_position(theta):
+            return body.orbit.position(theta) - focus_offset
+        focus_offset = body.orbit.position_t(self.time)
+
+        # position ancestors of the focus relatively to it
+        b = self.focus
+        while b != body:
+            glTranslate(*-b.orbit.position_t(self.time))
+            b = b.orbit.primary
 
         # path
         glBegin(GL_LINE_STRIP)  # GL_LINE_LOOP glitches when n_points >= 139
@@ -145,19 +158,17 @@ class GUI:
             # the function i -> 2.*i/n - 1
             # has values in [-1, 1] and a lower slope around 0
             theta = x + math.pi * (2.*i/n - 1)**3
-            relative_p = body.orbit.position(theta) - p
+            relative_p = corrected_orbit_position(theta)
             glVertex3f(*relative_p)
         # manually close the loop
-        theta = x - math.pi
-        relative_p = body.orbit.position(theta) - p
-        glVertex3f(*relative_p)
+        glVertex3f(*corrected_orbit_position(x - math.pi))
         glEnd()
 
         # apses
         glPointSize(5)
         glBegin(GL_POINTS)
-        glVertex3f(*(body.orbit.position(0) - p))
-        glVertex3f(*(body.orbit.position(math.pi) - p))
+        glVertex3f(*corrected_orbit_position(0))
+        glVertex3f(*corrected_orbit_position(math.pi))
         glEnd()
 
     def draw_sphere(self, radius):
