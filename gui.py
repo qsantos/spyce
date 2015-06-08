@@ -107,7 +107,7 @@ class GUI:
         glVertex3f(*orbit.position(math.pi))
         glEnd()
 
-    def draw_nice_orbit(self, body):
+    def draw_nice_orbit_and_position(self, body):
         # issues when drawing the orbit a focused body:
         # 1. moving to system center and back close to camera induces
         #    loss of significance and produces jitter
@@ -124,13 +124,15 @@ class GUI:
         else:
             # if not, simply use the call list
             glCallList(body.orbit.call_list)
+
+            # position body
+            glTranslate(*body.orbit.position_t(self.time))
             return
 
         # now, we fix the three issues mentioned above
 
         # translating back does not induces loss of significance (1.)
         p = body.orbit.position_t(self.time)
-        glPushMatrix()
         glTranslatef(*p)
 
         # path
@@ -151,14 +153,11 @@ class GUI:
         glVertex3f(*relative_p)
         glEnd()
 
-        # back to normal coordinates
-        glPopMatrix()
-
-        # apses (normal drawing)
+        # apses
         glPointSize(5)
         glBegin(GL_POINTS)
-        glVertex3f(*body.orbit.position(0))
-        glVertex3f(*body.orbit.position(math.pi))
+        glVertex3f(*(body.orbit.position(0) - p))
+        glVertex3f(*(body.orbit.position(math.pi) - p))
         glEnd()
 
     def draw_sphere(self, radius):
@@ -179,10 +178,7 @@ class GUI:
         if body.orbit is not None:
             # draw orbit
             glColor4f(1.0, 1.0, 0.0, 1.0)
-            self.draw_nice_orbit(body)
-
-            # position body
-            glTranslate(*body.orbit.position_t(self.time))
+            self.draw_nice_orbit_and_position(body)
 
         glPushMatrix()
         glRotatef(360. / body.rotational_period * self.time, 0, 0, 1)
