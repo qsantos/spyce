@@ -53,16 +53,16 @@ class Simulation(gui.GUI):
             # passage of time
             now = time.time()
             dt, last = (now - last) * self.timewarp, now
-            self.time += dt
 
             # rocket simulation
             n = 256
             for _ in range(n):
-                self.rocket.simulate(dt / n)
+                self.rocket.simulate(self.time, dt / n)
                 if condition():
                     condition = next(program)
             self.path.append(self.rocket.position)  # save rocket path
 
+            self.time += dt
             self.update()
         glutCloseFunc(None)
 

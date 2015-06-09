@@ -1,6 +1,7 @@
 import vector
 import physics
 import orbit
+import integration
 
 
 class RocketPart:
@@ -64,25 +65,34 @@ class Rocket:
         self.orientation = vector.Matrix.identity()
         self.rotate_deg(90, 0, 1, 0)
 
-    def simulate(self, dt):
+    def simulate(self, t, dt):
         """Run physics simulation"""
-        mass = self.dry_mass + self.propellant
-        self.acceleration = vector.Vector([0, 0, 0])
-
-        # gravity
-        if self.primary:
-            distance = self.position.norm()
-            g = self.primary.gravity_from_center(distance)
-            self.acceleration -= self.position * (g/distance)
 
         # propulsion
         if self.propellant > 0:
-            self.acceleration += self.prograde*(self.thrust*self.throttle/mass)
             self.propellant -= self.expulsion_rate * dt * self.throttle
 
+        def f(t, y):
+            position, velocity = vector.Vector(y[:3]), y[3:]
+            acceleration = vector.Vector([0, 0, 0])
+
+            # gravity
+            if self.primary:
+                distance = position.norm()
+                g = self.primary.gravity_from_center(distance)
+                acceleration -= position * (g/distance)
+
+            # propulsion
+            if self.propellant > 0:
+                mass = self.dry_mass + self.propellant
+                acceleration += self.prograde*(self.thrust*self.throttle/mass)
+            return vector.Vector(velocity + acceleration)
+
         # update velocity and position
-        self.velocity += self.acceleration * dt
-        self.position += self.velocity * dt
+        y = self.position[:] + self.velocity
+        y = integration.rk4(f, t, y, dt)
+        self.position = vector.Vector(y[:3])
+        self.velocity = vector.Vector(y[3:])
 
     def update_parts(self):
         """Update information about parts"""
