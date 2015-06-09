@@ -38,10 +38,8 @@ class Simulation(gui.GUI):
 
         if k == b',':
             self.timewarp /= 10.
-            print("Time x%g" % self.timewarp)
         elif k == b';':
             self.timewarp *= 10.
-            print("Time x%g" % self.timewarp)
 
     def main(self, program):
         condition = next(program)
