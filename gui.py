@@ -192,7 +192,10 @@ class GUI:
             self.draw_nice_orbit_and_position(body)
 
         glPushMatrix()
-        glRotatef(360. / body.rotational_period * self.time, 0, 0, 1)
+        # OpenGL use single precision while Python has double precision
+        # reducing modulo 2 PI in Python reduces loss of significance
+        turn_fraction, _ = math.modf(self.time / body.rotational_period)
+        glRotatef(360. * turn_fraction, 0, 0, 1)
 
         # textured quadric (representation from close by)
         # sphere with radius proportional to that of the body
