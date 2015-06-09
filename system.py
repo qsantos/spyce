@@ -10,6 +10,24 @@ import skybox
 import picking
 
 
+def make_vbo(vertices):
+    """Return a VBO of the given vertices"""
+    vbo_index = glGenBuffers(1)
+    data_buffer = (ctypes.c_float*len(vertices))(*vertices)
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_index)
+    glBufferData(GL_ARRAY_BUFFER, data_buffer, GL_STATIC_DRAW)
+    return vbo_index
+
+
+def draw_vbo(vbo_index, n_vertices):
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_index)
+    glVertexPointer(3, GL_FLOAT, 0, None)
+    glEnableClientState(GL_VERTEX_ARRAY)
+    glDrawArrays(GL_LINE_STRIP, 0, n_vertices)
+    glDisableClientState(GL_VERTEX_ARRAY)
+    glBindBuffer(GL_ARRAY_BUFFER, 0)
+
+
 class SystemGUI(picking.PickingGUI):
     """GUI for showing planetary system"""
     def __init__(self, focus, texture_directory=None):
@@ -34,6 +52,34 @@ class SystemGUI(picking.PickingGUI):
         self.system = self.focus
         while self.system.orbit is not None:
             self.system = self.system.orbit.primary
+
+        # VBOs for drawing orbits
+
+        # unit circle centered on (0, 0)
+        n = 1023
+        vertices = []
+        for i in range(n):
+            t = math.pi * (2.*i/n - 1)
+            vertices += [math.cos(t), math.sin(t), 0.]
+        vertices += [-1., 0., 0.]  # close the loop
+        self.circle = make_vbo(vertices)
+
+        # unit circle centered on (1, 0)
+        n = 1023
+        vertices = []
+        for i in range(n):
+            theta = math.pi * (2.*i/n - 1)
+            vertices += [1. + math.cos(theta), math.sin(theta), 0.]
+        vertices += [0., 0., 0.]  # close the loop
+        self.shifted_circle = make_vbo(vertices)
+
+        # unit parabola centered on (0, 0)
+        n = 1024
+        vertices = []
+        for i in range(n):
+            t = math.pi * (2.*i/n - 1)
+            vertices += [math.cosh(t), math.sinh(t), 0.]
+        self.parabola = make_vbo(vertices)
 
         # make call lists for orbits
         def make_orbit_call_list(body):
@@ -84,22 +130,36 @@ class SystemGUI(picking.PickingGUI):
         return cls(body, texture_directory)
 
     def draw_orbit(self, orbit):
-        # path
-        glBegin(GL_LINE_STRIP)  # GL_LINE_LOOP glitches when n_points >= 139
-        n_points = 512
-        for i in range(n_points):
-            glVertex3f(*orbit.position(2*math.pi/n_points * i))
-        glVertex3f(*orbit.position(0))  # manually close the loop
-        glEnd()
+        """Draw an orbit centered on its focus"""
+        glPushMatrix()
+
+        # make tilted ellipse from a circle or tilted hyperbola from a parabola
+        glRotate(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
+        glRotate(math.degrees(orbit.inclination),                 1, 0, 0)
+        glRotate(math.degrees(orbit.argument_of_periapsis),       0, 0, 1)
+        glTranslatef(-orbit.focus, 0, 0)
+        glScalef(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
+
+        # draw circle or parabola
+        if orbit.eccentricity < 1.:
+            draw_vbo(self.circle, 1024)
+        else:
+            draw_vbo(self.parabola, 1024)
+        vbo = self.circle if orbit.eccentricity < 1. else self.parabola
 
         # apses
         glPointSize(5)
         glBegin(GL_POINTS)
-        glVertex3f(*orbit.position(0))
-        glVertex3f(*orbit.position(math.pi))
+        glVertex3f(+1, 0, 0)
+        if orbit.eccentricity < 1.:
+            glVertex3f(-1, 0, 0)
         glEnd()
 
+        glPopMatrix()
+
     def draw_orbit_focused(self, body):
+        """Draw on orbit centered on the object current position"""
+
         # issues when drawing the orbit a focused body:
         # 1. moving to system center and back close to camera induces
         #    loss of significance and produces jitter
@@ -114,21 +174,45 @@ class SystemGUI(picking.PickingGUI):
             return body.orbit.position(theta) - focus_offset
         focus_offset = body.orbit.position_t(self.time)
 
-        # path
-        glBegin(GL_LINE_STRIP)  # GL_LINE_LOOP glitches when n_points >= 139
-        n = 128
-        # ensure the body will be on the line (2.)
-        x = body.orbit.true_anomaly(self.time)
-        for i in range(n):
-            # we need more points close to the camera (3.)
-            # the function i -> 2.*i/n - 1
-            # has values in [-1, 1] and a lower slope around 0
-            theta = x + math.pi * (2.*i/n - 1)**3
-            relative_p = corrected_orbit_position(theta)
-            glVertex3f(*relative_p)
-        # manually close the loop
-        glVertex3f(*corrected_orbit_position(x - math.pi))
-        glEnd()
+        orbit = body.orbit
+
+        if orbit.eccentricity >= 1.:
+            # path
+            glBegin(GL_LINE_STRIP)
+            n = 128
+            # ensure the body will be on the line (2.)
+            x = orbit.true_anomaly(self.time)
+            for i in range(n):
+                # we need more points close to the camera (3.)
+                # the function i -> 2.*i/n - 1
+                # has values in [-1, 1] and a lower slope around 0
+                theta = x + math.pi * (2.*i/n - 1)**3
+                relative_p = corrected_orbit_position(theta)
+                glVertex3f(*relative_p)
+            glEnd()
+        else:
+            # nice hack with circle symetry to draw the orbit from the body
+            # while still using VBOs
+            # unsure it can be adapted for parabolic and hyperbolic orbits
+
+            glPushMatrix()
+
+            # the first point of shifted_circle is (0,0) (2.)
+            # using linear transforms spreads points more naturally (3.)
+
+            # make tilted ellipse from a circle
+            glRotate(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
+            glRotate(math.degrees(orbit.inclination),                 1, 0, 0)
+            glRotate(math.degrees(orbit.argument_of_periapsis),       0, 0, 1)
+            glScalef(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
+
+            # account for current position of the body (use circle symmetry)
+            anomaly = orbit.eccentric_anomaly(self.time)
+            glRotate(math.degrees(anomaly) - 180., 0, 0, 1)
+
+            draw_vbo(self.shifted_circle, 1024)
+
+            glPopMatrix()
 
         # apses
         glPointSize(5)
