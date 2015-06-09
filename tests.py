@@ -90,7 +90,7 @@ def test_almost_equal_orbit(a, b):
     test_almost_equal_angle("inclination", a.inclination, b.inclination)
 
     # longitude of ascending node
-    if a.inclination != 0:
+    if a.inclination not in (0., math.pi):
         test_almost_equal_angle(
             "longitude of ascending node",
             a.longitude_of_ascending_node, b.longitude_of_ascending_node
@@ -103,6 +103,9 @@ def test_almost_equal_orbit(a, b):
         if a.inclination == 0:
             angle_a += a.longitude_of_ascending_node
             angle_b += b.longitude_of_ascending_node
+        elif a.inclination == math.pi:
+            angle_a -= a.longitude_of_ascending_node
+            angle_b -= b.longitude_of_ascending_node
         test_almost_equal_angle("argument of periapsis", angle_a, angle_b)
 
     # mean anomaly

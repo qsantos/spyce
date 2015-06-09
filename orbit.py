@@ -195,7 +195,7 @@ class Orbit:
         inclination = vector.angle(orbital_plane_normal_vector, z_axis)
 
         # direction of the ascending node
-        if inclination == 0:
+        if inclination in (0, math.pi):
             ascend_node_dir = x_axis
         else:
             ascend_node_dir = vector.cross(z_axis, orbital_plane_normal_vector)
