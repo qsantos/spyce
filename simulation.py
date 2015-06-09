@@ -56,7 +56,7 @@ class Simulation(gui.GUI):
             dt, last = (now - last) * self.timewarp, now
 
             # rocket simulation
-            n = 256
+            n = 32
             for _ in range(n):
                 self.rocket.simulate(self.time, dt / n)
                 if condition():
