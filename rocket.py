@@ -65,8 +65,15 @@ class Rocket:
         self.orientation = vector.Matrix.identity()
         self.rotate_deg(90, 0, 1, 0)
 
+        self.update_orbit(0.)
+
     def simulate(self, t, dt):
         """Run physics simulation"""
+
+        if self.throttle == 0.:
+            self.position = self.orbit.position_t(t)
+            self.velocity = self.orbit.velocity_t(t)
+            return
 
         # propulsion
         if self.propellant > 0:
@@ -94,6 +101,13 @@ class Rocket:
         self.position = vector.Vector(y[:3])
         self.velocity = vector.Vector(y[3:])
 
+        self.update_orbit(t)
+
+    def update_orbit(self, epoch):
+        """Update current orbital trajectory"""
+        self.orbit = orbit.Orbit.from_state(
+            self.primary, self.position, self.velocity, epoch)
+
     def update_parts(self):
         """Update information about parts"""
         self.dry_mass = sum(part.dry_mass for part in self.parts)
@@ -117,8 +131,3 @@ class Rocket:
         """Rotate `angle` degrees along axis (x,y,z)"""
         self.orientation *= vector.Matrix.rotation_deg(angle, x, y, z)
         self.prograde = self.orientation * [0, 0, 1]
-
-    def orbit(self):
-        """Current orbital trajectory"""
-        return orbit.Orbit.from_state(
-            self.primary, self.position, self.velocity)

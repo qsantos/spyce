@@ -88,16 +88,16 @@ if __name__ == "__main__":
         # vertical ascent with progressive gravity turn
         yield lambda: rocket.position[0] > 610e3
         rocket.rotate_deg(-45, 1, 0, 0)
-        yield lambda: rocket.orbit().apoapsis > 675e3
+        yield lambda: rocket.orbit.apoapsis > 675e3
         rocket.rotate_deg(-45, 1, 0, 0)
-        yield lambda: rocket.orbit().apoapsis > 700e3
+        yield lambda: rocket.orbit.apoapsis > 700e3
         rocket.throttle = 0.
 
         # circularizing
         yield lambda: rocket.position.norm() > 699e3
         rocket.rotate_deg(-20, 1, 0, 0)
         rocket.throttle = 1.0
-        yield lambda: rocket.orbit().periapsis > 695e3
+        yield lambda: rocket.orbit.periapsis > 695e3
         rocket.throttle = 0.0
         yield lambda: False
 
