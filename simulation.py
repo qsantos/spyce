@@ -44,9 +44,7 @@ class Simulation(gui.GUI):
         elif k == b';':
             self.timewarp *= 10.
 
-    def main(self, program):
-        condition = next(program)
-
+    def main(self):
         last = time.time()
         while self.is_running:
             glutMainLoopEvent()
@@ -59,8 +57,6 @@ class Simulation(gui.GUI):
             n = 32
             for _ in range(n):
                 self.rocket.simulate(self.time, dt / n)
-                if condition():
-                    condition = next(program)
             self.path.append(self.rocket.position)  # save rocket path
 
             self.time += dt
@@ -75,17 +71,7 @@ if __name__ == "__main__":
     import ksp_cfg
     import rocket
 
-    def make_parts(*names):
-        return {copy.copy(parts[name]) for name in names}
-
-    parts = ksp_cfg.get_parts()
-    body = kerbol['Kerbin']
-    rocket = rocket.Rocket(body)
-    rocket |= make_parts(
-        'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
-    )
-
-    def program():
+    def program(rocket):
         # vertical ascent with progressive gravity turn
         yield lambda: rocket.position[0] > 610e3
         rocket.rotate_deg(-45, 1, 0, 0)
@@ -102,5 +88,15 @@ if __name__ == "__main__":
         rocket.throttle = 0.0
         yield lambda: False
 
+    def make_parts(*names):
+        return {copy.copy(parts[name]) for name in names}
+
+    parts = ksp_cfg.get_parts()
+    body = kerbol['Kerbin']
+    rocket = rocket.Rocket(body, program)
+    rocket |= make_parts(
+        'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
+    )
+
     sim = Simulation(rocket, body, 'textures/kerbol')
-    sim.main(program())
+    sim.main()

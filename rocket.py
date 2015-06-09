@@ -48,7 +48,7 @@ class RocketPart:
 
 class Rocket:
     """A rocket, or a spaceship, or a duck"""
-    def __init__(self, primary=None):
+    def __init__(self, primary=None, program=None):
         self.parts = set()
         self.dry_mass = 0.
         self.throttle = 1.
@@ -67,8 +67,14 @@ class Rocket:
 
         self.update_orbit(0.)
 
+        self.program = program(self)
+        self.resume_condition = next(self.program)
+
     def simulate(self, t, dt):
         """Run physics simulation"""
+
+        if self.resume_condition():
+            self.resume_condition = next(self.program)
 
         if self.throttle == 0.:
             self.position = self.orbit.position_t(t)
