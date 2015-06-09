@@ -27,6 +27,9 @@ class Simulation(gui.GUI):
             glVertex3f(*position)
         glEnd()
 
+        glColor4f(1, 1, 1, 1)
+        self.draw_orbit(self.rocket.orbit)
+
     def draw_hud(self):
         gui.GUI.draw_hud(self)
         self.hud_print("Time x%g\n" % self.timewarp)
