@@ -125,17 +125,33 @@ def random_angle():
         return random.uniform(-math.pi, math.pi)
 
 
-def test_random_orbit(eccentricity):
-    # generate a random orbit with given eccentricity
+def random_eccentricity():
+    case = random.randrange(4)
+    if case == 0:
+        return 0.
+    elif case == 1:
+        return random.uniform(0., 1.)
+    elif case == 2:
+        return 1.
+    elif case == 3:
+        return 1. + random.expovariate(.25)
+
+
+def random_orbit():
     periapsis = random.expovariate(1e-9)
+    eccentricity = random_eccentricity()
     inclination = abs(random_angle())
     longitude_of_ascending_node = random_angle()
     argument_of_periapsis = random_angle()
 
-    o = orbit.Orbit(
+    return orbit.Orbit(
         primary, periapsis, eccentricity,
         inclination, longitude_of_ascending_node, argument_of_periapsis,
     )
+
+
+for _ in range(400):
+    o = random_orbit()
 
     # check true anomaly at periapsis and apoapsis
     assert abs(o.true_anomaly(0)) < 2**-95
@@ -170,23 +186,6 @@ def test_random_orbit(eccentricity):
     instant = random.expovariate(1e-6) * random.choice([-1, 1])
     p, v = o.position_t(instant), o.velocity_t(instant)
     test_almost_equal_orbit(o, orbit.Orbit.from_state(primary, p, v, instant))
-
-
-# circular orbits
-for _ in range(100):
-    test_random_orbit(eccentricity=0)
-
-# elliptic orbits
-for _ in range(100):
-    test_random_orbit(eccentricity=random.uniform(0, 1))
-
-# parabolic trajectories
-for _ in range(100):
-    test_random_orbit(eccentricity=1)
-
-# hyperbolic trajectories
-for _ in range(100):
-    test_random_orbit(eccentricity=1 + random.expovariate(.25))
 
 
 import body
