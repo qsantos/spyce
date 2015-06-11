@@ -91,13 +91,14 @@ class Rocket:
 
         def f(t, y):
             position, velocity = vector.Vector(y[:3]), y[3:]
-            acceleration = vector.Vector([0, 0, 0])
 
             # gravity
             if self.primary:
                 distance = position.norm()
                 g = self.primary.gravity_from_center(distance)
-                acceleration -= position * (g/distance)
+                acceleration = position * (-g/distance)
+            else:
+                acceleration = vector.Vector([0, 0, 0])
 
             # propulsion
             if self.propellant > 0:

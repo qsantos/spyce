@@ -11,28 +11,29 @@ import math
 
 class Vector(list):
     def norm(self):
-        return math.sqrt(dot(self, self))
+        x, y, z = self
+        return math.sqrt(x*x + y*y + z*z)
 
     def __mul__(self, s):
-        return Vector(x*s for x in self)
+        return Vector([x*s for x in self])
 
     def __div__(self, s):
-        return Vector(x/s for x in self)
+        return Vector([x/s for x in self])
 
     def __add__(self, v):
-        return Vector(x+y for x, y in zip(self, v))
+        return Vector([x+y for x, y in zip(self, v)])
 
     def __iadd__(self, v):
         return self + v
 
     def __sub__(self, v):
-        return Vector(x-y for x, y in zip(self, v))
+        return Vector([x-y for x, y in zip(self, v)])
 
     def __isub__(self, v):
         return self - v
 
     def __neg__(self):
-        return Vector(-x for x in self)
+        return Vector([-x for x in self])
 
 
 def dot(u, v):
@@ -79,10 +80,10 @@ class Matrix(list):
         if type(x) == Matrix:
             # matrix-matrix multiplication
             m = Matrix(zip(*x))
-            return Matrix(m*row for row in self)
+            return Matrix([m*row for row in self])
         else:
             # matrix-vector multiplication
-            return Vector(sum(a*b for a, b in zip(row, x)) for row in self)
+            return Vector([sum(a*b for a, b in zip(row, x)) for row in self])
 
     @classmethod
     def identity(cls):
