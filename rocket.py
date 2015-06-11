@@ -67,8 +67,12 @@ class Rocket:
 
         self.update_orbit(0.)
 
-        self.program = program(self)
-        self.resume_condition = next(self.program)
+        if program is None:
+            self.program = None
+            self.resume_condition = lambda: False
+        else:
+            self.program = program(self)
+            self.resume_condition = next(self.program)
 
     def simulate(self, t, dt):
         """Run physics simulation"""

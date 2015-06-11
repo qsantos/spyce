@@ -260,3 +260,42 @@ assert part == {"PART": {"MODULE": [{"name": "first"}, {"name": "second"}]}}
 
 part = part["PART"]
 assert ksp_cfg.dict_get_group(part, "MODULE", "first") == {"name": "first"}
+
+
+import rocket
+from load import kerbol
+
+
+primary = kerbol['Kerbin']
+rocket = rocket.Rocket(primary)
+rocket |= ksp_cfg.PartSet().make(
+    'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
+)
+
+# enable physics simulation with no actual thrust
+rocket.throttle = 1.
+rocket.propellant = 0.
+
+# set rocket on orbit
+o = orbit.Orbit(primary, 700e3, random.uniform(0., 2.))
+rocket.position = o.position(0.)
+rocket.velocity = o.velocity(0.)
+
+# rocket simulation
+time = 0.
+n = 1000
+dt = .1
+for _ in range(n):
+    rocket.simulate(time, dt)
+    time += dt
+
+
+# check error
+def relative_error(v1, v2):
+    error = (v1 - v2).norm()
+    return error / v1.norm()
+
+e1 = relative_error(o.position_t(time), rocket.position)
+e2 = relative_error(o.velocity_t(time), rocket.velocity)
+assert e1 < 1e-12, "Simulated position has relative error %f" % e1
+assert e2 < 1e-12, "Simulated velocity has relative error %f" % e2
