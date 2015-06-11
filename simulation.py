@@ -65,8 +65,6 @@ class Simulation(gui.GUI):
 
 
 if __name__ == "__main__":
-    import copy
-
     from load import kerbol
     import ksp_cfg
     import rocket
@@ -88,13 +86,9 @@ if __name__ == "__main__":
         rocket.throttle = 0.0
         yield lambda: False
 
-    def make_parts(*names):
-        return {copy.copy(parts[name]) for name in names}
-
-    parts = ksp_cfg.get_parts()
     body = kerbol['Kerbin']
     rocket = rocket.Rocket(body, program)
-    rocket |= make_parts(
+    rocket |= ksp_cfg.PartSet().make(
         'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
     )
 

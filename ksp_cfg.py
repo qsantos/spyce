@@ -2,6 +2,7 @@
 
 import os
 import io
+import copy
 
 import rocket
 
@@ -142,6 +143,14 @@ def get_parts():
         parts[part.name] = part
 
     return parts
+
+
+class PartSet:
+    def __init__(self):
+        self.parts = get_parts()
+
+    def make(self, *names):
+        return {copy.copy(self.parts[name]) for name in names}
 
 
 if __name__ == "__main__":
