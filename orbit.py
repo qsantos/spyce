@@ -57,11 +57,11 @@ class Orbit:
         self.semi_minor_axis = self.semi_major_axis * math.sqrt(abs(e2))
         self.focus = self.semi_major_axis * self.eccentricity
 
-        m = vector.Matrix.identity()
-        m = vector.Matrix.rotation(self.argument_of_periapsis,       0, 0, 1)*m
-        m = vector.Matrix.rotation(self.inclination,                 1, 0, 0)*m
-        m = vector.Matrix.rotation(self.longitude_of_ascending_node, 0, 0, 1)*m
-        self.transform = m
+        self.transform = vector.Matrix.from_euler_angles(
+            self.longitude_of_ascending_node,
+            self.inclination,
+            self.argument_of_periapsis,
+        )
 
     def __repr__(self):
         return (

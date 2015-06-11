@@ -102,6 +102,19 @@ class Matrix(list):
         ])
 
     @classmethod
+    def from_euler_angles(cls, alpha, beta, gamma):
+        """Return the Z1X2Z3 rotation matrix from the given Euler angles"""
+        # see https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
+        c1, s1 = math.cos(alpha), math.sin(alpha)
+        c2, s2 = math.cos(beta),  math.sin(beta)
+        c3, s3 = math.cos(gamma), math.sin(gamma)
+        return cls([
+            [c1*c3-c2*s1*s3, -c1*s3-c2*c3*s1, s1*s2],
+            [c3*s1+c1*c2*s3, c1*c2*c3-s1*s3,  -c1*s2],
+            [s2*s3,          c3*s2,           c2],
+        ])
+
+    @classmethod
     def rotation_deg(cls, angle, x, y, z):
         """Rotation matrix of given angle (degrees) around axis (x,y,z)"""
         return cls.rotation(math.radians(angle), x, y, z)
