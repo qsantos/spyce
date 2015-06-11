@@ -10,6 +10,29 @@ import textures
 import skybox
 
 
+def make_shader(program, type_, filename):
+        """Compile and attach a shader of given type"""
+        if filename is None:
+            return
+
+        shader = glCreateShader(type_)
+        glShaderSource(shader, open(filename).read())
+        glCompileShader(shader)
+        error = glGetShaderInfoLog(shader)
+        if error:
+            raise SyntaxError(error)
+        glAttachShader(program, shader)
+
+
+def make_program(vertex_file=None, fragment_file=None):
+        """Make a program from shader files"""
+        program = glCreateProgram()
+        make_shader(program, GL_VERTEX_SHADER, vertex_file)
+        make_shader(program, GL_FRAGMENT_SHADER, fragment_file)
+        glLinkProgram(program)
+        return program
+
+
 class GUI:
     def __init__(self, focus, texture_directory=None):
         # set to False for soft exit
@@ -38,13 +61,15 @@ class GUI:
         glutInitWindowSize(1024, 768)
         glutCreateWindow(b'Spaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaace')
 
+        self.pick_shader = make_program(None, "shaders/pick.frag")
+        self.pick_name = glGetUniformLocation(self.pick_shader, b"name")
+
         # OpenGL init
         glEnable(GL_POINT_SMOOTH)  # may make GL_POINTS round
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glClearColor(0.0, 0.0, 0.0, 1.0)
-        glInitNames()
 
         # generic sphere for drawing bodies
         sphere = gluNewQuadric()
@@ -183,7 +208,11 @@ class GUI:
 
         # set local context
         glPushMatrix()
-        glPushName(body.label)
+
+        # push name
+        self.pick_objects.append(body)
+        name = len(self.pick_objects)
+        glProgramUniform1i(self.pick_shader, self.pick_name, name)
 
         # orbit
         if body.orbit is not None:
@@ -214,13 +243,15 @@ class GUI:
         point_radius = distance_to_camera * .01
         self.draw_sphere(point_radius)
 
+        # pop name
+        glProgramUniform1i(self.pick_shader, self.pick_name, 0)
+
         # recursively draw satellites
         for satellite in body.satellites:
             if satellite.orbit.apoapsis > 3*point_radius:
                 self.draw_body(satellite)
 
         # done
-        glPopName()
         glPopMatrix()
 
     def draw(self):
@@ -229,6 +260,7 @@ class GUI:
         # reset everything
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
+        self.pick_objects = []
 
         # move camera out of focus
         glTranslate(0, 0, -1)
@@ -286,35 +318,45 @@ class GUI:
         glutSwapBuffers()
 
     def pick(self, x, y):
-        """Find object at given screen coordinates (see glPushName())"""
+        """Find object at given screen coordinates"""
 
-        # restrict view (projection matrix) to the single pixel at (x, y)
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        viewport = glGetIntegerv(GL_VIEWPORT)
-        gluPickMatrix(x, viewport[3]-y, 1, 1, viewport)
-        self.projection_matrix()
-        glMatrixMode(GL_MODELVIEW)
-
-        # draw and collects hits
-        glSelectBuffer(512)
-        glRenderMode(GL_SELECT)
+        # draw with color picking
+        glUseProgram(self.pick_shader)
         self.draw()
-        hits = glRenderMode(GL_RENDER)
+        glUseProgram(0)
 
-        # restore view
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
+        # inverse y axis
+        viewport = glGetIntegerv(GL_VIEWPORT)
+        y = viewport[3] - y
 
-        # return first actual hit
-        # (first hit is always empty)
-        for hit in hits:
-            min_depth, max_depth, names = hit
-            if names:
-                return names
-        return None
+        # retrieve names
+        search_radius = 10
+        r = search_radius
+        red = glReadPixels(x-r, y-r, 1+2*r, 1+2*r, GL_RED, GL_UNSIGNED_BYTE)
+
+        # find best match
+        best = float("inf")
+        closest = 0
+        for index, pixel in enumerate(red):
+            # get integer value
+            pixel = pixel[0]
+            try:  # Python 2
+                pixel = ord(pixel)
+            except TypeError:  # Python 3
+                pass
+
+            # no match
+            if pixel == 0:
+                continue
+
+            # compute distance to mouse pointer
+            x, y = index // search_radius, index % search_radius,
+            distance = math.hypot(x - search_radius, y - search_radius)
+            if distance < best and distance <= search_radius:
+                best = distance
+                closest = pixel
+
+        return closest
 
     def closeFunc(self):
         """Handle window closing (GLUT callback)"""
@@ -370,11 +412,9 @@ class GUI:
         """Handle mouse clicks (GLUT callback)"""
         if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
             # body selection
-            names = self.pick(x, y)
-            if names:
-                self.focus = self.system
-                for label in names[1:]:
-                    self.focus = self.focus.satellites[label]
+            name = self.pick(x, y)
+            if name > 0:
+                self.focus = self.pick_objects[name-1]
                 self.update()
         if button == GLUT_RIGHT_BUTTON:
             # drag'n drop for camera orientation
