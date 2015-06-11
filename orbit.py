@@ -393,3 +393,23 @@ class Orbit:
     def velocity_t(self, time):
         """Computes the velocity vector at a given time (s)"""
         return self.velocity(self.true_anomaly(time))
+
+
+# if available, use a C version to compute orbital elements from state vectors
+
+try:  # Python 3
+    from cext.elements_py3 import elements_from_state
+except ImportError:
+    try:  # Python 2
+        from cext.elements_py2 import elements_from_state
+    except ImportError:
+        print("Note: to improve performances, run `make` in cext/")
+        elements_from_state = None
+
+if elements_from_state is not None:
+    @classmethod
+    def from_state(cls, primary, position, velocity, epoch=0):
+        mu = primary.gravitational_parameter
+        elements = elements_from_state(mu, position, velocity, epoch)
+        return cls(primary, *elements)
+    Orbit.from_state = from_state
