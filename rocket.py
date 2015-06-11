@@ -81,8 +81,8 @@ class Rocket:
             self.resume_condition = next(self.program)
 
         if self.throttle == 0.:
-            self.position = self.orbit.position_t(t)
-            self.velocity = self.orbit.velocity_t(t)
+            self.position = self.orbit.position_t(t + dt)
+            self.velocity = self.orbit.velocity_t(t + dt)
             return
 
         # propulsion
