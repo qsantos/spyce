@@ -3,18 +3,18 @@ import time
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 
-import gui
+import system
 
 
-class Simulation(gui.GUI):
-    def __init__(self, rocket, *args, **kwargs):
-        gui.GUI.__init__(self, *args, **kwargs)
-        self.rocket = rocket
-        self.path = [self.rocket.position]
+class SimulationGUI(system.SystemGUI):
+    def __init__(self, *args, **kwargs):
+        system.SystemGUI.__init__(self, *args, **kwargs)
+
+        self.path = []
         self.timewarp = 1.
 
     def draw(self):
-        gui.GUI.draw(self)
+        system.SystemGUI.draw(self)
 
         body = self.rocket.primary
 
@@ -30,20 +30,23 @@ class Simulation(gui.GUI):
         self.draw_orbit(self.rocket.orbit)
 
     def draw_hud(self):
-        gui.GUI.draw_hud(self)
+        system.SystemGUI.draw_hud(self)
         self.hud_print("Time x%g\n" % self.timewarp)
         self.hud_print(self.rocket.primary.time2str(self.time))
 
     def keyboardFunc(self, k, x, y):
         """Handle key presses (GLUT callback)"""
-        gui.GUI.keyboardFunc(self, k, x, y)
-
-        if k == b',':
+        if k == b'\x1b':  # escape
+            self.is_running = False
+        elif k == b',':
             self.timewarp /= 10.
         elif k == b';':
             self.timewarp *= 10.
+        else:
+            system.SystemGUI.keyboardFunc(self, k, x, y)
 
     def main(self):
+        """Main loop"""
         last = time.time()
         while self.is_running:
             glutMainLoopEvent()
@@ -61,7 +64,6 @@ class Simulation(gui.GUI):
             self.time += dt
             self.update()
         glutCloseFunc(None)
-
 
 if __name__ == "__main__":
     from load import kerbol
@@ -91,5 +93,6 @@ if __name__ == "__main__":
         'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
     )
 
-    sim = Simulation(rocket, body, 'textures/kerbol')
+    sim = SimulationGUI.from_cli_args()
+    sim.rocket = rocket
     sim.main()
