@@ -210,9 +210,7 @@ class GUI:
         glPushMatrix()
 
         # push name
-        self.pick_objects.append(body)
-        name = len(self.pick_objects)
-        glProgramUniform1i(self.pick_shader, self.pick_name, name)
+        self.add_pick_object(body)
 
         # orbit
         if body.orbit is not None:
@@ -316,6 +314,12 @@ class GUI:
         glMatrixMode(GL_MODELVIEW)
 
         glutSwapBuffers()
+
+    def add_pick_object(self, thing):
+        """Add thing to pick list and setup shader"""
+        self.pick_objects.append(thing)
+        name = len(self.pick_objects)
+        glProgramUniform1i(self.pick_shader, self.pick_name, name)
 
     def pick(self, x, y):
         """Find object at given screen coordinates"""
