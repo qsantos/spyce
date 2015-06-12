@@ -1,4 +1,6 @@
 import sys
+import time
+import collections
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 
@@ -15,6 +17,7 @@ class GUI:
         self.phi = -90
         self.time = 0
         self.is_running = True  # set to False for soft exit
+        self.frame_timings = collections.deque([time.time()], 60)
 
         # GLUT init
         glutInit(sys.argv)
@@ -86,6 +89,12 @@ class GUI:
         glClear(GL_DEPTH_BUFFER_BIT)
 
         self.draw_hud()
+
+        # show FPS
+        self.frame_timings.append(time.time())
+        elapsed = self.frame_timings[-1] - self.frame_timings[0]
+        fps = len(self.frame_timings) / elapsed
+        self.hud_print("%i FPS\n" % fps)
 
         glPopMatrix()
         glMatrixMode(GL_PROJECTION)

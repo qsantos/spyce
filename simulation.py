@@ -32,7 +32,7 @@ class SimulationGUI(system.SystemGUI):
     def draw_hud(self):
         system.SystemGUI.draw_hud(self)
         self.hud_print("Time x%g\n" % self.timewarp)
-        self.hud_print(self.rocket.primary.time2str(self.time))
+        self.hud_print("%s\n" % self.rocket.primary.time2str(self.time))
 
     def keyboardFunc(self, k, x, y):
         """Handle key presses (GLUT callback)"""
