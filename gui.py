@@ -203,8 +203,13 @@ class GUI:
         point_radius = distance_to_camera * .01
         self.draw_sphere(point_radius)
 
-    def draw_satellites(self, body, skip=None):
+    def draw_satellites(self, body, skip=None, maxDepth=None):
         """Recursively draw the satellites of a body"""
+        if maxDepth is not None:
+            if maxDepth == 0:
+                return
+            maxDepth -= 1
+
         for satellite in body.satellites:
             if satellite != skip:
                 self.add_pick_object(satellite)
@@ -213,13 +218,13 @@ class GUI:
                 glCallList(satellite.orbit.call_list)
                 glTranslatef(*satellite.orbit.position_t(self.time))
                 self.draw_body(satellite)
-                self.draw_satellites(satellite, body)
+                self.draw_satellites(satellite, body, maxDepth)
                 glPopMatrix()
 
     def draw_system(self, body, skip=None):
         """Draw the whole system a body belongs to"""
         self.draw_body(body)
-        self.draw_satellites(body, skip)
+        self.draw_satellites(body, skip, 1)
 
         # recursively draw primary
         if body.orbit is not None:
