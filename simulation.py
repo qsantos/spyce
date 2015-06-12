@@ -17,9 +17,8 @@ class Simulation(gui.GUI):
         gui.GUI.draw(self)
 
         body = self.rocket.primary
-        while body.orbit:
-            glTranslate(*body.orbit.position_t(self.time))
-            body = body.orbit.primary
+
+        # rocket will always be shown on the focused body
 
         glColor4f(1, 0, 0, 1)
         glBegin(GL_LINE_STRIP)

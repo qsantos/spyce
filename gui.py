@@ -132,7 +132,7 @@ class GUI:
         glVertex3f(*orbit.position(math.pi))
         glEnd()
 
-    def draw_nice_orbit_and_position(self, body):
+    def draw_orbit_focused(self, body):
         # issues when drawing the orbit a focused body:
         # 1. moving to system center and back close to camera induces
         #    loss of significance and produces jitter
@@ -140,38 +140,12 @@ class GUI:
         #    of the line when zooming in
         # 3. line breaks may be visible close to the camera
 
-        # detect whether `body` is the focused body (or one of its satellites)
-        b = self.focus
-        while b.orbit is not None:
-            if b == body:
-                break
-            b = b.orbit.primary
-        else:
-            # if not, simply use the call list
-            glCallList(body.orbit.call_list)
-
-            # position body
-            glTranslate(*body.orbit.position_t(self.time))
-            return
-
         # now, we fix the three issues mentioned above
-
-        # reset to the camera and manually offset the orbit (1.)
-        glLoadIdentity()
-        glTranslate(0, 0, -1)
-        glRotate(self.phi,   1, 0, 0)
-        glRotate(self.theta, 0, 0, 1)
-        glScalef(self.zoom, self.zoom, self.zoom)
+        # draw the orbit from the body rather than from the orbit focus (1.)
 
         def corrected_orbit_position(theta):
             return body.orbit.position(theta) - focus_offset
         focus_offset = body.orbit.position_t(self.time)
-
-        # position ancestors of the focus relatively to it
-        b = self.focus
-        while b != body:
-            glTranslate(*-b.orbit.position_t(self.time))
-            b = b.orbit.primary
 
         # path
         glBegin(GL_LINE_STRIP)  # GL_LINE_LOOP glitches when n_points >= 139
@@ -204,19 +178,7 @@ class GUI:
         glPopMatrix()
 
     def draw_body(self, body):
-        """Draw a CelestialBody, its orbit and its satellites"""
-
-        # set local context
-        glPushMatrix()
-
-        # push name
-        self.add_pick_object(body)
-
-        # orbit
-        if body.orbit is not None:
-            # draw orbit
-            glColor4f(1.0, 1.0, 0.0, 1.0)
-            self.draw_nice_orbit_and_position(body)
+        """Draw a CelestialBody"""
 
         glPushMatrix()
         # OpenGL use single precision while Python has double precision
@@ -241,16 +203,33 @@ class GUI:
         point_radius = distance_to_camera * .01
         self.draw_sphere(point_radius)
 
-        # pop name
-        glProgramUniform1i(self.pick_shader, self.pick_name, 0)
-
-        # recursively draw satellites
+    def draw_satellites(self, body, skip=None):
+        """Recursively draw the satellites of a body"""
         for satellite in body.satellites:
-            if satellite.orbit.apoapsis > 3*point_radius:
+            if satellite != skip:
+                self.add_pick_object(satellite)
+                glPushMatrix()
+                glColor4f(1.0, 1.0, 0.0, 1.0)
+                glCallList(satellite.orbit.call_list)
+                glTranslatef(*satellite.orbit.position_t(self.time))
                 self.draw_body(satellite)
+                self.draw_satellites(satellite, body)
+                glPopMatrix()
 
-        # done
-        glPopMatrix()
+    def draw_system(self, body, skip=None):
+        """Draw the whole system a body belongs to"""
+        self.draw_body(body)
+        self.draw_satellites(body, skip)
+
+        # recursively draw primary
+        if body.orbit is not None:
+            self.add_pick_object(body.orbit.primary)
+            glPushMatrix()
+            glColor4f(1.0, 1.0, 0.0, 1.0)
+            self.draw_orbit_focused(body)
+            glTranslatef(*-body.orbit.position_t(self.time))
+            self.draw_system(body.orbit.primary, body)
+            glPopMatrix()
 
     def draw(self):
         """Draw the screen"""
@@ -274,15 +253,11 @@ class GUI:
         # abusing the depth buffer (see glFrustum())
         glScalef(self.zoom, self.zoom, self.zoom)
 
-        # focus
-        orbit = self.focus.orbit
-        while orbit is not None:
-            x, y, z = orbit.position_t(self.time)
-            glTranslate(-x, -y, -z)
-            orbit = orbit.primary.orbit
-
         # system
-        self.draw_body(self.system)
+        self.draw_system(self.focus)
+
+        # disable the color picking shader
+        glProgramUniform1i(self.pick_shader, self.pick_name, 0)
 
     def hud_print(self, string):
         glutBitmapString(GLUT_BITMAP_HELVETICA_18, string.encode())
