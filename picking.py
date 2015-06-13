@@ -68,29 +68,32 @@ class PickingGUI(gui.GUI):
         # retrieve names
         search_radius = 10
         r = search_radius
-        red = glReadPixels(x-r, y-r, 1+2*r, 1+2*r, GL_RED, GL_UNSIGNED_BYTE)
+        size = 2*r + 1
+        red = glReadPixels(x-r, y-r, size, size, GL_RED, GL_UNSIGNED_BYTE)
+
+        if len(red[0]) == 1:  # Python 2
+            red = [ord(pixel) for pixel in red]
+            red = [red[i:i+size] for i in range(0, len(red), size)]
 
         # find best match
         best = float("inf")
         closest = 0
-        for index, pixel in enumerate(red):
-            # get integer value
-            pixel = pixel[0]
-            try:  # Python 2
-                pixel = ord(pixel)
-            except TypeError:  # Python 3
-                pass
+        for i, row in enumerate(red):
+            for j, pixel in enumerate(row):
+                try:  # Python 2
+                    pixel = ord(pixel)
+                except TypeError:  # Python 3
+                    pass
 
-            # no match
-            if pixel == 0:
-                continue
+                # no match
+                if pixel == 0:
+                    continue
 
-            # compute distance to mouse pointer
-            x, y = index // search_radius, index % search_radius,
-            distance = math.hypot(x - search_radius, y - search_radius)
-            if distance < best and distance <= search_radius:
-                best = distance
-                closest = pixel
+                # compute distance to mouse pointer
+                distance = math.hypot(i - search_radius, j - search_radius)
+                if distance < best and distance <= search_radius:
+                    best = distance
+                    closest = pixel
 
         return self.pick_objects[closest-1] if closest > 0 else default
 
