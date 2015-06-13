@@ -174,6 +174,12 @@ class SystemGUI(picking.PickingGUI):
                 relative_p = corrected_orbit_position(theta)
                 glVertex3f(*relative_p)
             glEnd()
+
+            # apses
+            glPointSize(5)
+            glBegin(GL_POINTS)
+            glVertex3f(*corrected_orbit_position(0))
+            glEnd()
         else:
             # nice hack with circle symetry to draw the orbit from the body
             # while still using VBOs
@@ -198,12 +204,12 @@ class SystemGUI(picking.PickingGUI):
 
             glPopMatrix()
 
-        # apses
-        glPointSize(5)
-        glBegin(GL_POINTS)
-        glVertex3f(*corrected_orbit_position(0))
-        glVertex3f(*corrected_orbit_position(math.pi))
-        glEnd()
+            # apses
+            glPointSize(5)
+            glBegin(GL_POINTS)
+            glVertex3f(*corrected_orbit_position(0))
+            glVertex3f(*corrected_orbit_position(math.pi))
+            glEnd()
 
     def draw_sphere(self, radius):
         """Draw a sphere of given radius"""
