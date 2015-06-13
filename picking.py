@@ -9,17 +9,22 @@ class PickingGUI(gui.GUI):
     def __init__(self, title=b"Click to pick!"):
         gui.GUI.__init__(self, title)
         self.pick_shader = make_program(None, "shaders/pick.frag")
-        self.pick_name = glGetUniformLocation(self.pick_shader, b"name")
+        self.pick_enabled = False
+        self.pick_current_name = 0
 
     def add_pick_object(self, thing):
         """Add thing to pick list and setup shader"""
         self.pick_objects.append(thing)
         name = len(self.pick_objects)
-        glProgramUniform1i(self.pick_shader, self.pick_name, name)
+        self.pick_current_name = name
+        if self.pick_enabled:
+            glUniform1i(self.pick_name, name)
 
     def pick_clear(self):
         """Clear the current pickable object"""
-        glProgramUniform1i(self.pick_shader, self.pick_name, 0)
+        self.pick_current_name = 0
+        if self.pick_enabled:
+            glUniform1i(self.pick_name, 0)
 
     def pick_reset(self):
         """Reset the list of pickable objects"""
@@ -31,13 +36,30 @@ class PickingGUI(gui.GUI):
         gui.GUI.set_and_draw(self)
         self.pick_clear()
 
+    def shader_set(self, program):
+        """Switch the current shader, set pick uniforms to correct values"""
+        glUseProgram(program)
+        var_flag = glGetUniformLocation(program, b"pick_enabled")
+        glUniform1i(var_flag, int(self.pick_enabled))
+        self.pick_name = glGetUniformLocation(program, b"pick_name")
+        glUniform1i(self.pick_name, self.pick_current_name)
+
+    def shader_reset(self):
+        """Restore the default shader"""
+        if self.pick_enabled:
+            self.shader_set(self.pick_shader)
+        else:
+            glUseProgram(0)
+
     def pick(self, x, y, default=None):
         """Find object at given screen coordinates"""
 
         # draw with color picking
-        glUseProgram(self.pick_shader)
+        self.pick_enabled = True
+        self.shader_reset()
         self.set_and_draw()
-        glUseProgram(0)
+        self.pick_enabled = False
+        self.shader_reset()
 
         # inverse y axis
         viewport = glGetIntegerv(GL_VIEWPORT)
