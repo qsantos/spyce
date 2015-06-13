@@ -254,12 +254,13 @@ class SystemGUI(picking.PickingGUI):
 
     def draw_system(self, body, skip=None):
         """Draw the whole system a body belongs to"""
-        self.draw_body(body)
         self.draw_satellites(body, skip, 1)
+
+        self.add_pick_object(body)
+        self.draw_body(body)
 
         # recursively draw primary
         if body.orbit is not None:
-            self.add_pick_object(body.orbit.primary)
             glPushMatrix()
             glColor4f(1.0, 1.0, 0.0, 1.0)
             self.draw_orbit_focused(body)
