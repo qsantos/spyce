@@ -53,6 +53,10 @@ class Rocket:
         self.dry_mass = 0.
         self.throttle = 1.
 
+        # make the rocket body-like
+        self.name = "<rocket>"
+        self.satellites = []
+
         self.acceleration = vector.Vector([0, 0, 0])
         if primary is None:
             self.velocity = vector.Vector([0, 0, 0])

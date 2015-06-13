@@ -12,6 +12,9 @@ class SimulationGUI(system.SystemGUI):
         self.timewarp = 1.
 
     def draw_body(self, body):
+        if body == self.rocket:
+            return
+
         if body == self.rocket.primary:
             glColor4f(1, 0, 0, 1)
             glBegin(GL_LINE_STRIP)
@@ -84,7 +87,9 @@ if __name__ == "__main__":
     rocket |= ksp_cfg.PartSet().make(
         'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
     )
+    rocket.orbit.primary.satellites.append(rocket)
 
     sim = SimulationGUI.from_cli_args()
     sim.rocket = rocket
+    sim.focus = rocket
     sim.main()

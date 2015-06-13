@@ -253,7 +253,10 @@ class SystemGUI(picking.PickingGUI):
                 self.add_pick_object(satellite)
                 glPushMatrix()
                 glColor4f(1.0, 1.0, 0.0, 1.0)
-                glCallList(satellite.orbit.call_list)
+                if hasattr(satellite.orbit, "call_list"):
+                    glCallList(satellite.orbit.call_list)
+                else:
+                    self.draw_orbit(satellite.orbit)
                 glTranslatef(*satellite.orbit.position_t(self.time))
                 self.draw_body(satellite)
                 self.draw_satellites(satellite, body, maxDepth)
