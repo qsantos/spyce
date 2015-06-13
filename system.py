@@ -33,6 +33,10 @@ class SystemGUI(picking.PickingGUI):
         while self.system.orbit is not None:
             self.system = self.system.orbit.primary
 
+        glEnable(GL_POINT_SPRITE)
+        self.shader_smooth_point = \
+            make_program(None, "shaders/smooth_point.frag")
+
         # VBOs for drawing orbits
 
         # unit circle centered on (0, 0)
@@ -227,12 +231,15 @@ class SystemGUI(picking.PickingGUI):
 
         # point (representation from far away)
         # draw sphere of constant visible radius at body position
-        # see http://www.songho.ca/opengl/gl_transform.html
-        modelview_matrix = glGetFloatv(GL_MODELVIEW_MATRIX)
-        distance_to_camera = vector.norm(modelview_matrix[3][:3]) / self.zoom
-        glColor4f(0.5, 0.5, 1.0, 0.5)
-        point_radius = distance_to_camera * .01
-        self.draw_sphere(point_radius)
+        glColor4f(1, 1, 1, .5)
+        glPointSize(20)
+        glDepthMask(False)
+        self.shader_set(self.shader_smooth_point)
+        glBegin(GL_POINTS)
+        glVertex3f(0, 0, 0)
+        glEnd()
+        self.shader_reset()
+        glDepthMask(True)
 
     def draw_satellites(self, body, skip=None, maxDepth=None):
         """Recursively draw the satellites of a body"""
