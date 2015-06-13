@@ -11,21 +11,15 @@ class SimulationGUI(system.SystemGUI):
         self.path = []
         self.timewarp = 1.
 
-    def draw(self):
-        system.SystemGUI.draw(self)
+    def draw_body(self, body):
+        if body == self.rocket.primary:
+            glColor4f(1, 0, 0, 1)
+            glBegin(GL_LINE_STRIP)
+            for position in self.path:
+                glVertex3f(*position)
+            glEnd()
 
-        body = self.rocket.primary
-
-        # rocket will always be shown on the focused body
-
-        glColor4f(1, 0, 0, 1)
-        glBegin(GL_LINE_STRIP)
-        for position in self.path:
-            glVertex3f(*position)
-        glEnd()
-
-        glColor4f(1, 1, 1, 1)
-        self.draw_orbit(self.rocket.orbit)
+        system.SystemGUI.draw_body(self, body)
 
     def draw_hud(self):
         system.SystemGUI.draw_hud(self)
