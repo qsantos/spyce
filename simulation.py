@@ -1,9 +1,7 @@
 import time
 
-from OpenGL.GL import *
-from OpenGL.GLUT import *
-
 import system
+from graphics import *
 
 
 class SimulationGUI(system.SystemGUI):

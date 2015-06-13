@@ -1,8 +1,8 @@
 import sys
 import time
 import collections
-from OpenGL.GL import *
-from OpenGL.GLUT import *
+
+from graphics import *
 
 
 class GUI:
