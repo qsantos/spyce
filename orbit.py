@@ -310,12 +310,12 @@ class Orbit:
             M %= (2*math.pi)
             E = math.pi
             # M = E - e sin E
-            f = lambda E: math.fsum([E, -e*math.sin(E), -M])
+            f = lambda E: E - e*math.sin(E) - M
             fprime = lambda E: 1 - e*math.cos(E)
         else:
             E = math.asinh(M)
             # M = e sinh E - E
-            f = lambda E: math.fsum([e*math.sinh(E), -E, -M])
+            f = lambda E: e*math.sinh(E) - E - M
             fprime = lambda E: e*math.cosh(E) - 1
 
         # sin(E) = E -> M = (1 - e) E

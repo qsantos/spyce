@@ -15,25 +15,36 @@ class Vector(list):
         return math.sqrt(x*x + y*y + z*z)
 
     def __mul__(self, s):
-        return Vector([x*s for x in self])
+        x, y, z = self
+        return Vector([x*s, y*s, z*s])
 
     def __div__(self, s):
-        return Vector([x/s for x in self])
+        x, y, z = self
+        return Vector([x/s, y/s, z/s])
 
     def __add__(self, v):
-        return Vector([x+y for x, y in zip(self, v)])
+        x, y, z = self
+        a, b, c = v
+        return Vector([x+a, y+b, z+c])
 
     def __iadd__(self, v):
-        return self + v
+        x, y, z = self
+        a, b, c = v
+        return Vector([x+a, y+b, z+c])
 
     def __sub__(self, v):
-        return Vector([x-y for x, y in zip(self, v)])
+        x, y, z = self
+        a, b, c = v
+        return Vector([x-a, y-b, z-c])
 
     def __isub__(self, v):
-        return self - v
+        x, y, z = self
+        a, b, c = v
+        return Vector([x-a, y-b, z-c])
 
     def __neg__(self):
-        return Vector([-x for x in self])
+        x, y, z = self
+        return Vector([-x, -y, -z])
 
 
 def dot(u, v):
@@ -77,13 +88,20 @@ def oriented_angle(u, v, normal=[0, 0, 1]):
 
 class Matrix(list):
     def __mul__(self, x):
-        if type(x) == Matrix:
-            # matrix-matrix multiplication
+        if isinstance(x, Matrix):  # matrix-matrix multiplication
             m = Matrix(zip(*x))
             return Matrix([m*row for row in self])
-        else:
-            # matrix-vector multiplication
-            return Vector([sum(a*b for a, b in zip(row, x)) for row in self])
+        else:  # matrix-vector multiplication
+            # 3x3 version (optimized)
+            [a, b, c], [d, e, f], [g, h, i] = self
+            x, y, z = x
+            return Vector([
+                a*x + b*y + c*z,
+                d*x + e*y + f*z,
+                g*x + h*y + i*z,
+            ])
+            # generic version
+            # return Vector([sum(a*b for a, b in zip(row, x)) for row in self])
 
     @classmethod
     def identity(cls):

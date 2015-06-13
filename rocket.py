@@ -108,7 +108,8 @@ class Rocket:
             if self.propellant > 0:
                 mass = self.dry_mass + self.propellant
                 acceleration += self.prograde*(self.thrust*self.throttle/mass)
-            return vector.Vector(velocity + acceleration)
+
+            return velocity + acceleration
 
         # update velocity and position
         y = self.position[:] + self.velocity
