@@ -72,6 +72,13 @@ class GUI:
         """Draw an HUD"""
         glColor4f(1.0, 1.0, 1.0, 1.0)
         glRasterPos2i(10, 20)
+
+        # compute fps
+        self.frame_timings.append(time.time())
+        elapsed = self.frame_timings[-1] - self.frame_timings[0]
+        fps = len(self.frame_timings) / elapsed
+
+        self.hud_print("%i FPS\n" % fps)
         self.hud_print("Zoom x%g\n" % self.zoom)
 
     def displayFunc(self):
@@ -89,12 +96,6 @@ class GUI:
         glClear(GL_DEPTH_BUFFER_BIT)
 
         self.draw_hud()
-
-        # show FPS
-        self.frame_timings.append(time.time())
-        elapsed = self.frame_timings[-1] - self.frame_timings[0]
-        fps = len(self.frame_timings) / elapsed
-        self.hud_print("%i FPS\n" % fps)
 
         glPopMatrix()
         glMatrixMode(GL_PROJECTION)
