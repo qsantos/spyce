@@ -49,20 +49,18 @@ class CelestialBody:
         """Cast to string using the name"""
         return self.name
 
-    def gravity_from_center(self, distance):
-        """Gravity at given distance"""
+    def gravity(self, distance=None):
+        """Gravity at given distance from center
+
+        Defaults to surface gravity
+        """
+        if distance is None:
+            distance = self.radius
         mu = self.gravitational_parameter
         if distance < self.radius:
             # see https://en.wikipedia.org/wiki/Shell_theorem
             mu *= distance**3/self.radius**3
         return mu / distance**2
-
-    def gravity(self, altitude=0):
-        """Gravity at given altitude (m/s^2)
-
-        Defaults to surface gravity
-        """
-        return self.gravity_from_center(self.radius + altitude)
 
     def sphere_of_influence(self):
         """Radius of the sphere of influence (m)"""
