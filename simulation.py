@@ -1,6 +1,7 @@
 import time
 
 import system
+import textures
 from graphics import *
 
 
@@ -10,9 +11,34 @@ class SimulationGUI(system.SystemGUI):
 
         self.path = []
         self.timewarp = 1.
+        self.texture_rocket_on = textures.load("textures/rocket_on.png")
+        self.texture_rocket_off = textures.load("textures/rocket_off.png")
+
+        glAlphaFunc(GL_GREATER, 0.)
+        glEnable(GL_ALPHA_TEST)
 
     def draw_body(self, body):
         if body == self.rocket:
+            glPushMatrix()
+            glScalef(1e4, 1e4, 1e4)
+            (a, b, c), (d, e, f), (g, h, i) = body.orientation
+            mat44 = [a, d, g, 0, b, e, h, 0, c, f, i, 0, 0, 0, 0, 1]
+            glMultMatrixf(mat44)
+
+            if self.rocket.throttle == 0:
+                textures.bind(self.texture_rocket_off)
+            else:
+                textures.bind(self.texture_rocket_on)
+
+            glBegin(GL_QUADS)
+            glTexCoord2f(0, 0) or glVertex3f(-1, 0, -1)
+            glTexCoord2f(0, 1) or glVertex3f(-1, 0, +1)
+            glTexCoord2f(1, 1) or glVertex3f(+1, 0, +1)
+            glTexCoord2f(1, 0) or glVertex3f(+1, 0, -1)
+            glEnd()
+
+            textures.unbind()
+            glPopMatrix()
             return
 
         if body == self.rocket.primary:
