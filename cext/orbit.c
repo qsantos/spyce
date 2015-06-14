@@ -5,6 +5,7 @@ Then, use:
 
 import ctypes
 lib = ctypes.CDLL("./elements.so")
+
 def elements_from_state(mu, position, velocity):
 	mu = ctypes.c_double(mu)
 	position = (ctypes.c_double*3)(*position)
@@ -12,6 +13,12 @@ def elements_from_state(mu, position, velocity):
 	elements = (ctypes.c_double*6)()
 	lib.elements_from_state(mu, position, velocity, elements)
 	return elements
+
+lib.eccentric_anomaly.restype = ctypes.c_double
+def eccentric_anomaly(e, M):
+	e = ctypes.c_double(e)
+	M = ctypes.c_double(M)
+	return lib.eccentric_anomaly(e, M)
 */
 
 #include <math.h>
@@ -78,6 +85,8 @@ struct elements
 
 void elements_from_state(double mu, double* position, double* velocity, double epoch, struct elements* ret)
 {
+	/* Compute orbital elements from given state vectors */
+
 	double distance = norm(position);
 	double speed = norm(velocity);
 
@@ -157,4 +166,86 @@ void elements_from_state(double mu, double* position, double* velocity, double e
 		epoch,
 		mean_anomaly_at_epoch,
 	};
+}
+
+double eccentric_anomaly(double e, double M)
+{
+	/* Computes the eccentric anomaly at a given time (s) */
+
+	if (e < 1.)
+	{
+		// M %= 2*PI
+		M = fmod(M, 2.*M_PI);
+		if (M < 0)
+			M += 2.*M_PI;
+
+		// sin(E) = E -> M = (1 - e) E
+		if (fabs(M) < 1.4901161193847656e-08)  // 2**-26
+			return M / (1. - e);
+
+		// M = E - e sin E
+		double E = M_PI;
+		inline double f     (double E) { return E - e*sin(E) - M; }
+		inline double fprime(double E) { return 1. - e*cos(E); }
+
+		// Newton's method
+		double previous_E = 0.;
+		for (int i = 0; i < 30; i++)
+		{
+			double previous_previous_E = previous_E;
+			double previous_E = E;
+			E -= f(E) / fprime(E);
+			if (E == previous_E || E == previous_previous_E)
+				break;
+		}
+
+		return E;
+	}
+	else
+	{
+		// sinh(E) = E -> M = (e - 1) E
+		if (fabs(M) < 1.4901161193847656e-08)  // 2**-26
+			return M / (e - 1.);
+
+		// M = e sinh E - E
+		double E = asinh(M);
+		inline double f     (double E) { return e*sinh(E) - E - M; }
+		inline double fprime(double E) { return e*cosh(E) - 1.; }
+
+		// Newton's method
+		double previous_E = 0.;
+		for (int i = 0; i < 30; i++)
+		{
+			double previous_previous_E = previous_E;
+			double previous_E = E;
+			E -= f(E) / fprime(E);
+			if (E == previous_E || E == previous_previous_E)
+				break;
+		}
+
+		return E;
+	}
+}
+
+double true_anomaly(double e, double M)
+{
+	/* Computes the true anomaly at a given time (s) */
+	if (e < 1.)
+	{
+		double E = eccentric_anomaly(e, M);
+		double x = sqrt(1.-e) * cos(E/2.);
+		double y = sqrt(1.+e) * sin(E/2.);
+		return 2. * atan2(y, x);
+	}
+	else if (e == 1.)
+	{
+		return 0.;
+	}
+	else
+	{
+		double E = eccentric_anomaly(e, M);
+		double x = sqrt(e-1.) * cosh(E/2.);
+		double y = sqrt(e+1.) * sinh(E/2.);
+		return 2. * atan2(y, x);
+	}
 }

@@ -367,18 +367,30 @@ class Orbit:
 # if available, use a C version to compute orbital elements from state vectors
 
 try:  # Python 3
-    from cext.elements_py3 import elements_from_state
+    import cext.orbit_py3 as cext
 except ImportError:
     try:  # Python 2
-        from cext.elements_py2 import elements_from_state
+        import cext.orbit_py2 as cext
     except ImportError:
         print("Note: to improve performances, run `make` in cext/")
-        elements_from_state = None
+        cext = None
 
-if elements_from_state is not None:
+if cext is not None:
     @classmethod
     def from_state(cls, primary, position, velocity, epoch=0):
         mu = primary.gravitational_parameter
-        elements = elements_from_state(mu, position, velocity, epoch)
+        elements = cext.elements_from_state(mu, position, velocity, epoch)
         return cls(primary, *elements)
     Orbit.from_state = from_state
+
+    def eccentric_anomaly(self, time):
+        e = self.eccentricity
+        M = self.mean_anomaly(time)
+        return cext.eccentric_anomaly(e, M)
+    Orbit.eccentric_anomaly = eccentric_anomaly
+
+    def true_anomaly(self, time):
+        e = self.eccentricity
+        M = self.mean_anomaly(time)
+        return cext.true_anomaly(e, M)
+    Orbit.true_anomaly = true_anomaly
