@@ -65,6 +65,7 @@ class SimulationGUI(system.SystemGUI):
         for message in self.message_log:
             self.hud_print("%s\n" % message)
 
+    @glut_callback
     def keyboardFunc(self, k, x, y):
         """Handle key presses (GLUT callback)"""
         if k == b'\x1b':  # escape

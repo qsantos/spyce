@@ -42,3 +42,14 @@ def make_program(vertex_file=None, fragment_file=None):
     make_shader(program, GL_FRAGMENT_SHADER, fragment_file)
     glLinkProgram(program)
     return program
+
+
+def glut_callback(f):
+    """Wraps a GLUT callback method so that exceptions are not ignored"""
+    def wrapper(self, *args, **kwargs):
+        try:
+            return f(self, *args, **kwargs)
+        except Exception as e:
+            self.is_running = False
+            raise e
+    return wrapper

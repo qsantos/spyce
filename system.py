@@ -306,6 +306,7 @@ class SystemGUI(picking.PickingGUI):
         self.draw()
         self.pick_clear()
 
+    @glut_callback
     def mouseFunc(self, button, state, x, y):
         """Handle mouse clicks (GLUT callback)"""
         if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:

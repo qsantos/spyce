@@ -81,6 +81,7 @@ class GUI:
         self.hud_print("%i FPS\n" % fps)
         self.hud_print("Zoom x%g\n" % self.zoom)
 
+    @glut_callback
     def displayFunc(self):
         """Draw the screen (GLUT callback)"""
         self.set_and_draw()
@@ -104,6 +105,7 @@ class GUI:
 
         glutSwapBuffers()
 
+    @glut_callback
     def keyboardFunc(self, k, x, y):
         """Handle key presses (GLUT callback)"""
         if k == b'\x1b':  # escape
@@ -118,6 +120,7 @@ class GUI:
         # see https://stackoverflow.com/a/16459424/4457767
         glFrustum(-near, near, -near*aspect, near*aspect, 2*near, 1e7)
 
+    @glut_callback
     def reshapeFunc(self, width, height):
         """Handle window reshapings (GLUT callback)"""
         glViewport(0, 0, width, height)
@@ -130,11 +133,13 @@ class GUI:
         self.projection_matrix()
         glMatrixMode(GL_MODELVIEW)
 
+    @glut_callback
     def passiveMotionFunc(self, x, y):
         """Handle (passive) mouse motions (GLUT callback)"""
         # have to check which button is pressed anyway
         self.motionFunc(x, y)
 
+    @glut_callback
     def motionFunc(self, x, y):
         """Handle (active) mouse motions (GLUT callback)"""
         if self.drag_active:
@@ -151,6 +156,7 @@ class GUI:
         self.mouse_x = x
         self.mouse_y = y
 
+    @glut_callback
     def mouseFunc(self, button, state, x, y):
         """Handle mouse clicks (GLUT callback)"""
         if button == GLUT_RIGHT_BUTTON:
@@ -168,6 +174,7 @@ class GUI:
             self.zoom /= 1.2
             self.update()
 
+    @glut_callback
     def closeFunc(self):
         """Handle window closing (GLUT callback)"""
         self.is_running = False

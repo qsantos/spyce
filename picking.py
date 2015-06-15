@@ -126,6 +126,7 @@ class PickingGUI(gui.GUI):
         self.add_pick_object("the dodecahedron")
         glutSolidDodecahedron(1, 2, 16, 16)
 
+    @glut_callback
     def mouseFunc(self, button, state, x, y):
         """Handle mouse clicks (GLUT callback)"""
         if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
