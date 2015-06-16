@@ -91,7 +91,14 @@ class Rocket:
 
         # propulsion
         if self.propellant > 0:
-            self.propellant -= self.expulsion_rate * dt * self.throttle
+            required_propellant = self.expulsion_rate * dt * self.throttle
+            used_propellant = min(self.propellant, required_propellant)
+            self.propellant -= used_propellant
+            thrust_ratio = self.throttle * used_propellant/required_propellant
+            mass = self.dry_mass + self.propellant
+            thrust = self.prograde*(self.max_thrust*thrust_ratio/mass)
+        else:
+            thrust = vector.Vector([0, 0, 0])
 
         def f(t, y):
             position, velocity = vector.Vector(y[:3]), y[3:]
@@ -105,10 +112,7 @@ class Rocket:
                 acceleration = vector.Vector([0, 0, 0])
 
             # propulsion
-            if self.propellant > 0:
-                mass = self.dry_mass + self.propellant
-                thrust = self.max_thrust * self.throttle
-                acceleration += self.prograde * (thrust / mass)
+            acceleration += thrust
 
             return velocity + acceleration
 
