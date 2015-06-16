@@ -79,11 +79,16 @@ class Rocket:
             self.resume_condition = next(self.program)
 
     def simulate(self, t, dt):
-        """Run physics simulation"""
+        """Run simulation"""
 
         if self.resume_condition():
             self.resume_condition = next(self.program)
 
+        self.update_physics(t, dt)
+        self.update_orbit(t + dt)
+
+    def update_physics(self, t, dt):
+        """Run physics simulation"""
         if self.throttle == 0.:
             self.position = self.orbit.position_t(t + dt)
             self.velocity = self.orbit.velocity_t(t + dt)
@@ -121,8 +126,6 @@ class Rocket:
         y = integration.rk4(f, t, y, dt)
         self.position = vector.Vector(y[:3])
         self.velocity = vector.Vector(y[3:])
-
-        self.update_orbit(t)
 
     def update_orbit(self, epoch):
         """Update current orbital trajectory"""
