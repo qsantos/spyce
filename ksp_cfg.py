@@ -112,11 +112,11 @@ def part_from_cfg(cfg_dict):
     r = dict_get_group(cfg_dict, 'MODULE', 'ModuleEngines') or \
         dict_get_group(cfg_dict, 'MODULE', 'ModuleEnginesFX')
     if r is not None:
-        thrust = float(r.get('maxThrust', 0.)) * 1e3  # given in kN
+        max_thrust = float(r.get('maxThrust', 0.)) * 1e3  # given in kN
         a = r['atmosphereCurve']['key']
         a = a[1] if isinstance(a, list) else a
         specific_impulse = float(a.split(' ')[1])
-        part.make_engine(thrust, specific_impulse)
+        part.make_engine(max_thrust, specific_impulse)
 
     # tank
     r = dict_get_group(cfg_dict, 'RESOURCE', 'LiquidFuel')

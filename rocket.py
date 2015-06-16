@@ -12,7 +12,7 @@ class RocketPart:
     title
     dry_mass             kg
     coefficient_of_drag  -
-    thrust               N
+    max_thrust           N
     specific_impulse     s
     propellant           kg
     exhaust_velocity     m/s
@@ -36,11 +36,11 @@ class RocketPart:
         """Cast to string using the part's title"""
         return self.title
 
-    def make_engine(self, thrust, specific_impulse):
-        self.thrust = thrust
+    def make_engine(self, max_thrust, specific_impulse):
+        self.max_thrust = max_thrust
         self.specific_impulse = specific_impulse
         self.exhaust_velocity = self.specific_impulse * physics.g0
-        self.expulsion_rate = self.thrust / self.exhaust_velocity
+        self.expulsion_rate = self.max_thrust / self.exhaust_velocity
 
     def make_tank(self, propellant):
         self.propellant = propellant
@@ -107,7 +107,8 @@ class Rocket:
             # propulsion
             if self.propellant > 0:
                 mass = self.dry_mass + self.propellant
-                acceleration += self.prograde*(self.thrust*self.throttle/mass)
+                thrust = self.max_thrust * self.throttle
+                acceleration += self.prograde * (thrust / mass)
 
             return velocity + acceleration
 
@@ -127,7 +128,7 @@ class Rocket:
     def update_parts(self):
         """Update information about parts"""
         self.dry_mass = sum(part.dry_mass for part in self.parts)
-        self.thrust = sum(part.thrust for part in self.parts)
+        self.max_thrust = sum(part.max_thrust for part in self.parts)
         self.expulsion_rate = sum(part.expulsion_rate for part in self.parts)
         self.propellant = sum(part.propellant for part in self.parts)
 
