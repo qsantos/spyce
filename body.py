@@ -33,10 +33,39 @@ class CelestialBody:
         if self.orbit is not None:
             self.orbit.primary.satellites.append(self)
 
+        # rotational period
         if rotational_period == 0 and orbit is not None:
             self.rotational_period = self.orbit.period
         else:
             self.rotational_period = float(rotational_period)
+
+        # sphere of influence
+        if self.orbit is None:
+            self.sphere_of_influence = float("inf")
+        else:
+            a = self.orbit.semi_major_axis
+            mu_p = self.orbit.primary.gravitational_parameter
+            mu_b = self.gravitational_parameter
+            self.sphere_of_influence = a * (mu_b / mu_p)**0.4
+
+        # solar day
+        if self.orbit is not None:
+            sidereal_day = self.rotational_period
+            sidereal_year = self.orbit.period
+            solar_year = sidereal_year - sidereal_day
+            if solar_year == 0:
+                self.solar_day = float("inf")
+            else:
+                self.solar_day = sidereal_day * sidereal_year/solar_year
+        else:
+            self.solar_day = 0
+
+        # surface velocity
+        if self.rotational_period == 0:
+            self.surface_velocity = float("inf")
+        else:
+            R = self.radius
+            self.surface_velocity = 2*math.pi * R / self.rotational_period
 
     def __repr__(self):
         """Appear as <Name> in a Python interpreter"""
@@ -58,22 +87,6 @@ class CelestialBody:
             # see https://en.wikipedia.org/wiki/Shell_theorem
             mu *= distance**3/self.radius**3
         return mu / distance**2
-
-    def sphere_of_influence(self):
-        """Radius of the sphere of influence (m)"""
-        if self.orbit is None:
-            return float("inf")
-
-        mu_p = self.orbit.primary.gravitational_parameter
-        mu_b = self.gravitational_parameter
-        return self.orbit.semi_major_axis * (mu_b / mu_p)**0.4
-
-    def solar_day(self):
-        """Duration of the solar day (s)"""
-        sidereal_day = self.rotational_period
-        sidereal_year = self.orbit.period
-        solar_year = sidereal_year - sidereal_day
-        return sidereal_day * sidereal_year/solar_year
 
     def time2str(self, seconds):
         """Convert a duration (s) to a human-readable string
@@ -122,10 +135,6 @@ class CelestialBody:
     def escape_velocity(self, distance):
         """Escape velocity at a given distance (m)"""
         return math.sqrt(2 * self.gravitational_parameter / distance)
-
-    def surface_velocity(self):
-        """Velocity of the surface at the equator"""
-        return 2*math.pi * self.radius / self.rotational_period
 
     def angular_diameter(self, distance):
         """Angular diameter / apparent size at a given distance (m)"""

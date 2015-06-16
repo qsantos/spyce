@@ -62,7 +62,7 @@ class Rocket:
             self.velocity = vector.Vector([0, 0, 0])
             self.position = vector.Vector([0, 0, 0])
         else:
-            self.velocity = vector.Vector([0, primary.surface_velocity(), 0])
+            self.velocity = vector.Vector([0, primary.surface_velocity, 0])
             self.position = vector.Vector([primary.radius, 0, 0])
         self.primary = primary
 
