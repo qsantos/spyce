@@ -87,6 +87,55 @@ class Rocket:
         self.update_physics(t, dt)
         self.update_orbit(t + dt)
 
+        self.update_sphere_of_influence(t, dt)
+
+    def update_sphere_of_influence(self, t, dt):
+        """Handle the change of sphere of influence
+
+        Return True when the sphere of influence changes"""
+        if self.primary is None:
+            return False
+
+        # entering sphere of influence
+        for satellite in self.primary.satellites:
+            # we are technically a satellite of our primary
+            if satellite == self:
+                continue
+
+            # in most situations, orbits do not reach satellites
+            if 0 < self.orbit.apoapsis < satellite.orbit.periapsis:
+                continue
+
+            # compare distance to radius of sphere of influence
+            satellite_position = satellite.orbit.position_t(t + dt)
+            distance = (self.position - satellite_position).norm()
+            if distance > satellite.sphere_of_influence:
+                continue
+
+            # update information
+            self.position -= satellite_position
+            self.velocity -= satellite.orbit.velocity_t(t + dt)
+            self.primary.satellites.remove(self)
+            self.primary = satellite
+            self.primary.satellites.append(self)
+            self.update_orbit(t + dt)
+            return True
+
+        # in most situations, orbits do not reach the sphere of influence
+        if 0 < self.orbit.apoapsis < self.primary.sphere_of_influence:
+            return False
+
+        # escaping sphere of influence
+        if self.position.norm() > self.primary.sphere_of_influence:
+            # update information
+            self.position += self.primary.orbit.position_t(t + dt)
+            self.velocity += self.primary.orbit.velocity_t(t + dt)
+            self.primary.satellites.remove(self)
+            self.primary = self.primary.orbit.primary
+            self.primary.satellites.append(self)
+            self.update_orbit(t + dt)
+            return True
+
     def update_physics(self, t, dt):
         """Run physics simulation"""
         if self.throttle == 0.:
