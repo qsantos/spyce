@@ -15,6 +15,7 @@ class SystemGUI(picking.PickingGUI):
         title = b'Sp' + b'a'*42 + b'ce'
         picking.PickingGUI.__init__(self, title)
 
+        self.time = 0
         self.zoom = 1e-7
 
         # generic sphere for drawing bodies
@@ -85,7 +86,6 @@ class SystemGUI(picking.PickingGUI):
                 body.texture = 0
             for satellite in body.satellites:
                 load_body(satellite)
-        glEnable(GL_TEXTURE_2D)
         load_body(self.system)
 
         # skybox

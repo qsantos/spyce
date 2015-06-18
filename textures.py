@@ -35,6 +35,7 @@ else:
                 data = im.convert("RGBA").tostring("raw", "RGBA", 0, -1)
 
         new_tex = glGenTextures(1)
+        glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, new_tex)
         glTexImage2D(
             GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data

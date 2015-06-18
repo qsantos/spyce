@@ -15,7 +15,6 @@ class GUI:
         self.mouse_y = 0
         self.theta = 0
         self.phi = -90
-        self.time = 0
         self.is_running = True  # set to False for soft exit
         self.frame_timings = collections.deque([time.time()], 60)
 
