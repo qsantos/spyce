@@ -125,7 +125,6 @@ if __name__ == "__main__":
         yield lambda: rocket.orbit.periapsis > 695e3
         sim.log("In orbit")
         rocket.throttle = 0.0
-        yield lambda: False
 
     body = kerbol['Kerbin']
     rocket = rocket.Rocket(body, program)

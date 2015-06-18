@@ -82,7 +82,10 @@ class Rocket:
         """Run simulation"""
 
         if self.resume_condition():
-            self.resume_condition = next(self.program)
+            try:
+                self.resume_condition = next(self.program)
+            except StopIteration:
+                self.resume_condition = lambda: False
 
         self.update_physics(t, dt)
         self.update_orbit(t + dt)
