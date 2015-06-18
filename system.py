@@ -247,12 +247,12 @@ class SystemGUI(picking.PickingGUI):
         self.shader_reset()
         glDepthMask(True)
 
-    def draw_satellites(self, body, skip=None, maxDepth=None):
+    def draw_satellites(self, body, skip=None, max_depth=None):
         """Recursively draw the satellites of a body"""
-        if maxDepth is not None:
-            if maxDepth == 0:
+        if max_depth is not None:
+            if max_depth == 0:
                 return
-            maxDepth -= 1
+            max_depth -= 1
 
         for satellite in body.satellites:
             if satellite != skip:
@@ -265,7 +265,7 @@ class SystemGUI(picking.PickingGUI):
                     self.draw_orbit(satellite.orbit)
                 glTranslatef(*satellite.orbit.position_t(self.time))
                 self.draw_body(satellite)
-                self.draw_satellites(satellite, body, maxDepth)
+                self.draw_satellites(satellite, body, max_depth)
                 glPopMatrix()
 
     def draw_system(self, body, skip=None):
