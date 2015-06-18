@@ -235,16 +235,6 @@ class SystemGUI(picking.PickingGUI):
 
         glPopMatrix()
 
-        # point (representation from far away)
-        # draw sphere of constant visible radius at body position
-        glColor4f(1, 1, 1, .5)
-        glPointSize(20)
-        glDepthMask(False)
-        self.shader_set(self.shader_smooth_point)
-        glBegin(GL_POINTS)
-        glVertex3f(0, 0, 0)
-        glEnd()
-        self.shader_reset()
         glDepthMask(True)
 
     def draw_satellites(self, body, skip=None, max_depth=None):
@@ -284,9 +274,49 @@ class SystemGUI(picking.PickingGUI):
             self.draw_system(body.orbit.primary, body)
             glPopMatrix()
 
+    def draw_satellite_points(self, body, offset, skip=None, max_depth=None):
+        """Recursively draw the satellites of a body as points"""
+        if max_depth is not None:
+            if max_depth == 0:
+                return
+            max_depth -= 1
+
+        for satellite in body.satellites:
+            if satellite == skip:
+                continue
+
+            self.add_pick_object(satellite, GL_POINTS)
+            new_offset = offset + satellite.orbit.position_t(self.time)
+            glVertex3f(*new_offset)
+            self.draw_satellite_points(satellite, new_offset, body, max_depth)
+
+    def draw_system_points(self, body, offset, skip=None):
+        """Draw the whole system a body belongs to as points"""
+        self.draw_satellite_points(body, offset, skip, 1)
+
+        self.add_pick_object(body, GL_POINTS)
+        glVertex3f(*offset)
+
+        # recursively draw primary
+        if body.orbit is not None:
+            new_offset = offset - body.orbit.position_t(self.time)
+            self.draw_system_points(body.orbit.primary, new_offset, body)
+
     def draw(self):
         """Draw the scene"""
         self.draw_system(self.focus)
+
+        # point (representation from far away)
+        # draw spheres of constant visible radius at body positions
+        glPointSize(20)
+        glDepthMask(False)
+        self.shader_set(self.shader_smooth_point)
+        glBegin(GL_POINTS)
+        glColor4f(1, 1, 1, 0.5)
+        self.draw_system_points(self.focus, vector.Vector([0, 0, 0]))
+        glEnd()
+        self.shader_reset()
+        glDepthMask(True)
 
     def set_and_draw(self):
         """Setup the camera and draw"""
