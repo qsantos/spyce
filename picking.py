@@ -12,13 +12,21 @@ class PickingGUI(gui.GUI):
         self.pick_enabled = False
         self.pick_current_name = 0
 
-    def add_pick_object(self, thing):
+    def add_pick_object(self, thing, primitive_group=None):
         """Add thing to pick list and setup shader"""
         self.pick_objects.append(thing)
         name = len(self.pick_objects)
         self.pick_current_name = name
-        if self.pick_enabled:
+        if not self.pick_enabled:
+            return
+
+        if primitive_group is None:
             glUniform1i(self.pick_name, name)
+        else:
+            # pause the current glBegin/glEnd group
+            glEnd()
+            glUniform1i(self.pick_name, name)
+            glBegin(primitive_group)
 
     def pick_clear(self):
         """Clear the current pickable object"""
