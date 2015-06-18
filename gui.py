@@ -1,12 +1,10 @@
 import sys
-import time
-import collections
 
 from graphics import *
 
 
 class GUI:
-    """A simple GUI handling an HUD, zooming and orientation"""
+    """A simple GUI handling zooming and camera orientation"""
     def __init__(self, title=b'GUI'):
         # default settings
         self.zoom = .25
@@ -16,7 +14,6 @@ class GUI:
         self.theta = 0
         self.phi = -90
         self.is_running = True  # set to False for soft exit
-        self.frame_timings = collections.deque([time.time()], 60)
 
         # GLUT init
         glutInit(sys.argv)
@@ -63,45 +60,10 @@ class GUI:
         # draw!
         self.draw()
 
-    def hud_print(self, string):
-        """Print a string to HUD after draw_hud() has been called"""
-        glutBitmapString(GLUT_BITMAP_HELVETICA_18, string.encode())
-
-    def draw_hud(self):
-        """Draw an HUD"""
-        glColor4f(1.0, 1.0, 1.0, 1.0)
-        glRasterPos2i(10, 20)
-
-        # compute fps
-        self.frame_timings.append(time.time())
-        elapsed = self.frame_timings[-1] - self.frame_timings[0]
-        fps = len(self.frame_timings) / elapsed
-
-        self.hud_print("%i FPS\n" % fps)
-        self.hud_print("Zoom x%g\n" % self.zoom)
-
     @glut_callback
     def displayFunc(self):
         """Draw the screen (GLUT callback)"""
         self.set_and_draw()
-
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        glOrtho(0.0, self.width, self.height, 0.0, -1.0, 10.0)
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glLoadIdentity()
-        glDisable(GL_CULL_FACE)
-        glClear(GL_DEPTH_BUFFER_BIT)
-
-        self.draw_hud()
-
-        glPopMatrix()
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
-
         glutSwapBuffers()
 
     @glut_callback

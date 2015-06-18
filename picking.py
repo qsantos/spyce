@@ -1,13 +1,13 @@
 import math
 
-import gui
+import hud
 from graphics import *
 
 
-class PickingGUI(gui.GUI):
+class PickingGUI(hud.HUD):
     """GUI with object picking using a fragment shader"""
     def __init__(self, title=b"Click to pick!"):
-        gui.GUI.__init__(self, title)
+        hud.HUD.__init__(self, title)
         self.pick_shader = make_program(None, "shaders/pick.frag")
         self.pick_enabled = False
         self.pick_current_name = 0
@@ -41,7 +41,7 @@ class PickingGUI(gui.GUI):
     def set_and_draw(self):
         """Setup the camera and draw"""
         self.pick_reset()
-        gui.GUI.set_and_draw(self)
+        hud.HUD.set_and_draw(self)
         self.pick_clear()
 
     def shader_set(self, program):
@@ -140,7 +140,7 @@ class PickingGUI(gui.GUI):
         if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
             print("You clicked on %s!" % self.pick(x, y, "nothing!"))
         else:
-            gui.GUI.mouseFunc(self, button, state, x, y)
+            hud.HUD.mouseFunc(self, button, state, x, y)
 
 if __name__ == '__main__':
     PickingGUI().main()
