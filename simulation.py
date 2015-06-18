@@ -60,7 +60,7 @@ class SimulationGUI(system.SystemGUI):
         self.hud_print("Time x%g\n" % self.timewarp)
         self.hud_print("%s\n" % self.rocket.primary.time2str(self.time))
 
-        glRasterPos2i(10, self.height-22-22*self.message_log.maxlen)
+        self.hud_grid(-self.message_log.maxlen-1, 1)
         self.hud_print("Message log:\n")
         for message in self.message_log:
             self.hud_print("%s\n" % message)

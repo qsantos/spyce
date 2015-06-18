@@ -3,9 +3,10 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 
-def make_vbo(vertices):
+def make_vbo(vertices, vbo_index=None):
     """Return a VBO of the given vertices"""
-    vbo_index = glGenBuffers(1)
+    if vbo_index is None:
+        vbo_index = glGenBuffers(1)
     data_buffer = (ctypes.c_float*len(vertices))(*vertices)
     glBindBuffer(GL_ARRAY_BUFFER, vbo_index)
     glBufferData(GL_ARRAY_BUFFER, data_buffer, GL_STATIC_DRAW)
