@@ -80,20 +80,24 @@ class SimulationGUI(system.SystemGUI):
     def main(self):
         """Main loop"""
         last = time.time()
+        accumulated_time = 0.
         while self.is_running:
             glutMainLoopEvent()
 
             # passage of time
             now = time.time()
-            dt, last = (now - last) * self.timewarp, now
+            accumulated_time += now - last
+            last = now
 
-            # rocket simulation
-            n = 32
-            for _ in range(n):
-                self.rocket.simulate(self.time, dt / n)
-            self.path.append(self.rocket.position)  # save rocket path
+            # physics simulation
+            dt = 2.**-8
+            if accumulated_time > dt:
+                while accumulated_time > dt:
+                    accumulated_time -= dt
+                    self.rocket.simulate(self.time, dt * self.timewarp)
+                    self.time += dt * self.timewarp
+                self.path.append(self.rocket.position)  # save rocket path
 
-            self.time += dt
             self.update()
         glutCloseFunc(None)
 
