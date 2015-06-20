@@ -54,7 +54,7 @@ class Rocket:
         self.throttle = 1.
 
         # make the rocket body-like
-        self.name = "<rocket>"
+        self.name = "rocket"
         self.satellites = []
 
         self.acceleration = vector.Vector([0, 0, 0])
@@ -77,6 +77,12 @@ class Rocket:
         else:
             self.program = program(self)
             self.resume_condition = next(self.program)
+
+    def __repr__(self):
+        return "<%s>" % self.name
+
+    def __str__(self):
+        return self.name
 
     def simulate(self, t, dt):
         """Run simulation"""

@@ -336,6 +336,10 @@ class SystemGUI(picking.PickingGUI):
         self.draw()
         self.pick_clear()
 
+    def draw_hud(self):
+        picking.PickingGUI.draw_hud(self)
+        self.hud_print("Focus: %s\n" % self.focus)
+
     @glut_callback
     def mouseFunc(self, button, state, x, y):
         """Handle mouse clicks (GLUT callback)"""
