@@ -3,6 +3,7 @@ import collections
 
 import system
 import textures
+from load import solar, kerbol
 from graphics import *
 
 
@@ -78,7 +79,12 @@ class SimulationGUI(system.SystemGUI):
 
         system.SystemGUI.draw_hud(self)
         self.hud_print("Time x%g\n" % self.timewarp)
-        self.hud_print("%s\n" % self.rocket.primary.time2str(self.time))
+
+        # display time
+        earth_time = solar['Earth'].time2str(self.time)
+        self.hud_print("Earth time:  %s\n" % earth_time)
+        kerbin_time = kerbol['Kerbin'].time2str(self.time)
+        self.hud_print("Kerbin time: %s\n" % kerbin_time)
 
         self.hud_grid(-self.message_log.maxlen-1, 1)
         self.hud_print("Message log:\n")
