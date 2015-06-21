@@ -24,14 +24,22 @@ class HUD(gui.GUI):
         self.frame_timings = collections.deque([time.time()], 60)
 
     def hud_move(self, x, y):
+        """Move the cursor to float coordinates (x, y)"""
         self.hud_x = x
         self.hud_y = y
 
     def hud_grid(self, row, col):
+        """Move the cursor on a virtual grid at (row, col)
+
+        Negative values are supported.
+        """
+
+        # handle negative values
         if col < 0:
             col += (self.width / self.character_width)
         if row < 0:
             row += (self.height / self.character_height)
+
         x = col * self.character_width
         y = row * self.character_height
         self.hud_move(x, y)
@@ -40,6 +48,7 @@ class HUD(gui.GUI):
         """Print a string to HUD after draw_hud() has been called"""
 
         def append_vertex(row, col, delta_x, delta_y):
+            """Add quad vertex for a character at (row, col)"""
             self.vertcoords += [
                 self.hud_x + self.character_width * delta_x,
                 self.hud_y + self.character_height * delta_y,
@@ -49,9 +58,10 @@ class HUD(gui.GUI):
                 (6 - (row + delta_y)) / 6.,
             ]
 
-        initial_x = self.hud_x
+        initial_x = self.hud_x  # save column for carriage returns
         for c in string:
             if c == "\n":
+                # go down and back for next line
                 self.hud_x = initial_x
                 self.hud_y += self.character_height
                 continue
@@ -69,10 +79,11 @@ class HUD(gui.GUI):
             append_vertex(row, col, 1, 1)
             append_vertex(row, col, 1, 0)
 
+            # skip forward to next character
             self.hud_x += self.character_width
 
     def draw_hud(self):
-        """Draw an HUD"""
+        """Draw the HUD"""
         # reset HUD
         self.texcoords = []
         self.vertcoords = []
@@ -87,6 +98,8 @@ class HUD(gui.GUI):
         self.hud_print("Zoom x%g\n" % self.zoom)
 
     def set_and_draw_hud(self):
+        """Set up the camera and draw the HUD"""
+
         # set up OpenGL context for HUD
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()

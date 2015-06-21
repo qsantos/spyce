@@ -93,6 +93,7 @@ class SystemGUI(picking.PickingGUI):
 
     @classmethod
     def from_cli_args(cls):
+        """Load the system given in command-line arguments"""
         from load import kerbol, solar
 
         try:
@@ -100,6 +101,7 @@ class SystemGUI(picking.PickingGUI):
         except IndexError:
             name = 'Kerbin'
 
+        # find body from name (and texture folder)
         try:
             body = kerbol[name]
             texture_directory = 'textures/kerbol'
@@ -337,6 +339,7 @@ class SystemGUI(picking.PickingGUI):
         self.pick_clear()
 
     def draw_hud(self):
+        """Draw the HUD"""
         picking.PickingGUI.draw_hud(self)
         self.hud_print("Focus: %s\n" % self.focus)
 

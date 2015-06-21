@@ -20,20 +20,28 @@ class SimulationGUI(system.SystemGUI):
         glEnable(GL_ALPHA_TEST)
 
     def log(self, message):
+        """Show message on HUD"""
         self.message_log.append(message)
 
     def draw_rocket(self):
+        """Represent the rocket on the screen"""
+
         glPushMatrix()
         glScalef(1e4, 1e4, 1e4)
+
+        # follow rocket orientation
         (a, b, c), (d, e, f), (g, h, i) = self.rocket.orientation
+        # glMultMatrixf() excepts a column-major matrix
         mat44 = [a, d, g, 0, b, e, h, 0, c, f, i, 0, 0, 0, 0, 1]
         glMultMatrixf(mat44)
 
+        # pick correct texture
         if self.rocket.throttle == 0:
             textures.bind(self.texture_rocket_off)
         else:
             textures.bind(self.texture_rocket_on)
 
+        # draw texture
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0) or glVertex3f(-1, 0, -1)
         glTexCoord2f(0, 1) or glVertex3f(-1, 0, +1)
@@ -41,10 +49,12 @@ class SimulationGUI(system.SystemGUI):
         glTexCoord2f(1, 0) or glVertex3f(+1, 0, -1)
         glEnd()
 
+        # all done
         textures.unbind()
         glPopMatrix()
 
     def draw_path(self):
+        """Draw the path used by the rocket"""
         glColor4f(1, 0, 0, 1)
         glBegin(GL_LINE_STRIP)
         for position in self.path:
@@ -52,6 +62,8 @@ class SimulationGUI(system.SystemGUI):
         glEnd()
 
     def draw_body(self, body):
+        """Draw a CelestialBody (or a Rocket)"""
+
         if body == self.rocket:
             self.draw_rocket()
             return
@@ -62,6 +74,8 @@ class SimulationGUI(system.SystemGUI):
         system.SystemGUI.draw_body(self, body)
 
     def draw_hud(self):
+        """Draw the HUD"""
+
         system.SystemGUI.draw_hud(self)
         self.hud_print("Time x%g\n" % self.timewarp)
         self.hud_print("%s\n" % self.rocket.primary.time2str(self.time))

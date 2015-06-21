@@ -37,12 +37,14 @@ class RocketPart:
         return self.title
 
     def make_engine(self, max_thrust, specific_impulse):
+        """Configure a part as an engine"""
         self.max_thrust = max_thrust
         self.specific_impulse = specific_impulse
         self.exhaust_velocity = self.specific_impulse * physics.g0
         self.expulsion_rate = self.max_thrust / self.exhaust_velocity
 
     def make_tank(self, propellant):
+        """Configure a part as a propllant tank"""
         self.propellant = propellant
 
 
@@ -71,6 +73,7 @@ class Rocket:
 
         self.update_orbit(0.)
 
+        # initialize flight program
         if program is None:
             self.program = None
             self.resume_condition = lambda: False
@@ -79,23 +82,28 @@ class Rocket:
             self.resume_condition = next(self.program)
 
     def __repr__(self):
+        """Representation in Python console"""
         return "<%s>" % self.name
 
     def __str__(self):
+        """Convert to string using rocket's name"""
         return self.name
 
     def simulate(self, t, dt):
         """Run simulation"""
 
+        # run flight program
         if self.resume_condition():
             try:
                 self.resume_condition = next(self.program)
             except StopIteration:
                 self.resume_condition = lambda: False
 
+        # update state vectors
         self.update_physics(t, dt)
         self.update_orbit(t + dt)
 
+        # handle potential change of sphere of influence
         self.update_sphere_of_influence(t, dt)
 
     def update_sphere_of_influence(self, t, dt):
