@@ -156,7 +156,7 @@ if __name__ == "__main__":
         sim.log("In orbit")
         rocket.throttle = 0.0
 
-    body = kerbol['Kerbin']
+    body = sim.focus
     rocket = rocket.Rocket(body, program)
     rocket |= ksp_cfg.PartSet().make(
         'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
