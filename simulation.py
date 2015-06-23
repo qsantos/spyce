@@ -112,19 +112,26 @@ class SimulationGUI(system.SystemGUI):
 
             # passage of time
             now = time.time()
-            accumulated_time += now - last
+            elapsed = now - last
             last = now
 
             # physics simulation
+            accumulated_time += elapsed
             dt = 2.**-8
             if accumulated_time > dt:
                 while accumulated_time > dt:
                     accumulated_time -= dt
                     self.rocket.simulate(self.time, dt * self.timewarp)
                     self.time += dt * self.timewarp
-                self.path.append(self.rocket.position)  # save rocket path
 
-            self.update()
+                self.path.append(self.rocket.position)  # save rocket path
+                self.update()
+            else:
+                # avoid wasting cycles
+                pause = 1./60 - elapsed
+                if pause > 0.:
+                    time.sleep(pause)
+
         glutCloseFunc(None)
 
 if __name__ == "__main__":
