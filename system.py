@@ -78,6 +78,9 @@ class SystemGUI(picking.PickingGUI):
         make_orbit_call_list(self.system)
 
         # textures
+        textures.init()
+
+        # body textures
         def load_body(body):
             if texture_directory is not None:
                 texture_file = "%s/%s.jpg" % (texture_directory, body.name)
@@ -88,7 +91,7 @@ class SystemGUI(picking.PickingGUI):
                 load_body(satellite)
         load_body(self.system)
 
-        # skybox
+        # skybox textures
         self.skybox = skybox.Skybox("textures/skybox/GalaxyTex_%s.jpg")
 
     @classmethod

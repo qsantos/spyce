@@ -9,6 +9,9 @@ except ImportError:
     else:  # Python 2
         sys.stderr.write("Install python-pil for textures\n")
 
+    def init():
+        pass
+
     def load(*_, **__):
         return 0
 
@@ -18,6 +21,17 @@ except ImportError:
     def unbind(*_, **__):
         pass
 else:
+    def init():
+        glEnable(GL_TEXTURE_2D)
+
+        # fill default texture with white
+        # (for some reasons, this is not the default behavior)
+        glBindTexture(GL_TEXTURE_2D, 0)
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_FLOAT,
+            [1., 1., 1., 1.]  # opaque white pixel
+        )
+
     def load(filename):
         try:
             im = Image.open(filename)
@@ -35,7 +49,6 @@ else:
                 data = im.convert("RGBA").tostring("raw", "RGBA", 0, -1)
 
         new_tex = glGenTextures(1)
-        glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, new_tex)
         glTexImage2D(
             GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data

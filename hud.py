@@ -11,6 +11,9 @@ class HUD(gui.GUI):
     def __init__(self, title=b'HUD'):
         gui.GUI.__init__(self, title)
 
+        # initialize textures
+        textures.init()
+
         # font bitmap information
         self.character_width = 10
         self.character_height = 19
