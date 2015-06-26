@@ -8,7 +8,7 @@ class PickingGUI(hud.HUD):
     """GUI with object picking using a fragment shader"""
     def __init__(self, title=b"Click to pick!"):
         hud.HUD.__init__(self, title)
-        self.pick_shader = make_program(None, "shaders/pick.frag")
+        self.pick_shader = make_program(None, "pick.frag")
         self.pick_enabled = False
         self.pick_current_name = 0
 

@@ -13,8 +13,8 @@ class SimulationGUI(system.SystemGUI):
 
         self.path = []
         self.timewarp = 1.
-        self.texture_rocket_on = textures.load("textures/rocket_on.png")
-        self.texture_rocket_off = textures.load("textures/rocket_off.png")
+        self.texture_rocket_on = textures.load("rocket_on.png")
+        self.texture_rocket_off = textures.load("rocket_off.png")
         self.message_log = collections.deque(maxlen=10)
 
         glAlphaFunc(GL_GREATER, 0.)

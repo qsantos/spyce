@@ -1,3 +1,4 @@
+import os
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -26,6 +27,8 @@ def make_shader(program, type_, filename):
     """Compile and attach a shader of given type"""
     if filename is None:
         return
+
+    filename = os.path.join("shaders", filename)
 
     shader = glCreateShader(type_)
     glShaderSource(shader, open(filename).read())

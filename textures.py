@@ -1,5 +1,3 @@
-from OpenGL.GL import *
-
 try:
     from PIL import Image
 except ImportError:
@@ -21,6 +19,9 @@ except ImportError:
     def unbind(*_, **__):
         pass
 else:
+    import os
+    from OpenGL.GL import *
+
     def init():
         glEnable(GL_TEXTURE_2D)
 
@@ -32,7 +33,8 @@ else:
             [1., 1., 1., 1.]  # opaque white pixel
         )
 
-    def load(filename):
+    def load(*path):
+        filename = os.path.join("textures", *path)
         try:
             im = Image.open(filename)
         except:  # FileNotFoundError in Python 3, IOError in Python 2

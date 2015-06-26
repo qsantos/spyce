@@ -9,7 +9,7 @@ completer = rlcompleter.Completer(interact.namespace)
 readline.set_completer(completer.complete)
 readline.parse_and_bind("tab: complete")
 
-histfile = os.path.expanduser("~/.spyce_history")
+histfile = os.path.join(os.path.expanduser("~"), ".spyce_history")
 try:
     readline.read_history_file(histfile)
 except:  # FileNotFoundError in Python 3, IOError in Python 2

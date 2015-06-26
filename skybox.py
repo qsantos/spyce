@@ -4,12 +4,14 @@ import textures
 
 
 class Skybox:
-    def __init__(self, filepattern):
+    def __init__(self, *path):
         self.faces = []
+        path, file_pattern = list(path[:-1]), path[-1]
         for coordinate in "XYZ":
             for direction in "Positive", "Negative":
-                face = direction + coordinate
-                self.faces.append(textures.load(filepattern % face))
+                full_path = path + [file_pattern % (direction + coordinate)]
+                texture = textures.load(*full_path)
+                self.faces.append(texture)
 
     def draw(self, size):
         glPushMatrix()

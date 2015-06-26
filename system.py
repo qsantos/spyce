@@ -35,8 +35,7 @@ class SystemGUI(picking.PickingGUI):
             self.system = self.system.orbit.primary
 
         glEnable(GL_POINT_SPRITE)
-        self.shader_smooth_point = \
-            make_program(None, "shaders/smooth_point.frag")
+        self.shader_smooth_point = make_program(None, "smooth_point.frag")
 
         # VBOs for drawing orbits
 
@@ -83,8 +82,8 @@ class SystemGUI(picking.PickingGUI):
         # body textures
         def load_body(body):
             if texture_directory is not None:
-                texture_file = "%s/%s.jpg" % (texture_directory, body.name)
-                body.texture = textures.load(texture_file)
+                texture_file = "%s.jpg" % body.name
+                body.texture = textures.load(texture_directory, texture_file)
             else:
                 body.texture = 0
             for satellite in body.satellites:
@@ -92,7 +91,7 @@ class SystemGUI(picking.PickingGUI):
         load_body(self.system)
 
         # skybox textures
-        self.skybox = skybox.Skybox("textures/skybox/GalaxyTex_%s.jpg")
+        self.skybox = skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
 
     @classmethod
     def from_cli_args(cls):
@@ -107,11 +106,11 @@ class SystemGUI(picking.PickingGUI):
         # find body from name (and texture folder)
         try:
             body = kerbol[name]
-            texture_directory = 'textures/kerbol'
+            texture_directory = 'kerbol'
         except KeyError:
             try:
                 body = solar[name]
-                texture_directory = 'textures/solar'
+                texture_directory = 'solar'
             except KeyError:
                 sys.stderr.write("Unknwon body '%s'\n" % name)
                 sys.exit(1)

@@ -17,7 +17,7 @@ class HUD(gui.GUI):
         # font bitmap information
         self.character_width = 10
         self.character_height = 19
-        self.font = textures.load("textures/font.png")
+        self.font = textures.load("font.png")
 
         # set up buffer objects
         self.text_vbo = glGenBuffers(1)
