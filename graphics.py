@@ -45,6 +45,11 @@ def make_program(vertex_file=None, fragment_file=None):
     make_shader(program, GL_VERTEX_SHADER, vertex_file)
     make_shader(program, GL_FRAGMENT_SHADER, fragment_file)
     glLinkProgram(program)
+
+    # make `Texture0` refer to the first texture
+    variable = glGetUniformLocation(program, b"Texture0")
+    glProgramUniform1i(program, variable, 0)
+
     return program
 
 
