@@ -330,13 +330,13 @@ class SystemGUI(picking.PickingGUI):
         glLoadIdentity()
 
         # set up camera
-        glTranslate(0, 0, -1)
+        self.pick_reset()
+
+        glTranslate(0, 0, -1/self.zoom)
         glRotate(self.phi,   1, 0, 0)
         glRotate(self.theta, 0, 0, 1)
-        self.skybox.draw(1e6)  # skybox
-        glScalef(self.zoom, self.zoom, self.zoom)
+        self.skybox.draw(1e19)  # skybox
 
-        self.pick_reset()
         self.draw()
         self.pick_clear()
 

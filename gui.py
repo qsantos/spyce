@@ -53,10 +53,9 @@ class GUI:
         glLoadIdentity()
 
         # set camera
-        glTranslate(0, 0, -1)
+        glTranslate(0, 0, -1/self.zoom)
         glRotate(self.phi,   1, 0, 0)
         glRotate(self.theta, 0, 0, 1)
-        glScalef(self.zoom, self.zoom, self.zoom)
 
         # draw!
         self.draw()
