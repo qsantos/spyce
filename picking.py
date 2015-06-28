@@ -76,9 +76,11 @@ class PickingGUI(hud.HUD):
         size = 2*r + 1
         red = glReadPixels(x-r, y-r, size, size, GL_RED, GL_UNSIGNED_BYTE)
 
-        if len(red[0]) == 1:  # Python 2
-            red = [ord(pixel) for pixel in red]
-            red = [red[i:i+size] for i in range(0, len(red), size)]
+        if isinstance(red[0], str):  # Python 2
+            red = map(ord, red)
+
+        # make a grid
+        red = [red[i:i+size] for i in range(0, len(red), size)]
 
         # find best match
         best = float("inf")
