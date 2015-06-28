@@ -23,11 +23,15 @@ def draw_vbo(vbo_index, n_vertices):
     glBindBuffer(GL_ARRAY_BUFFER, 0)
 
 
-def make_shader(program, type_, filename):
+def make_shader(program, filename):
     """Compile and attach a shader of given type"""
-    if filename is None:
-        return
 
+    if filename.endswith(".vert"):
+        type_ = GL_VERTEX_SHADER
+    elif filename.endswith(".frag"):
+        type_ = GL_FRAGMENT_SHADER
+    else:
+        raise Exception("Unable to determine type of shader '%s'" % filename)
     filename = os.path.join("shaders", filename)
 
     shader = glCreateShader(type_)
@@ -39,11 +43,11 @@ def make_shader(program, type_, filename):
     glAttachShader(program, shader)
 
 
-def make_program(vertex_file=None, fragment_file=None):
+def make_program(*files):
     """Make a program from shader files"""
     program = glCreateProgram()
-    make_shader(program, GL_VERTEX_SHADER, vertex_file)
-    make_shader(program, GL_FRAGMENT_SHADER, fragment_file)
+    for filename in files:
+        make_shader(program, filename)
     glLinkProgram(program)
 
     # make `Texture0` refer to the first texture
