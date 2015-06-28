@@ -35,7 +35,7 @@ class SystemGUI(picking.PickingGUI):
             self.system = self.system.orbit.primary
 
         glEnable(GL_POINT_SPRITE)
-        self.shader_smooth_point = make_program("smooth_point.frag")
+        self.shader_smooth_point = main_program(None, "smooth_point.frag")
 
         # VBOs for drawing orbits
 

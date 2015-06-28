@@ -8,7 +8,7 @@ class PickingGUI(hud.HUD):
     """GUI with object picking using a fragment shader"""
     def __init__(self, title=b"Click to pick!"):
         hud.HUD.__init__(self, title)
-        self.pick_shader = make_program("pick.frag")
+        self.pick_shader = main_program()
         self.pick_enabled = False
         self.pick_current_name = 0
 
@@ -54,10 +54,7 @@ class PickingGUI(hud.HUD):
 
     def shader_reset(self):
         """Restore the default shader"""
-        if self.pick_enabled:
-            self.shader_set(self.pick_shader)
-        else:
-            glUseProgram(0)
+        self.shader_set(self.pick_shader)
 
     def pick(self, x, y, default=None):
         """Find object at given screen coordinates"""

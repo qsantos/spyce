@@ -57,6 +57,15 @@ def make_program(*files):
     return program
 
 
+def main_program(vertex_shader=None, fragment_shader=None):
+    """Make a program from local shaders and fixed global shaders"""
+    return make_program(
+        "main.vert", "main.frag",  # global shader
+        vertex_shader or "default.vert",  # local vertex shader
+        fragment_shader or "default.frag",  # local fragment shader
+    )
+
+
 def glut_callback(f):
     """Wraps a GLUT callback method so that exceptions are not ignored"""
     def wrapper(self, *args, **kwargs):
