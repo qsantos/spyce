@@ -1,4 +1,5 @@
 import os
+import sys
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -73,5 +74,11 @@ def glut_callback(f):
             return f(self, *args, **kwargs)
         except Exception as e:
             self.is_running = False
-            raise e
+
+            # propagate exception with complete traceback
+            if hasattr(e, "with_traceback"):  # Python 3
+                raise e.with_traceback(sys.exc_info()[2])
+            else:  # Python 2
+                cmd = "raise type(e), e.args, sys.exc_info()[2]"
+                exec(cmd, globals(), locals())
     return wrapper
