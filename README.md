@@ -140,8 +140,9 @@ Orbit(Mun, 220000, 0, 1.5708, 0, 0, 0, 0)
 
 ### Graphical interface (Work-In-Progress)
 
-The graphical interface requires OpenGL and uses PIL if available (for
-textures). To install both on Debian (Ubuntu), run the relevant command:
+The graphical interface requires the python package `OpenGL` and uses `PIL` if
+available (for textures). To install both on Debian (Ubuntu), run the relevant
+command:
 
 ```bash
 $ sudo apt-get install python-opengl python-pil
