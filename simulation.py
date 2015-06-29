@@ -43,12 +43,14 @@ class SimulationGUI(system.SystemGUI):
             textures.bind(self.texture_rocket_on)
 
         # draw texture
+        glDisable(GL_CULL_FACE)
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0) or glVertex3f(-1, 0, -1)
         glTexCoord2f(0, 1) or glVertex3f(-1, 0, +1)
         glTexCoord2f(1, 1) or glVertex3f(+1, 0, +1)
         glTexCoord2f(1, 0) or glVertex3f(+1, 0, -1)
         glEnd()
+        glEnable(GL_CULL_FACE)
 
         # all done
         textures.unbind()

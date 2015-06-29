@@ -111,8 +111,6 @@ class HUD(gui.GUI):
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-        glDisable(GL_CULL_FACE)
-        glClear(GL_DEPTH_BUFFER_BIT)
 
         # fill vertex lists
         self.draw_hud()
