@@ -110,6 +110,23 @@ Orbit(Mun, 220000, 0, 1.5708, 0, 0, 0, 0)
 544.1356679123854
 ```
 
+### Computing surface and orbital velocities
+
+```python
+>>> Kerbin.surface_velocity
+174.5336361449068
+>>> Orbit(Kerbin, Kerbin.radius+80e3).speed(0)
+2278.931638238564
+>>> Mun.surface_velocity
+9.041570660012562
+>>> Orbit(Mun, Mun.radius+10e3).speed(0)
+556.9406120378104
+>>> Earth.surface_velocity
+464.5806481876878
+>>> Orbit(Earth, Earth.radius+120e3).speed(0)
+7836.338986369195
+```
+
 
 ### Notes
 
