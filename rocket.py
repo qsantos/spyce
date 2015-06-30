@@ -101,7 +101,6 @@ class Rocket:
 
         # update state vectors
         self.update_physics(t, dt)
-        self.update_orbit(t + dt)
 
         # handle potential change of sphere of influence
         self.update_sphere_of_influence(t, dt)
@@ -192,6 +191,8 @@ class Rocket:
         y = integration.rk4(f, t, y, dt)
         self.position = vector.Vector(y[:3])
         self.velocity = vector.Vector(y[3:])
+
+        self.update_orbit(t + dt)
 
     def update_orbit(self, epoch):
         """Update current orbital trajectory"""
