@@ -143,7 +143,7 @@ if __name__ == "__main__":
 
     sim = SimulationGUI.from_cli_args()
 
-    def program(rocket):
+    def launchpad_to_orbit(rocket):
         # vertical ascent with progressive gravity turn
         sim.log("Phase 1 (vertical take-off)")
         yield lambda: rocket.position[0] > 610e3
@@ -164,6 +164,17 @@ if __name__ == "__main__":
         yield lambda: rocket.orbit.periapsis > 695e3
         sim.log("In orbit")
         rocket.throttle = 0.0
+
+    def program(rocket):
+        for c in launchpad_to_orbit(rocket):
+            yield c
+
+        sim.log("Onto the Mun!")
+        rocket.throttle = 1.0
+        rocket.rotate_deg(59, 1, 0, 0)
+        yield lambda: rocket.propellant <= 0.
+        sim.log("Out of propellant!")
+        rocket.throttle = 0
 
     body = sim.focus
     rocket = rocket.Rocket(body, program)
