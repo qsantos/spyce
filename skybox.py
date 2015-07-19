@@ -14,6 +14,7 @@ class Skybox:
                 self.faces.append(texture)
 
     def draw(self, size):
+        glCullFace(GL_FRONT)
         glPushMatrix()
         glScale(size, size, size)
 
@@ -67,3 +68,4 @@ class Skybox:
 
         textures.unbind()
         glPopMatrix()
+        glCullFace(GL_BACK)
