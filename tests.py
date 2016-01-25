@@ -207,7 +207,7 @@ Kerbol = load.kerbol['Kerbol']
 Sun = load.solar['Sun']
 assert len(Kerbol.satellites) == 7
 assert sum(1 for x in Sun.satellites if x.mass > 1e23) == 8
-assert max(b.orbit.semi_major_axis for b in Sun.satellites) < 100*physics.au
+assert max(b.orbit.semi_major_axis for b in Sun.satellites) < 1000*physics.au
 assert max(b.orbit.semi_major_axis for b in Kerbol.satellites) < physics.au
 
 for system in (load.kerbol, load.solar):

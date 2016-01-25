@@ -264,7 +264,7 @@ if __name__ == "__main__":
     get_moons_physics(bodies)
     get_moons_orbits(bodies)
 
-    dwarf_planets = ["Ceres", "Pluto", "Haumea", "Makemake", "Eris"]
+    dwarf_planets = ["Ceres", "Pluto", "Sedna", "Haumea", "Makemake", "Eris"]
     for dwarf_planet in dwarf_planets:
         get_dwarf_planet_data(bodies, dwarf_planet)
 
