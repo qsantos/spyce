@@ -12,10 +12,9 @@ def unpack(a, *b):
     return a, b
 
 
-def locate(path="GameData"):
+def locate(subpath="GameData"):
     """Locate path in KSP installation directory"""
 
-    subpath = os.path.join("SteamApps", "common", "Kerbal Space Program", path)
     home = os.path.expanduser("~")
     candidates = (
         home + "/.steam/steam", home + "/.local/share/Steam",  # GNU/Linux
@@ -23,10 +22,15 @@ def locate(path="GameData"):
         home + "/Library/Application Support/Steam",  # Mac
     )
 
-    for directory in candidates:
-        path = os.path.join(directory, subpath)
-        if os.path.exists(path):
-            return path
+    for steam in candidates:
+        if not os.path.exists(steam):
+            continue
+
+        for apps in ("SteamApps", "steamapps"):
+            app = "Kerbal Space Program"
+            full_path = os.path.join(steam, apps, "common", app, subpath)
+            if os.path.exists(full_path):
+                return full_path
     else:
         raise IOError("cannot find KSP folder")
 
