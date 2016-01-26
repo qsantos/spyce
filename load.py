@@ -41,5 +41,5 @@ def load_bodies(filename):
     return bodies
 
 relative_path = os.path.dirname(__file__)
-kerbol = load_bodies(os.path.join(relative_path, "kerbol.json"))
-solar = load_bodies(os.path.join(relative_path, "solar.json"))
+kerbol = load_bodies(os.path.join(relative_path, "data", "kerbol.json"))
+solar = load_bodies(os.path.join(relative_path, "data", "solar.json"))

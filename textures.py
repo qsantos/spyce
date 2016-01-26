@@ -34,7 +34,7 @@ else:
         )
 
     def load(*path):
-        filename = os.path.join("textures", *path)
+        filename = os.path.join("data", "textures", *path)
         try:
             im = Image.open(filename)
         except:  # FileNotFoundError in Python 3, IOError in Python 2
