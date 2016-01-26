@@ -43,12 +43,12 @@ else:
 
         w, h = im.size
         try:
-            data = im.tostring("raw", "RGBA", 0, -1)
+            data = im.tobytes("raw", "RGBA", 0, -1)
         except SystemError:
             try:
-                data = im.tostring("raw", "RGBX", 0, -1)
+                data = im.tobytes("raw", "RGBX", 0, -1)
             except SystemError:
-                data = im.convert("RGBA").tostring("raw", "RGBA", 0, -1)
+                data = im.convert("RGBA").tobytes("raw", "RGBA", 0, -1)
 
         new_tex = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, new_tex)
