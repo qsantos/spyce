@@ -1,5 +1,7 @@
+import io
 import os
 import sys
+import pkgutil
 from OpenGL.GLU import *
 from OpenGL.GL import *
 
@@ -50,11 +52,12 @@ else:
         If loading the file fails, return dummy texture 0"""
         filename = os.path.join("data", "textures", *path)
         try:
-            im = Image.open(filename)
+            image = pkgutil.get_data("spyce", filename)
         except:  # FileNotFoundError in Python 3, IOError in Python 2
             sys.stderr.write("Missing %s\n" % filename)
             return 0
 
+        im = Image.open(io.BytesIO(image))
         w, h = im.size
         try:
             data = im.tobytes("raw", "RGBA", 0, -1)

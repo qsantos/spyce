@@ -1,5 +1,6 @@
 import os
 import json
+import pkgutil
 
 import spyce.body
 import spyce.human
@@ -42,17 +43,16 @@ def load_body(bodies, data, name):
 def load_bodies(filename):
     """Load celestial body physical and orbital data from a JSON file"""
 
-    with open(filename) as f:
-        data = json.load(f)
+    content = pkgutil.get_data("spyce", filename)
+    data = json.loads(content.decode())
 
     bodies = {}
     for name in data:
         load_body(bodies, data, name)
     return bodies
 
-relative_path = os.path.dirname(__file__)
-kerbol = load_bodies(os.path.join(relative_path, "data", "kerbol.json"))
-solar = load_bodies(os.path.join(relative_path, "data", "solar.json"))
+kerbol = load_bodies("data/kerbol.json")
+solar = load_bodies("data/solar.json")
 
 
 def from_name(name):

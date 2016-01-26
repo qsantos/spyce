@@ -1,5 +1,6 @@
 import os
 import sys
+import pkgutil
 import itertools
 import functools
 from OpenGL.GLUT import *
@@ -72,7 +73,7 @@ def make_shader_source(program, source, type_, filename="-"):
 def make_shader_filename(program, filename, type_):
     """Compile and attach shader of given type from file"""
     path = os.path.join("data", "shaders", filename)
-    source = open(path).read()
+    source = pkgutil.get_data('spyce', path)
     return make_shader_source(program, source, type_)
 
 
