@@ -149,7 +149,7 @@ def get_parts():
     return parts
 
 
-class PartSet:
+class PartSet(object):
     def __init__(self):
         self.parts = get_parts()
 

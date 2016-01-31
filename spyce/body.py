@@ -4,7 +4,7 @@ import math
 import physics
 
 
-class CelestialBody:
+class CelestialBody(object):
     """Celestial Body
 
     Minimalistic model of celestial bodies (stars, planets, moons)

@@ -7,7 +7,7 @@ class InvalidElements(Exception):
     pass
 
 
-class Orbit:
+class Orbit(object):
     """Kepler orbit
 
     Allow to define an orbit in a number of way (see class methods)

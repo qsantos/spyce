@@ -4,7 +4,7 @@ import time
 from graphics import *
 
 
-class Scene:
+class Scene(object):
     """A simple Scene handling zooming and camera orientation"""
     def __init__(self, title=b'Scene'):
         # default settings

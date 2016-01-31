@@ -3,7 +3,7 @@ from OpenGL.GL import *
 import textures
 
 
-class Skybox:
+class Skybox(object):
     def __init__(self, *path):
         self.faces = []
         path, file_pattern = list(path[:-1]), path[-1]

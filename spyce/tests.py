@@ -66,7 +66,7 @@ assert checkdiff(r, m)
 import orbit
 
 
-class Object:
+class Object(object):
     def __repr__(self):
         return "<TestBody>"
 

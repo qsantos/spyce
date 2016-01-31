@@ -4,7 +4,7 @@ import orbit
 import integration
 
 
-class RocketPart:
+class RocketPart(object):
     """Rocket part
 
     Properties:
@@ -48,7 +48,7 @@ class RocketPart:
         self.propellant = propellant
 
 
-class Rocket:
+class Rocket(object):
     """A rocket, or a spaceship, or a duck"""
     def __init__(self, primary=None, program=None):
         self.parts = set()
