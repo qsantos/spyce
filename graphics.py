@@ -1,8 +1,8 @@
 import os
 import sys
-from OpenGL.GL import *
-from OpenGL.GLU import *
 from OpenGL.GLUT import *
+from OpenGL.GLU import *
+from OpenGL.GL import *
 
 
 def make_vbo(vertices, vbo_index=None):

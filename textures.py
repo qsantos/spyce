@@ -20,6 +20,7 @@ except ImportError:
         pass
 else:
     import os
+    from OpenGL.GLU import *
     from OpenGL.GL import *
 
     def init():
