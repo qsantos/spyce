@@ -8,10 +8,10 @@ all: $(TARGETS)
 	$(CC) $(CFLAGS) -shared -fPIC $< -o $@
 
 %_py2.so: %_ext.c %.c
-	$(CC) $(CFLAGS) -I /usr/include/python2.7 -shared -fPIC $< -o $@
+	$(CC) $(CFLAGS) $$(pkg-config --cflags python2) -shared -fPIC $< -o $@
 
 %_py3.so: %_ext.c %.c
-	$(CC) $(CFLAGS) -I /usr/include/python3.4 -shared -fPIC $< -o $@
+	$(CC) $(CFLAGS) $$(pkg-config --cflags python3) -shared -fPIC $< -o $@
 
 destroy:
 	rm -f $(TARGETS)
