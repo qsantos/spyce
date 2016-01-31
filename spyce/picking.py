@@ -7,7 +7,7 @@ from graphics import *
 class PickingGUI(hud.HUD):
     """GUI with object picking using a fragment shader"""
     def __init__(self, title=b"Click to pick!"):
-        hud.HUD.__init__(self, title)
+        super(PickingGUI, self).__init__(title)
         self.pick_shader = main_program()
         self.pick_enabled = False
         self.pick_current_name = 0
@@ -41,7 +41,7 @@ class PickingGUI(hud.HUD):
     def set_and_draw(self):
         """Setup the camera and draw"""
         self.pick_reset()
-        hud.HUD.set_and_draw(self)
+        super(PickingGUI, self).set_and_draw()
         self.pick_clear()
 
     def shader_set(self, program):
@@ -139,7 +139,7 @@ class PickingGUI(hud.HUD):
         if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
             print("You clicked on %s!" % self.pick(x, y, "nothing!"))
         else:
-            hud.HUD.mouseFunc(self, button, state, x, y)
+            super(PickingGUI, self).mouseFunc(button, state, x, y)
 
 if __name__ == '__main__':
     PickingGUI().main()

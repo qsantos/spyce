@@ -9,7 +9,7 @@ from graphics import *
 
 class SimulationGUI(system.SystemGUI):
     def __init__(self, *args, **kwargs):
-        system.SystemGUI.__init__(self, *args, **kwargs)
+        super(SimulationGUI, self).__init__(*args, **kwargs)
 
         self.path = []
         self.timewarp = 1.
@@ -74,12 +74,12 @@ class SimulationGUI(system.SystemGUI):
         if body == self.rocket.primary:
             self.draw_path()
 
-        system.SystemGUI.draw_body(self, body)
+        super(SimulationGUI, self).draw_body(body)
 
     def draw_hud(self):
         """Draw the HUD"""
 
-        system.SystemGUI.draw_hud(self)
+        super(SimulationGUI, self).draw_hud()
         self.hud_print("Time x%g\n" % self.timewarp)
 
         # display time
@@ -103,7 +103,7 @@ class SimulationGUI(system.SystemGUI):
         elif k == b';':
             self.timewarp *= 10.
         else:
-            system.SystemGUI.keyboardFunc(self, k, x, y)
+            super(SimulationGUI, self).keyboardFunc(k, x, y)
 
     def main(self):
         """Main loop"""

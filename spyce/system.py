@@ -13,7 +13,7 @@ class SystemGUI(picking.PickingGUI):
     def __init__(self, focus, texture_directory=None):
         title = b'Spaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaace'
         title = b'Sp' + b'a'*42 + b'ce'
-        picking.PickingGUI.__init__(self, title)
+        super(SystemGUI, self).__init__(title)
 
         self.time = 0
         self.zoom = 1e-7
@@ -342,7 +342,7 @@ class SystemGUI(picking.PickingGUI):
 
     def draw_hud(self):
         """Draw the HUD"""
-        picking.PickingGUI.draw_hud(self)
+        super(SystemGUI, self).draw_hud()
         self.hud_print("Focus: %s\n" % self.focus)
 
     @glut_callback
@@ -353,7 +353,7 @@ class SystemGUI(picking.PickingGUI):
             self.focus = self.pick(x, y, self.focus)
             self.update()
         else:
-            picking.PickingGUI.mouseFunc(self, button, state, x, y)
+            super(SystemGUI, self).mouseFunc(button, state, x, y)
 
 if __name__ == '__main__':
     SystemGUI.from_cli_args().main()

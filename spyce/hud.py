@@ -9,7 +9,7 @@ from graphics import *
 class HUD(scene.Scene):
     """Scene with an HUD"""
     def __init__(self, title=b'HUD'):
-        scene.Scene.__init__(self, title)
+        super(HUD, self).__init__(title)
 
         # initialize textures
         textures.init()
