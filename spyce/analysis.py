@@ -1,3 +1,6 @@
+"""Numerical analysis methods"""
+
+
 def euler(f, t, y, h):
     """Euler method
 
