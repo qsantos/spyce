@@ -46,6 +46,10 @@ class Vector(list):
         x, y, z = self
         return Vector([-x, -y, -z])
 
+    def __abs__(self):
+        """Maximum metric (see Chebyshev distance)"""
+        return max(self)
+
 
 def dot(u, v):
     """Dot product of vectors"""
@@ -87,6 +91,13 @@ def oriented_angle(u, v, normal=[0, 0, 1]):
 
 
 class Matrix(list):
+    def __sub__(A, B):
+        return Matrix([x-y for a, b in zip(A, B) for x, y in zip(a, b)])
+
+    def __abs__(A):
+        """Maximum metric (see Chebyshev distance)"""
+        return max(abs(a) for a in A)
+
     def __mul__(self, x):
         if isinstance(x, Matrix):  # matrix-matrix multiplication
             m = Matrix(zip(*x))
