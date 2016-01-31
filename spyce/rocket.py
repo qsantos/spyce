@@ -188,7 +188,7 @@ class Rocket(object):
 
         # update velocity and position
         y = self.position[:] + self.velocity
-        y = integration.rk4(f, t, y, dt)
+        y = analysis.runge_kutta_4(f, t, y, dt)
         self.position = vector.Vector(y[:3])
         self.velocity = vector.Vector(y[3:])
 

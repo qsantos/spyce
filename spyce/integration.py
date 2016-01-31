@@ -7,8 +7,8 @@ def euler(f, t, y, h):
     return [x+dx*h for x, dx in zip(y, f(t, y))]
 
 
-def rk4(f, t, y, h):
-    """Runge-Kutta method
+def runge_kutta_4(f, t, y, h):
+    """Runge-Kutta 4 method
 
     Run a numerical integration step `h` on `y` of derivative `f` along `t`"""
     # notations from https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
@@ -29,7 +29,7 @@ def rk4(f, t, y, h):
 if __name__ == "__main__":
     import time
 
-    def test(name, method, duration, dt):
+    def benchmark(name, method, duration, dt):
         n_iterations = int(duration / dt)
         duration = n_iterations * dt
 
@@ -50,5 +50,5 @@ if __name__ == "__main__":
         error = abs(y[0] - expect)
         print("%-6s time = %.2fs, error = %.1e" % (name+":", elapsed, error))
 
-    test("Euler", euler, 1e4, .1)
-    test("RK4",   rk4,   1e4, .1)
+    benchmark("Euler", euler,         1e4, .1)
+    benchmark("RK4",   runge_kutta_4, 1e4, .1)
