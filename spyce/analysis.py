@@ -1,6 +1,22 @@
 """Numerical analysis methods"""
 
 
+def newton_raphson(x_0, f, f_prime):
+    """Newton-Raphson method
+
+    Look around `x_0` for a root of `f`, of derivative `f_prime`
+    """
+    x = x_0
+    previous_x = 0
+    for _ in range(30):  # upper limit on iteration count
+        previous_previous_x, previous_x = previous_x, x
+        x -= f(x) / f_prime(x)
+        if x in (previous_x, previous_previous_x):
+            # best accuracy reached
+            break
+    return x
+
+
 def euler(f, t, y, h):
     """Euler method
 

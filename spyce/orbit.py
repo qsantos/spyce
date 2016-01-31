@@ -1,6 +1,7 @@
 import math
 
 import vector
+import analysis
 
 
 class InvalidElements(Exception):
@@ -313,27 +314,21 @@ class Orbit(object):
             if abs(M) < 2**-26:
                 return M / (1 - e)
 
-            E = math.pi
-            f = lambda E: E - e*math.sin(E) - M
-            fprime = lambda E: 1 - e*math.cos(E)
+            return analysis.newton_raphson(
+                x_0=math.pi,
+                f=lambda E: E - e*math.sin(E) - M,
+                f_prime=lambda E: 1 - e*math.cos(E),
+            )
         else:  # M = e sinh E - E
             # sinh(E) = E -> M = (e - 1) E
             if abs(M) < 2**-26:
                 return M / (e - 1)
 
-            E = math.asinh(M)
-            f = lambda E: e*math.sinh(E) - E - M
-            fprime = lambda E: e*math.cosh(E) - 1
-
-        # Newton's method
-        previous_E = 0
-        for _ in range(30):
-            previous_previous_E, previous_E = previous_E, E
-            E -= f(E) / fprime(E)
-            if E in (previous_E, previous_previous_E):
-                break
-
-        return E
+            return analysis.newton_raphson(
+                x_0=math.asinh(M),
+                f=lambda E: e*math.sinh(E) - E - M,
+                f_prime=lambda E: e*math.cosh(E) - 1,
+            )
 
     def true_anomaly(self, time):
         """Computes the true anomaly at a given time (s)"""
