@@ -1,7 +1,7 @@
 import sys
 import time
 
-from graphics import *
+from gui.graphics import *
 
 
 class Scene(object):

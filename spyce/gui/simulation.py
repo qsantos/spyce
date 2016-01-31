@@ -1,20 +1,20 @@
 import time
 import collections
 
-import system
-import textures
+import gui.system
+import gui.textures
 from load import solar, kerbol
-from graphics import *
+from gui.graphics import *
 
 
-class SimulationGUI(system.SystemGUI):
+class SimulationGUI(gui.system.SystemGUI):
     def __init__(self, *args, **kwargs):
         super(SimulationGUI, self).__init__(*args, **kwargs)
 
         self.path = []
         self.timewarp = 1.
-        self.texture_rocket_on = textures.load("rocket_on.png")
-        self.texture_rocket_off = textures.load("rocket_off.png")
+        self.texture_rocket_on = gui.textures.load("rocket_on.png")
+        self.texture_rocket_off = gui.textures.load("rocket_off.png")
         self.message_log = collections.deque(maxlen=10)
 
         glAlphaFunc(GL_GREATER, 0.)
@@ -38,9 +38,9 @@ class SimulationGUI(system.SystemGUI):
 
         # pick correct texture
         if self.rocket.throttle == 0:
-            textures.bind(self.texture_rocket_off)
+            gui.textures.bind(self.texture_rocket_off)
         else:
-            textures.bind(self.texture_rocket_on)
+            gui.textures.bind(self.texture_rocket_on)
 
         # draw texture
         glDisable(GL_CULL_FACE)
@@ -53,7 +53,7 @@ class SimulationGUI(system.SystemGUI):
         glEnable(GL_CULL_FACE)
 
         # all done
-        textures.unbind()
+        gui.textures.unbind()
         glPopMatrix()
 
     def draw_path(self):

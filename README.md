@@ -153,12 +153,12 @@ You can visualize the Kerbol or Solar system with:
 
 ```bash
 $ cd spyce
-$ python system.py
-$ python system.py Earth
+$ python -m gui.system
+$ python -m gui.system Earth
 ```
 
 It also works for stars (Sun and Kerbol), the other planets and the moons.
-Similarly, you can run `simulation.py` to look at a rocket get into orbit.
+Similarly, you can run `gui.simulation` to look at a rocket get into orbit.
 
 
 ### C extensions

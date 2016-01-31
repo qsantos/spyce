@@ -1,23 +1,23 @@
 import time
 import collections
 
-import textures
-import scene
-from graphics import *
+import gui.textures
+import gui.scene
+from gui.graphics import *
 
 
-class HUD(scene.Scene):
+class HUD(gui.scene.Scene):
     """Scene with an HUD"""
     def __init__(self, title=b'HUD'):
         super(HUD, self).__init__(title)
 
         # initialize textures
-        textures.init()
+        gui.textures.init()
 
         # font bitmap information
         self.character_width = 10
         self.character_height = 19
-        self.font = textures.load("font.png")
+        self.font = gui.textures.load("font.png")
 
         # set up buffer objects
         self.text_vbo = glGenBuffers(1)
@@ -122,13 +122,13 @@ class HUD(scene.Scene):
         glTexCoordPointer(2, GL_FLOAT, 0, None)
 
         # actually draw the HUD
-        textures.bind(self.font)
+        gui.textures.bind(self.font)
         glEnableClientState(GL_VERTEX_ARRAY)
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         glDrawArrays(GL_QUADS, 0, len(self.vertcoords)//2)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
         glDisableClientState(GL_VERTEX_ARRAY)
-        textures.unbind()
+        gui.textures.unbind()
 
         # restore OpenGL context
         glPopMatrix()

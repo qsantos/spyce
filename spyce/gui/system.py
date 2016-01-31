@@ -2,13 +2,13 @@ import sys
 import math
 
 import vector
-import textures
-import skybox
-import picking
-from graphics import *
+import gui.textures
+import gui.skybox
+import gui.picking
+from gui.graphics import *
 
 
-class SystemGUI(picking.PickingGUI):
+class SystemGUI(gui.picking.PickingGUI):
     """GUI for showing planetary system"""
     def __init__(self, focus, texture_directory=None):
         title = b'Spaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaace'
@@ -77,13 +77,13 @@ class SystemGUI(picking.PickingGUI):
         make_orbit_call_list(self.system)
 
         # textures
-        textures.init()
+        gui.textures.init()
 
         # body textures
         def load_body(body):
             if texture_directory is not None:
-                texture_file = "%s.jpg" % body.name
-                body.texture = textures.load(texture_directory, texture_file)
+                filename = "%s.jpg" % body.name
+                body.texture = gui.textures.load(texture_directory, filename)
             else:
                 body.texture = 0
             for satellite in body.satellites:
@@ -91,7 +91,7 @@ class SystemGUI(picking.PickingGUI):
         load_body(self.system)
 
         # skybox textures
-        self.skybox = skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
+        self.skybox = gui.skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
 
     @classmethod
     def from_cli_args(cls):
@@ -233,9 +233,9 @@ class SystemGUI(picking.PickingGUI):
 
         # textured quadric (representation from close by)
         # sphere with radius proportional to that of the body
-        textures.bind(body.texture, (0.5, 0.5, 1.0))
+        gui.textures.bind(body.texture, (0.5, 0.5, 1.0))
         self.draw_sphere(body.radius)
-        textures.unbind()
+        gui.textures.unbind()
 
         glPopMatrix()
 
