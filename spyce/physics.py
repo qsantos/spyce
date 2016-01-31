@@ -1,5 +1,11 @@
 """Main physical constants"""
 
+# All values except for Planck charge and the "miscellaneous" section come from
+# http://physics.nist.gov/cuu/Constants/ . Other values, as well as explicit
+# expressions were taken from various pages of Wikipedia. All use SI units.
+
+import math
+
 
 def _(tabulated, uncertainty=None, computed=None):
     """Checks tabulated against computed values"""
@@ -15,12 +21,6 @@ def _(tabulated, uncertainty=None, computed=None):
             "absolute error (%g) above threshold (%g)" % (error, uncertainty)
     return computed
 
-
-# All values except for Planck charge and the "miscellaneous" section come from
-# http://physics.nist.gov/cuu/Constants/ . Other values, as well as explicit
-# expressions were taken from various pages of Wikipedia. All use SI units.
-
-import math
 
 # universal constants
 c = _(299792458)               # speed of ligth in vacuum (m/s)
