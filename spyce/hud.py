@@ -2,14 +2,14 @@ import time
 import collections
 
 import textures
-import gui
+import scene
 from graphics import *
 
 
-class HUD(gui.GUI):
-    """GUI with an HUD"""
+class HUD(scene.Scene):
+    """Scene with an HUD"""
     def __init__(self, title=b'HUD'):
-        gui.GUI.__init__(self, title)
+        scene.Scene.__init__(self, title)
 
         # initialize textures
         textures.init()

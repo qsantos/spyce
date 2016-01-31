@@ -4,9 +4,9 @@ import time
 from graphics import *
 
 
-class GUI:
-    """A simple GUI handling zooming and camera orientation"""
-    def __init__(self, title=b'GUI'):
+class Scene:
+    """A simple Scene handling zooming and camera orientation"""
+    def __init__(self, title=b'Scene'):
         # default settings
         self.zoom = .25
         self.drag_active = False
@@ -166,4 +166,4 @@ class GUI:
         glutCloseFunc(None)
 
 if __name__ == '__main__':
-    GUI().main()
+    Scene().main()
