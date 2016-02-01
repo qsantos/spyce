@@ -1,11 +1,20 @@
 import unittest
 
+import math
 import time
 
 import analysis
 
 
 class TestBody(unittest.TestCase):
+    def test_newton_raphson(self):
+        x = analysis.newton_raphson(
+            x_0=1.4,
+            f=lambda x: x**2 - 2,
+            f_prime=lambda x: 2*x,
+        )
+        self.assertEqual(x, math.sqrt(2))
+
     def integration(self, method, n_iterations, step):
         # set problem: free fall on Earth surface
         def f(t, y):
