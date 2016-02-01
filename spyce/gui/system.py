@@ -53,8 +53,8 @@ class SystemGUI(gui.picking.PickingGUI):
         vertices = []
         for i in range(n):
             x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
-            theta = math.pi * x
-            vertices += [1. + math.cos(theta), math.sin(theta), 0.]
+            theta = math.pi * x**3
+            vertices += [1. - math.cos(theta), math.sin(theta), 0.]
         self.shifted_circle = make_vbo(vertices)
 
         # unit parabola centered on (0, 0)
