@@ -75,23 +75,21 @@ class PickingGUI(gui.hud.HUD):
         r = search_radius
         size = 2*r + 1
         red = glReadPixels(x-r, y-r, size, size, GL_RED, GL_UNSIGNED_BYTE)
+        # in Python 2, str of "ASCII bytes"
+        # in Python 3, grid of int
 
-        if isinstance(red[0], str):  # Python 2
-            red = map(ord, red)
+        if isinstance(red, str):  # Python 2
+            # make it list of int
+            red = list(map(ord, red))
 
-        # make a grid
-        red = [red[i:i+size] for i in range(0, len(red), size)]
+            # make it a grid
+            red = [red[i:i+size] for i in range(0, len(red), size)]
 
         # find best match
         best = float("inf")
         closest = 0
         for i, row in enumerate(red):
             for j, pixel in enumerate(row):
-                try:  # Python 2
-                    pixel = ord(pixel)
-                except TypeError:  # Python 3
-                    pass
-
                 # no match
                 if pixel == 0:
                     continue
