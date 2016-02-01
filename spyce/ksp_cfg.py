@@ -155,8 +155,3 @@ class PartSet(object):
 
     def make(self, *names):
         return {copy.copy(self.parts[name]) for name in names}
-
-
-if __name__ == "__main__":
-    parts = get_parts()
-    print("%u parts loaded" % len(parts))
