@@ -1,11 +1,18 @@
 #!/bin/bash
 set -e
+cd $(dirname $0)
+
+cd spyce/
 
 echo "Running test for python2"
-python2 tests.py
+python2-coverage run -m unittest discover
+python2-coverage report
 
 echo "Running test for python3"
-python3 tests.py
+python3-coverage run -m unittest discover
+python3-coverage report
+
+cd ..
 
 echo "Checking compliance with PEP 8"
-git ls-tree -z --name-only HEAD *.py | xargs -0 pep8
+git ls-tree -rz --name-only HEAD | grep -z '\.py$' | xargs -0 pep8
