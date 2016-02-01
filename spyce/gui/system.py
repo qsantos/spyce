@@ -40,7 +40,7 @@ class SystemGUI(gui.picking.PickingGUI):
         # VBOs for drawing orbits
 
         # unit circle centered on (0, 0)
-        n = 1024
+        n = 512
         vertices = []
         for i in range(n):
             x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
@@ -49,7 +49,7 @@ class SystemGUI(gui.picking.PickingGUI):
         self.circle = make_vbo(vertices)
 
         # unit circle centered on (1, 0)
-        n = 1023
+        n = 256
         vertices = []
         for i in range(n):
             x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
@@ -58,7 +58,7 @@ class SystemGUI(gui.picking.PickingGUI):
         self.shifted_circle = make_vbo(vertices)
 
         # unit parabola centered on (0, 0)
-        n = 1024
+        n = 256
         vertices = []
         for i in range(n):
             x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
@@ -131,9 +131,9 @@ class SystemGUI(gui.picking.PickingGUI):
 
         # draw circle or parabola
         if orbit.eccentricity < 1.:
-            draw_vbo(self.circle, 1024)
+            draw_vbo(self.circle, 512)
         else:
-            draw_vbo(self.parabola, 1024)
+            draw_vbo(self.parabola, 256)
         vbo = self.circle if orbit.eccentricity < 1. else self.parabola
 
         # apses
@@ -205,7 +205,7 @@ class SystemGUI(gui.picking.PickingGUI):
             anomaly = orbit.eccentric_anomaly(self.time)
             glRotate(math.degrees(anomaly) - 180., 0, 0, 1)
 
-            draw_vbo(self.shifted_circle, 1024)
+            draw_vbo(self.shifted_circle, 256)
 
             glPopMatrix()
 
