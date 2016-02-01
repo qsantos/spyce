@@ -40,29 +40,30 @@ class SystemGUI(gui.picking.PickingGUI):
         # VBOs for drawing orbits
 
         # unit circle centered on (0, 0)
-        n = 1023
+        n = 1024
         vertices = []
         for i in range(n):
-            t = math.pi * (2.*i/n - 1)
-            vertices += [math.cos(t), math.sin(t), 0.]
-        vertices += [-1., 0., 0.]  # close the loop
+            x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
+            theta = math.pi * x
+            vertices += [math.cos(theta), math.sin(theta), 0.]
         self.circle = make_vbo(vertices)
 
         # unit circle centered on (1, 0)
         n = 1023
         vertices = []
         for i in range(n):
-            theta = math.pi * (2.*i/n - 1)
+            x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
+            theta = math.pi * x
             vertices += [1. + math.cos(theta), math.sin(theta), 0.]
-        vertices += [0., 0., 0.]  # close the loop
         self.shifted_circle = make_vbo(vertices)
 
         # unit parabola centered on (0, 0)
         n = 1024
         vertices = []
         for i in range(n):
-            t = math.pi * (2.*i/n - 1)
-            vertices += [math.cosh(t), math.sinh(t), 0.]
+            x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
+            theta = math.pi * x
+            vertices += [math.cosh(theta), math.sinh(theta), 0.]
         self.parabola = make_vbo(vertices)
 
         # make call lists for orbits
