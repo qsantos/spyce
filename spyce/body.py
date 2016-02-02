@@ -82,6 +82,8 @@ class CelestialBody(object):
         """
         if distance is None:
             distance = self.radius
+        if not distance:
+            return 0.
         mu = self.gravitational_parameter
         if distance < self.radius:
             # see https://en.wikipedia.org/wiki/Shell_theorem
