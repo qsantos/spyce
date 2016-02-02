@@ -11,6 +11,7 @@ class PickingGUI(gui.hud.HUD):
         self.pick_shader = main_program()
         self.pick_enabled = False
         self.pick_current_name = 0
+        self.shader_reset()
 
     def add_pick_object(self, thing, primitive_group=None):
         """Add thing to pick list and setup shader"""
