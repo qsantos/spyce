@@ -147,23 +147,7 @@ class Scene(object):
 
     def main(self):
         """Main loop"""
-        # use glutMainLoop() to save CPU time
-        last = time.time()
-        while self.is_running:
-            glutMainLoopEvent()
-
-            # passage of time
-            now = time.time()
-            elapsed = now - last
-            last = now
-
-            # avoid wasting cycles
-            pause = 1./60 - elapsed
-            if pause > 0.:
-                time.sleep(pause)
-
-            self.update()
-        glutCloseFunc(None)
+        glutMainLoop()
 
 if __name__ == '__main__':
     Scene().main()
