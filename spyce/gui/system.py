@@ -11,7 +11,6 @@ from gui.graphics import *
 class SystemGUI(gui.picking.PickingGUI):
     """GUI for showing planetary system"""
     def __init__(self, focus, texture_directory=None):
-        title = b'Spaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaace'
         title = b'Sp' + b'a'*42 + b'ce'
         super(SystemGUI, self).__init__(title)
 
