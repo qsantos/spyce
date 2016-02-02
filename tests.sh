@@ -5,12 +5,22 @@ cd $(dirname $0)
 cd spyce/
 
 echo "Running test for python2"
-python2-coverage run --source . -m unittest discover
-python2-coverage report
+if python2-coverage 2>&1 >/dev/null
+then
+    python2-coverage run --source . -m unittest discover
+    python2-coverage report
+else
+    python2 -m unittest discover
+fi
 
 echo "Running test for python3"
-python3-coverage run --source . -m unittest discover
-python3-coverage report
+if python3-coverage 2>&1 >/dev/null
+then
+    python3-coverage run --source . -m unittest discover
+    python3-coverage report
+else
+    python3 -m unittest discover
+fi
 
 cd ..
 
