@@ -138,4 +138,4 @@ class CelestialBody(object):
 
     def angular_diameter(self, distance):
         """Angular diameter / apparent size at a given distance (m)"""
-        return math.atan(self.radius/distance)
+        return 2 * math.asin(self.radius/distance)
