@@ -10,84 +10,76 @@ import math
 
 
 class Vector(list):
-    def norm(self):
-        x, y, z = self
-        return math.sqrt(x*x + y*y + z*z)
+    def norm(u):
+        return math.sqrt(u.dot(u))
 
-    def __mul__(self, s):
-        x, y, z = self
+    def dot(u, v):
+        """Dot product"""
+        u1, u2, u3 = u
+        v1, v2, v3 = v
+        return math.fsum([u1*v1, u2*v2, u3*v3])
+
+    def cross(u, v):
+        """Cross product"""
+        u1, u2, u3 = u
+        v1, v2, v3 = v
+        return Vector([
+            u2*v3 - u3*v2,
+            u3*v1 - u1*v3,
+            u1*v2 - u2*v1,
+        ])
+
+    def angle(u, v):
+        """Angle formed by two vectors"""
+        r = u.dot(v)/u.norm()/v.norm()
+        r = max(-1, min(1, r))
+        return math.acos(r)
+
+    def oriented_angle(u, v, normal=None):
+        """Angle formed by two vectors"""
+        if normal is None:
+            normal = Vector([0, 0, 1])
+        geometric_angle = u.angle(v)
+        if normal.dot(u.cross(v)) < 0:
+            return -geometric_angle
+        else:
+            return geometric_angle
+
+    def __mul__(u, s):
+        x, y, z = u
         return Vector([x*s, y*s, z*s])
 
-    def __div__(self, s):
-        x, y, z = self
+    def __div__(u, s):
+        x, y, z = u
         return Vector([x/s, y/s, z/s])
 
-    def __add__(self, v):
-        x, y, z = self
+    def __add__(u, v):
+        x, y, z = u
         a, b, c = v
         return Vector([x+a, y+b, z+c])
 
-    def __iadd__(self, v):
-        x, y, z = self
+    def __iadd__(u, v):
+        x, y, z = u
         a, b, c = v
         return Vector([x+a, y+b, z+c])
 
-    def __sub__(self, v):
-        x, y, z = self
+    def __sub__(u, v):
+        x, y, z = u
         a, b, c = v
         return Vector([x-a, y-b, z-c])
 
-    def __isub__(self, v):
-        x, y, z = self
+    def __isub__(u, v):
+        x, y, z = u
         a, b, c = v
         return Vector([x-a, y-b, z-c])
 
-    def __neg__(self):
-        x, y, z = self
+    def __neg__(u):
+        x, y, z = u
         return Vector([-x, -y, -z])
 
-    def __abs__(self):
+    def __abs__(u):
         """Maximum metric (see Chebyshev distance)"""
-        return max(self)
-
-
-def dot(u, v):
-    """Dot product of vectors"""
-    u1, u2, u3 = u
-    v1, v2, v3 = v
-    return math.fsum([u1*v1, u2*v2, u3*v3])
-
-
-def norm(u):
-    """Norm of a vector"""
-    return math.sqrt(dot(u, u))
-
-
-def cross(u, v):
-    """Cross product of vectors"""
-    u1, u2, u3 = u
-    v1, v2, v3 = v
-    return [
-        u2*v3 - u3*v2,
-        u3*v1 - u1*v3,
-        u1*v2 - u2*v1,
-    ]
-
-
-def angle(u, v):
-    """Angle formed by two vectors"""
-    r = dot(u, v)/norm(u)/norm(v)
-    r = max(-1, min(1, r))
-    return math.acos(r)
-
-
-def oriented_angle(u, v, normal=[0, 0, 1]):
-    """Angle formed by two vectors"""
-    geometric_angle = angle(u, v)
-    if dot(normal, cross(u, v)) < 0:
-        return -geometric_angle
-    else:
-        return geometric_angle
+        return max(u)
 
 
 class Matrix(list):

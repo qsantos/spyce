@@ -170,49 +170,49 @@ class Orbit(object):
         epoch:    time of the position and velocity (s)
         """
 
-        distance = vector.norm(position)
-        speed = vector.norm(velocity)
+        distance = position.norm()
+        speed = velocity.norm()
         mu = primary.gravitational_parameter
 
-        x_axis = [1, 0, 0]
-        z_axis = [0, 0, 1]
-        orbital_plane_normal_vector = vector.cross(position, velocity)
+        x_axis = vector.Vector([1, 0, 0])
+        z_axis = vector.Vector([0, 0, 1])
+        orbital_plane_normal_vector = position.cross(velocity)
 
         # eccentricity
-        rv = vector.dot(position, velocity)
-        eccentricity_vector = [
+        rv = position.dot(velocity)
+        eccentricity_vector = vector.Vector([
             (speed**2 * p - rv*v)/mu - p/distance
             for p, v in zip(position, velocity)
-        ]
-        eccentricity = vector.norm(eccentricity_vector)
+        ])
+        eccentricity = eccentricity_vector.norm()
 
         # periapsis
         # from r(t) = 1 / mu * h / (1 + e cos t)
-        specific_angular_momentum = vector.norm(orbital_plane_normal_vector)
+        specific_angular_momentum = orbital_plane_normal_vector.norm()
         periapsis = specific_angular_momentum**2 / mu / (1 + eccentricity)
         periapsis_dir = eccentricity_vector if eccentricity else x_axis
 
         # inclination
-        inclination = vector.angle(orbital_plane_normal_vector, z_axis)
+        inclination = orbital_plane_normal_vector.angle(z_axis)
 
         # direction of the ascending node
         if inclination in (0, math.pi):
             ascend_node_dir = x_axis
         else:
-            ascend_node_dir = vector.cross(z_axis, orbital_plane_normal_vector)
+            ascend_node_dir = z_axis.cross(orbital_plane_normal_vector)
 
         # longitude of ascending node
-        longitude_of_ascending_node = vector.angle(x_axis, ascend_node_dir)
+        longitude_of_ascending_node = x_axis.angle(ascend_node_dir)
         if orbital_plane_normal_vector[0] < 0:
             longitude_of_ascending_node = - longitude_of_ascending_node
 
         # argument of periapsis
-        argument_of_periapsis = vector.oriented_angle(
-            ascend_node_dir, periapsis_dir, orbital_plane_normal_vector)
+        argument_of_periapsis = ascend_node_dir.oriented_angle(
+            periapsis_dir, orbital_plane_normal_vector)
 
         # true anomaly at epoch
-        true_anomaly_at_epoch = vector.oriented_angle(
-            periapsis_dir, position, orbital_plane_normal_vector)
+        true_anomaly_at_epoch = periapsis_dir.oriented_angle(
+            position, orbital_plane_normal_vector)
 
         # mean anomaly from true anomaly
         v = true_anomaly_at_epoch
@@ -289,9 +289,9 @@ class Orbit(object):
         e = self.eccentricity
 
         x = self.semi_latus_rectum*e*s/(1+e*c)**2
-        v = [-distance*s + x*c, distance*c + x*s, 0]
+        v = vector.Vector([-distance*s + x*c, distance*c + x*s, 0])
 
-        norm_v = vector.norm(v)
+        norm_v = v.norm()
         speed = self.speed(true_anomaly)
         v = [x/norm_v*speed for x in v]
         v = self.transform * v

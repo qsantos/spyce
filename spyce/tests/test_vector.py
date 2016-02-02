@@ -3,11 +3,23 @@ import unittest
 import math
 import random
 
-from vector import *
+from vector import Vector, Matrix
 
 
 class TestVector(unittest.TestCase):
     def test_vector(self):
+
+        # shorthands
+        def norm(u): return Vector(u).norm()
+
+        def dot(u, v): return Vector(u).dot(Vector(v))
+
+        def cross(u, v): return Vector(u).cross(Vector(v))
+
+        def angle(u, v): return Vector(u).angle(Vector(v))
+
+        def oriented_angle(u, v): return Vector(u).oriented_angle(Vector(v))
+
         # easily verified
         self.assertEqual(dot([1, 0, 0], [0, 1, 1]), 0)
         self.assertEqual(norm([8, 9, 12]), 17)
@@ -19,10 +31,10 @@ class TestVector(unittest.TestCase):
         self.assertEqual(dot([1, 4, 7], [2, 5, 8]), 78)
         self.assertEqual(norm([4, 5, 6]), 8.774964387392123)
         self.assertEqual(cross([9, 8, 7], [2, 3, 1]), [-13, 5, 11])
-        self.assertEqual(angle([4, 7, 5], [3, 5, 8]), 0.3861364787976416)
-        self.assertEqual(angle([4, 7, 5], [3, 5, 8]), 0.3861364787976416)
 
         v = 0.3861364787976416
+        self.assertEqual(angle([4, 7, 5], [3, 5, 8]), v)
+        self.assertEqual(angle([4, 7, 5], [3, 5, 8]), v)
         self.assertEqual(oriented_angle([4, 7, 5], [3, 5, 8]), -v)
         self.assertEqual(oriented_angle([4, 5, 7], [3, 8, 5]), +v)
 
@@ -49,9 +61,9 @@ class TestVector(unittest.TestCase):
             x = random.uniform(0, 1)
             y = random.uniform(0, 1)
             r = Matrix.rotation(a, 0, 0, 1)
-            u = [x, y, 0]
+            u = Vector([x, y, 0])
             v = r * u
-            self.assertAlmostEqual(a, angle(u, v))
+            self.assertAlmostEqual(a, u.angle(v))
 
         m = Matrix([
             [0.33482917221585295, 0.8711838511445769, -0.3590656248350022],
