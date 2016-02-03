@@ -29,9 +29,6 @@ assert tt_to_j2000(2010, 6, 2) == tt_to_j2000(2010, 1, 153)
 assert tt_to_j2000(2004, 4, 4.25) == tt_to_j2000(2004, 4, 4, 6)
 
 
-epoch = tt_to_j2000(2015, 1, 1, 12)
-
-
 def get_sun_physics(bodies):
     """Get physical information of the Sun"""
 
@@ -84,6 +81,8 @@ def get_planets_orbits(bodies):
     # extract data from table
     lines = html.split("\n")
     lines = [re.split("\s{2,}", line) for line in lines[16:]]
+
+    epoch = tt_to_j2000(2015, 1, 1, 12)
 
     for i in range(0, len(lines)-1, 2):
         name = lines[i][0]
@@ -238,6 +237,8 @@ def get_dwarf_planet_data(bodies, name):
     # extract epoch
     pattern = "<b>Orbital Elements at Epoch ([0-9]+(\.[0-9])?) "
     epoch = re.search(pattern, html).group(1)
+    epoch = float(epoch) - 2451545.0  # shift from Julian Date to J2000
+    epoch *= 86400  # convert from Julian days to seconds
 
     # extract orbital information
     pattern = "<tr.*>(.*)</a></font></td> <td.*?><font.*?>(.*?)</font></td>"
@@ -251,7 +252,7 @@ def get_dwarf_planet_data(bodies, name):
         "inclination": math.radians(float(elements["i"])),
         "longitude_of_ascending_node": math.radians(float(elements["node"])),
         "argument_of_periapsis": math.radians(float(elements["peri"])),
-        "epoch": float(epoch) * 86400,
+        "epoch": epoch,
         "mean_anomaly_at_epoch": math.radians(float(elements["M"])),
     }
 
