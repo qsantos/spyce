@@ -252,7 +252,7 @@ class SystemGUI(gui.picking.PickingGUI):
             if satellite != skip:
                 self.add_pick_object(satellite)
                 glPushMatrix()
-                glColor4f(1.0, 1.0, 0.0, 1.0)
+                glColor4f(1.0, 1.0, 0.0, 0.2)
                 if hasattr(satellite.orbit, "call_list"):
                     glCallList(satellite.orbit.call_list)
                 else:
