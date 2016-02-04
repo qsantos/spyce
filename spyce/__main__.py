@@ -1,19 +1,26 @@
-import os
-import readline
-import rlcompleter
 import code
 
 import interact
 
-completer = rlcompleter.Completer(interact.namespace)
-readline.set_completer(completer.complete)
-readline.parse_and_bind("tab: complete")
 
-histfile = os.path.join(os.path.expanduser("~"), ".spyce_history")
 try:
-    readline.read_history_file(histfile)
-except:  # FileNotFoundError in Python 3, IOError in Python 2
+    import readline
+except ImportError:  # Windows
     pass
+else:
+    import os
+    import rlcompleter
+
+    completer = rlcompleter.Completer(interact.namespace)
+    readline.set_completer(completer.complete)
+    readline.parse_and_bind("tab: complete")
+
+    histfile = os.path.join(os.path.expanduser("~"), ".spyce_history")
+    try:
+        readline.read_history_file(histfile)
+    except:  # FileNotFoundError in Python 3, IOError in Python 2
+        pass
+
 
 banner = """===== Welcome to Spyce! =====
 Session example:
@@ -34,4 +41,7 @@ Session example:
 
 code.interact(banner=banner, local=interact.namespace)
 
-readline.write_history_file(histfile)
+try:
+    readline.write_history_file(histfile)
+except NameError:  # Windows
+    pass
