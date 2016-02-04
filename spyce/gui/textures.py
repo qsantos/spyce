@@ -1,3 +1,33 @@
+import os
+from OpenGL.GLU import *
+from OpenGL.GL import *
+
+
+def init():
+    glEnable(GL_TEXTURE_2D)
+
+    # fill default texture with white
+    # (for some reasons, this is not the default behavior)
+    glBindTexture(GL_TEXTURE_2D, 0)
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_FLOAT,
+        [1., 1., 1., 1.]  # opaque white pixel
+    )
+
+
+def bind(tex_id, default_color=(1.0, 1.0, 1.0)):
+    if tex_id == 0:
+        r, g, b = default_color
+        glColor4f(r, g, b, 1.0)
+    else:
+        glColor4f(1.0, 1.0, 1.0, 1.0)
+        glBindTexture(GL_TEXTURE_2D, tex_id)
+
+
+def unbind():
+    glBindTexture(GL_TEXTURE_2D, 0)
+
+
 try:
     from PIL import Image
 except ImportError:
@@ -7,33 +37,9 @@ except ImportError:
     else:  # Python 2
         sys.stderr.write("Install python-pil for textures\n")
 
-    def init():
-        pass
-
     def load(*_, **__):
         return 0
-
-    def bind(*_, **__):
-        pass
-
-    def unbind(*_, **__):
-        pass
 else:
-    import os
-    from OpenGL.GLU import *
-    from OpenGL.GL import *
-
-    def init():
-        glEnable(GL_TEXTURE_2D)
-
-        # fill default texture with white
-        # (for some reasons, this is not the default behavior)
-        glBindTexture(GL_TEXTURE_2D, 0)
-        glTexImage2D(
-            GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_FLOAT,
-            [1., 1., 1., 1.]  # opaque white pixel
-        )
-
     def load(*path):
         filename = os.path.join("data", "textures", *path)
         try:
@@ -61,14 +67,3 @@ else:
         glBindTexture(GL_TEXTURE_2D, 0)
 
         return new_tex
-
-    def bind(tex_id, default_color=(1.0, 1.0, 1.0)):
-        if tex_id == 0:
-            r, g, b = default_color
-            glColor4f(r, g, b, 1.0)
-        else:
-            glColor4f(1.0, 1.0, 1.0, 1.0)
-            glBindTexture(GL_TEXTURE_2D, tex_id)
-
-    def unbind():
-        glBindTexture(GL_TEXTURE_2D, 0)
