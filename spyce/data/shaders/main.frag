@@ -1,3 +1,5 @@
+#version 110
+
 uniform sampler2D Texture0;
 
 varying float flogz; // fixed depth
