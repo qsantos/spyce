@@ -3,8 +3,9 @@
 void shader()
 {
 	// clip to circle
-	vec2 pos = gl_PointCoord * gl_FragCoord.w;
-	vec2 center = vec2(.5, .5);
-	if (distance(pos, center) > .5)
+	vec2 pos = gl_PointCoord * gl_FragCoord.z;
+	vec2 center = vec2(.25, .25);
+	float d = distance(pos, center);
+	if (d > .25)
 		gl_FragColor = vec4(0, 0, 0, 0);
 }
