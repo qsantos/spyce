@@ -33,15 +33,17 @@ def make_shader(program, filename):
         type_ = GL_FRAGMENT_SHADER
     else:
         raise Exception("Unable to determine type of shader '%s'" % filename)
-    filename = os.path.join("data", "shaders", filename)
-    source = open(filename).read()
+    path = os.path.join("data", "shaders", filename)
+    source = open(path).read()
 
     shader = glCreateShader(type_)
     glShaderSource(shader, source)
     glCompileShader(shader)
     error = glGetShaderInfoLog(shader)
     if error:
-        raise SyntaxError(error)
+        # filename in messages for locating error
+        error = error.decode().replace('0:', filename+':')
+        raise SyntaxError('while compiling shaders\n' + error)
     glAttachShader(program, shader)
 
 
