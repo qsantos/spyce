@@ -76,13 +76,17 @@ class PickingGUI(gui.hud.HUD):
         r = search_radius
         size = 2*r + 1
         red = glReadPixels(x-r, y-r, size, size, GL_RED, GL_UNSIGNED_BYTE)
-        # in Python 2, str of "ASCII bytes"
-        # in Python 3, grid of int
+        # in Python 3: grid of int
+        # in Python 2: str of "ASCII bytes"
+        # in Windows: bytes
 
-        if isinstance(red, str):  # Python 2
+        if isinstance(red, str):
             # make it list of int
             red = list(map(ord, red))
 
+        try:
+            red[0][0]
+        except TypeError:
             # make it a grid
             red = [red[i:i+size] for i in range(0, len(red), size)]
 
