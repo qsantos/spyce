@@ -34,7 +34,7 @@ class SystemGUI(gui.picking.PickingGUI):
             self.system = self.system.orbit.primary
 
         glEnable(GL_POINT_SPRITE)
-        self.shader_smooth_point = main_program(None, "smooth_point.frag")
+        self.shader_position_marker = main_program(None, "circle_point.frag")
 
         # VBOs for drawing orbits
 
@@ -314,9 +314,9 @@ class SystemGUI(gui.picking.PickingGUI):
         # draw spheres of constant visible radius at body positions
         glPointSize(20)
         glDepthMask(False)
-        self.shader_set(self.shader_smooth_point)
+        self.shader_set(self.shader_position_marker)
         glBegin(GL_POINTS)
-        glColor4f(1, 1, 1, 0.5)
+        glColor4f(1, 0, 0, 0.5)
         self.draw_system_points(self.focus, vector.Vector([0, 0, 0]))
         glEnd()
         self.shader_reset()
