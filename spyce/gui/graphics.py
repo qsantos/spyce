@@ -77,6 +77,7 @@ def glut_callback(f):
             return f(self, *args, **kwargs)
         except Exception as e:
             self.is_running = False
+            glutLeaveMainLoop()
 
             # propagate exception with complete traceback
             if hasattr(e, "with_traceback"):  # Python 3
