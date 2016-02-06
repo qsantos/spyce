@@ -27,6 +27,7 @@ class Scene(object):
         # callbacks
         glutDisplayFunc(self.displayFunc)
         glutKeyboardFunc(self.keyboardFunc)
+        glutSpecialFunc(self.specialFunc)
         glutReshapeFunc(self.reshapeFunc)
         glutMotionFunc(self.motionFunc)
         glutPassiveMotionFunc(self.passiveMotionFunc)
@@ -73,6 +74,11 @@ class Scene(object):
         if k == b'\x1b':  # escape
             self.is_running = False
             glutLeaveMainLoop()
+
+    @glut_callback
+    def specialFunc(self, k, x, y):
+        """Handle special key presses (GLUT callback)"""
+        pass
 
     def projection_matrix(self):
         """Make projection matrix"""
