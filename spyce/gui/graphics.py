@@ -71,7 +71,7 @@ def main_program(vertex_shader=None, fragment_shader=None):
 
 
 def glut_callback(f):
-    """Wraps a GLUT callback method so that exceptions are not ignored"""
+    """Wrap a GLUT callback method so that exceptions are not ignored"""
     def wrapper(self, *args, **kwargs):
         try:
             return f(self, *args, **kwargs)

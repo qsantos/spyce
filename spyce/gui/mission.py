@@ -20,7 +20,7 @@ class MissionGUI(gui.simulation.SimulationGUI):
         glEnable(GL_ALPHA_TEST)
 
     def draw_rocket(self):
-        """Represent the rocket on the screen"""
+        """Draw the rocket"""
 
         glPushMatrix()
         glScalef(1e4, 1e4, 1e4)

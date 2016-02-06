@@ -8,7 +8,7 @@ import math
 
 
 def _(tabulated, uncertainty=None, computed=None):
-    """Checks tabulated against computed values"""
+    """Check tabulated against computed values"""
     if computed is None:
         return tabulated
 

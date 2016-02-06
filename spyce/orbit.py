@@ -11,15 +11,14 @@ class InvalidElements(Exception):
 class Orbit(object):
     """Kepler orbit
 
-    Allow to define an orbit in a number of way (see class methods)
-    and to retrieve the position and velocity from various parameters.
+    Two-body approximation of a body orbiting a mass-point.
     """
     def __init__(
         self, primary, periapsis, eccentricity=0,
         inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
         epoch=0, mean_anomaly_at_epoch=0, **_
     ):
-        """Definition of an orbit from the usual orbital parameters
+        """Orbit from the orbital elements
 
         Arguments:
         primary                     object with a "gravitational_parameter"
@@ -78,7 +77,7 @@ class Orbit(object):
         inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
         epoch=0, mean_anomaly_at_epoch=0, **_
     ):
-        """Defines an orbit from semi-major axis (m) and eccentricity (-)"""
+        """Orbit from semi-major axis (m) and eccentricity (-)"""
 
         if eccentricity < 1 and semi_major_axis <= 0:
             raise InvalidElements("eccentricity < 1 but semi-major axis <= 0")
@@ -99,7 +98,7 @@ class Orbit(object):
         inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
         epoch=0, mean_anomaly_at_epoch=0, **_
     ):
-        """Defines an orbit from periapsis (m) and apoapsis (m)"""
+        """Orbit from periapsis (m) and apoapsis (m)"""
 
         periapsis = min(abs(apsis1), abs(apsis2))
 
@@ -120,7 +119,7 @@ class Orbit(object):
         inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
         epoch=0, mean_anomaly_at_epoch=0, **_
     ):
-        """Defines an orbit from orbital period (s)"""
+        """Orbit from orbital period (s)"""
 
         period = float(period)
         mu = primary.gravitational_parameter
@@ -142,7 +141,7 @@ class Orbit(object):
         inclination=0, longitude_of_ascending_node=0, argument_of_periapsis=0,
         epoch=0, mean_anomaly_at_epoch=0, **_
     ):
-        """Defines an orbit from orbital period (s) and one apsis (m)"""
+        """Orbit from orbital period (s) and one apsis (m)"""
 
         period = float(period)
         mu = primary.gravitational_parameter
@@ -159,7 +158,7 @@ class Orbit(object):
     # inspired from https://space.stackexchange.com/questions/1904/#1919
     @classmethod
     def from_state(cls, primary, position, velocity, epoch=0):
-        """Defines an orbit from position and velocity
+        """Orbit from position and velocity
 
         The state is given in a referential centered on the primary.
 
@@ -241,7 +240,7 @@ class Orbit(object):
         )
 
     def visviva(self, distance):
-        """Computes the orbital speed at a given distance from the focus
+        """Orbital speed at a given distance from the focus
 
         This is an implementation of the vis-viva equation:
         speed**2 / (GM) = 2/distance - 1/semi_major_axis
@@ -254,25 +253,25 @@ class Orbit(object):
         return math.sqrt(mu * (2./distance - 1./self.semi_major_axis))
 
     def visviva_peri(self):
-        """Computes the orbital speed at periapsis"""
+        """Orbital speed at periapsis"""
         return self.visviva(self.periapsis)
 
     def visviva_apo(self):
-        """Computes the orbital speed at apoapsis"""
+        """Orbital speed at apoapsis"""
         return self.visviva(self.apoapsis)
 
     def distance(self, true_anomaly):
-        """Computes the distance from focus (m) at given true anomaly (rad)"""
+        """Distance from focus (m) at a given true anomaly (rad)"""
         c = math.cos(true_anomaly)
         return self.semi_latus_rectum / (1 + self.eccentricity*c)
 
     def speed(self, true_anomaly):
-        """Computes the orbital speed (m/s) at a given true anomaly (rad)"""
+        """Orbital speed (m/s) at a given true anomaly (rad)"""
         distance = self.distance(true_anomaly)
         return self.visviva(distance)
 
     def position(self, true_anomaly):
-        """Computes the position vector at a given true anomaly (rad)"""
+        """Position vector at a given true anomaly (rad)"""
         distance = self.distance(true_anomaly)
         c = math.cos(true_anomaly)
         s = math.sin(true_anomaly)
@@ -281,7 +280,7 @@ class Orbit(object):
         return x
 
     def velocity(self, true_anomaly):
-        """Computes the velocity vector at a given true anomaly (rad)"""
+        """Velocity vector at a given true anomaly (rad)"""
         distance = self.distance(true_anomaly)
 
         c = math.cos(true_anomaly)
@@ -298,12 +297,12 @@ class Orbit(object):
         return v
 
     def mean_anomaly(self, time):
-        """Computes the mean anomaly at a given time (s)"""
+        """Mean anomaly at a given time (s)"""
         time_since_epoch = time - self.epoch
         return self.mean_anomaly_at_epoch + self.mean_motion * time_since_epoch
 
     def eccentric_anomaly(self, time):
-        """Computes the eccentric anomaly at a given time (s)"""
+        """Eccentric anomaly at a given time (s)"""
         M = self.mean_anomaly(time)
         e = self.eccentricity
 
@@ -331,7 +330,7 @@ class Orbit(object):
             )
 
     def true_anomaly(self, time):
-        """Computes the true anomaly at a given time (s)"""
+        """True anomaly at a given time (s)"""
         if self.eccentricity < 1:  # circular or elliptic orbit
             E = self.eccentric_anomaly(time)
             x = math.sqrt(1-self.eccentricity)*math.cos(E/2)
@@ -351,11 +350,11 @@ class Orbit(object):
         return true_anomaly
 
     def position_t(self, time):
-        """Computes the position vector at a given time (s)"""
+        """Position vector at a given time (s)"""
         return self.position(self.true_anomaly(time))
 
     def velocity_t(self, time):
-        """Computes the velocity vector at a given time (s)"""
+        """The velocity vector at a given time (s)"""
         return self.velocity(self.true_anomaly(time))
 
 

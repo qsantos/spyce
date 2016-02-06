@@ -4,7 +4,14 @@ import gui.textures
 
 
 class Skybox(object):
+    """Simulate the sky with a textured box"""
+
     def __init__(self, *path):
+        """Create a skybox
+
+        Arguments are joined together to make the paths to the textures. Last
+        argument should be a pattern with a "%s", which will be completed as
+        "PositiveX", "NegativeY" and so on."""
         self.faces = []
         path, file_pattern = list(path[:-1]), path[-1]
         for coordinate in "XYZ":
@@ -14,6 +21,7 @@ class Skybox(object):
                 self.faces.append(texture)
 
     def draw(self, size):
+        """Draw a skybox of given size"""
         glCullFace(GL_FRONT)
         glPushMatrix()
         glScale(size, size, size)

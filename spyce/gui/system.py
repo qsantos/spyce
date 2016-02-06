@@ -9,7 +9,7 @@ from gui.graphics import *
 
 
 class SystemGUI(gui.picking.PickingGUI):
-    """GUI for showing planetary system"""
+    """GUI for showing a planetary system"""
     def __init__(self, focus, texture_directory=None):
         title = b'Sp' + b'a'*42 + b'ce'
         super(SystemGUI, self).__init__(title)
@@ -118,7 +118,7 @@ class SystemGUI(gui.picking.PickingGUI):
         return cls(body, texture_directory)
 
     def draw_orbit(self, orbit):
-        """Draw an orbit centered on its focus"""
+        """Draw an orbit using focus as origin"""
         glPushMatrix()
 
         # make tilted ellipse from a circle or tilted hyperbola from a parabola
@@ -146,7 +146,7 @@ class SystemGUI(gui.picking.PickingGUI):
         glPopMatrix()
 
     def draw_orbit_focused(self, body):
-        """Draw on orbit centered on the object current position"""
+        """Draw on orbit using current position as origin"""
 
         # issues when drawing the orbit a focused body:
         # 1. moving to system center and back close to camera induces
@@ -295,7 +295,7 @@ class SystemGUI(gui.picking.PickingGUI):
             self.draw_satellite_points(satellite, new_offset, body, max_depth)
 
     def draw_system_points(self, body, offset, skip=None):
-        """Draw the whole system a body belongs to as points"""
+        """Draw the whole system as points"""
         self.draw_satellite_points(body, offset, skip, 1)
 
         self.add_pick_object(body, GL_POINTS)

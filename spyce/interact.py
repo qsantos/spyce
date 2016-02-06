@@ -25,7 +25,7 @@ namespace["__name__"] = "spyce"
 
 
 def ask(prompt, default=None):
-    """Interactively asks for a value or evaluable expression"""
+    """Interactively ask for a value or evaluable expression"""
     try:  # Python 2
         line = raw_input(prompt)
     except NameError:  # Python 3
@@ -35,7 +35,7 @@ def ask(prompt, default=None):
 
 @classmethod
 def ask_orbit(cls):
-    """Interactively asks orbital elements"""
+    """Interactively ask orbital elements"""
     args = {}
     args["primary"] = ask("Primary [Kerbin]: ", load.kerbol["Kerbin"])
 

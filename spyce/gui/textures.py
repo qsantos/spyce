@@ -4,6 +4,7 @@ from OpenGL.GL import *
 
 
 def init():
+    """Set relevant OpenGL options"""
     glEnable(GL_TEXTURE_2D)
 
     # fill default texture with white
@@ -16,6 +17,7 @@ def init():
 
 
 def bind(tex_id, default_color=(1.0, 1.0, 1.0)):
+    """Bind texture if non-null; otherwise fill with default color"""
     if tex_id == 0:
         r, g, b = default_color
         glColor4f(r, g, b, 1.0)
@@ -25,6 +27,7 @@ def bind(tex_id, default_color=(1.0, 1.0, 1.0)):
 
 
 def unbind():
+    """Unbind texture"""
     glBindTexture(GL_TEXTURE_2D, 0)
 
 
@@ -38,9 +41,13 @@ except ImportError:
         sys.stderr.write("Install python-pil for textures\n")
 
     def load(*_, **__):
+        """No texture can be loaded with PIL; return dummy texture 0"""
         return 0
 else:
     def load(*path):
+        """Make texture from file at given path (join arguments)
+
+        If loading the file fails, return dummy texture 0"""
         filename = os.path.join("data", "textures", *path)
         try:
             im = Image.open(filename)

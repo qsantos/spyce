@@ -21,7 +21,7 @@ def euler(f, t, y, h):
     """Euler method
 
     Run a numerical integration step `h` on `y` of derivative `f` along `t`"""
-    # equivalent of
+    # list-equivalent of
     # return y + f(t, y) * h
     return [x+dx*h for x, dx in zip(y, f(t, y))]
 
@@ -31,7 +31,7 @@ def runge_kutta_4(f, t, y, h):
 
     Run a numerical integration step `h` on `y` of derivative `f` along `t`"""
     # notations from https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
-    # equivalent of
+    # list-equivalent of
     # k1 = f(t, y)
     # k2 = f(t + h*0.5, y + k1 * (h*0.5))
     # k3 = f(t + h*0.5, y + k2 * (h*0.5))
