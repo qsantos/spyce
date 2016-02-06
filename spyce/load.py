@@ -2,6 +2,7 @@ import os
 import json
 
 import body
+import date
 import orbit
 
 
@@ -57,4 +58,6 @@ def from_name(name):
 
 
 kerbol['Kerbol']._texture_directory = 'kerbol'
+kerbol['Kerbol'].format_date = date.to_kerbal_date
 solar['Sun']._texture_directory = 'solar'
+solar['Sun'].format_date = date.to_human_date

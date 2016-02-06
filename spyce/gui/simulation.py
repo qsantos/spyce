@@ -25,10 +25,7 @@ class SimulationGUI(gui.system.SystemGUI):
         self.hud_print("Time x%g\n" % self.timewarp)
 
         # display time
-        earth_time = solar['Earth'].time2str(self.time)
-        self.hud_print("Earth time:  %s\n" % earth_time)
-        kerbin_time = kerbol['Kerbin'].time2str(self.time)
-        self.hud_print("Kerbin time: %s\n" % kerbin_time)
+        self.hud_print('Date: %s' % self.system.format_date(self.time))
 
         self.hud_grid(-self.message_log.maxlen-1, 1)
         self.hud_print("Message log:\n")
