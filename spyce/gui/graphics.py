@@ -1,5 +1,6 @@
 import os
 import sys
+import functools
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
@@ -72,6 +73,7 @@ def main_program(vertex_shader=None, fragment_shader=None):
 
 def glut_callback(f):
     """Wrap a GLUT callback method so that exceptions are not ignored"""
+    @functools.wraps(f)
     def wrapper(self, *args, **kwargs):
         try:
             return f(self, *args, **kwargs)
