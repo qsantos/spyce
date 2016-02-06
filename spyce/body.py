@@ -112,27 +112,24 @@ class CelestialBody(object):
 
         See time2str()
         """
-        x = re.search("([0-9]*)y", formatted_time)
-        y = 0 if x is None else int(x.group(1))
-
-        x = re.search("([0-9]*)d", formatted_time)
-        d = 0 if x is None else int(x.group(1))
-
-        time_re = "((([0-9]{1,2}):)?([0-9]{1,2}):)?([0-9]{1,2}(\.[0-9]*)?)$"
-        x = re.search(time_re, formatted_time)
-        h = 0 if x is None else int(x.group(3))
-        m = 0 if x is None else int(x.group(4))
-        s = 0 if x is None else float(x.group(5))
+        regex = re.compile(
+            r"([-+]?)"  # sign
+            r"(?:(\d+)y[\s,]*)?"  # years
+            r"(?:(\d+)d[\s,]*)?"  # days
+            r"(?:"
+            r"(\d+):(\d+)"  # hours:minutes
+            r"(?::(\d+(?:\.\d+)?))?"  # :seconds.fraction
+            r")?"
+        )
+        match = regex.match(formatted_time)
+        groups = match.groups()
+        y, d, h, m, s = (float(group) if group else 0 for group in groups[1:])
 
         s += y * self.orbit.period
         s += d * self.rotational_period
         s += h * 3600
         s += m * 60
-
-        if formatted_time[0] == "-":
-            s = -s
-
-        return s
+        return -s if groups[0] == "-" else s
 
     def escape_velocity(self, distance):
         """Escape velocity at a given distance (m)"""
