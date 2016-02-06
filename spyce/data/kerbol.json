@@ -55,7 +55,7 @@
 	"Kerbin": {
 		"gravitational_parameter": 3531600000000,
 		"radius": 600000,
-		"rotational_period": 21599.91201454015,
+		"rotational_period": 21549.42518308983,
 		"pressure_scale_height": 5000,
 		"pressure_at_sea_level": 101325,
 		"orbit": {
