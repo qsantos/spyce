@@ -90,10 +90,6 @@ class HUD(gui.scene.Scene):
 
     def draw_hud(self):
         """Draw the HUD"""
-        # reset HUD
-        self.texcoords = []
-        self.vertcoords = []
-        self.hud_grid(0, 1)
 
         # compute fps
         self.frame_timings.append(time.time())
@@ -114,6 +110,11 @@ class HUD(gui.scene.Scene):
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
+
+        # reset HUD
+        self.texcoords = []
+        self.vertcoords = []
+        self.hud_grid(0, 1)
 
         # fill vertex lists
         self.draw_hud()
