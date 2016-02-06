@@ -68,6 +68,9 @@ class HUD(gui.scene.Scene):
                 self.hud_x = initial_x
                 self.hud_y += self.character_height
                 continue
+            elif c == "\t":
+                self.hud_x += self.character_width*4
+                continue
 
             # locate the character in the font bitmap
             c = ord(c)
