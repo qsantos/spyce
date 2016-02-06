@@ -21,11 +21,12 @@ class SimulationGUI(gui.system.SystemGUI):
     def draw_hud(self):
         """Draw the HUD"""
 
-        super(SimulationGUI, self).draw_hud()
         self.hud_print("Time x%g\n" % self.timewarp)
 
         # display time
-        self.hud_print('Date: %s' % self.system.format_date(self.time))
+        self.hud_print('Date: %s\n' % self.system.format_date(self.time))
+
+        super(SimulationGUI, self).draw_hud()
 
         self.hud_grid(-self.message_log.maxlen-1, 1)
         self.hud_print("Message log:\n")

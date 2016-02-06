@@ -5,10 +5,11 @@ import vector
 import gui.textures
 import gui.skybox
 import gui.picking
+import gui.terminal
 from gui.graphics import *
 
 
-class SystemGUI(gui.picking.PickingGUI):
+class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
     """GUI for showing a planetary system"""
     def __init__(self, focus):
         title = b'Sp' + b'a'*42 + b'ce'
@@ -334,8 +335,8 @@ class SystemGUI(gui.picking.PickingGUI):
 
     def draw_hud(self):
         """Draw the HUD"""
-        super(SystemGUI, self).draw_hud()
         self.hud_print("Focus: %s\n" % self.focus)
+        super(SystemGUI, self).draw_hud()
 
     @glut_callback
     def mouseFunc(self, button, state, x, y):
