@@ -16,10 +16,12 @@ namespace.update(physics.__dict__)
 namespace.update(load.kerbol)
 namespace.update(load.solar)
 
-# filtering out symbols starting with "_"
-for k in list(namespace.keys()):
+# filter out symbols starting with "_"
+for k in list(namespace):
     if k.startswith("_"):
         del namespace[k]
+
+namespace["__name__"] = "spyce"
 
 
 def ask(prompt, default=None):
