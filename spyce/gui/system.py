@@ -10,7 +10,7 @@ from gui.graphics import *
 
 class SystemGUI(gui.picking.PickingGUI):
     """GUI for showing a planetary system"""
-    def __init__(self, focus, texture_directory=None):
+    def __init__(self, focus):
         title = b'Sp' + b'a'*42 + b'ce'
         super(SystemGUI, self).__init__(title)
 
@@ -78,44 +78,36 @@ class SystemGUI(gui.picking.PickingGUI):
 
         # textures
         gui.textures.init()
+        texture_directory = self.system._texture_directory
 
-        # body textures
         def load_body(body):
-            if texture_directory is not None:
-                filename = "%s.jpg" % body.name
-                body.texture = gui.textures.load(texture_directory, filename)
-            else:
-                body.texture = 0
+            """Recursively load textures for celestial bodies"""
+            filename = "%s.jpg" % body.name
+            body.texture = gui.textures.load(texture_directory, filename)
             for satellite in body.satellites:
                 load_body(satellite)
         load_body(self.system)
 
-        # skybox textures
+        # skybox
         self.skybox = gui.skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
 
     @classmethod
     def from_cli_args(cls):
         """Load the system given in command-line arguments"""
-        from load import kerbol, solar
+        import load
 
         try:
             name = sys.argv[1]
         except IndexError:
             name = 'Kerbin'
 
-        # find body from name (and texture folder)
         try:
-            body = kerbol[name]
-            texture_directory = 'kerbol'
+            body = load.from_name(name)
         except KeyError:
-            try:
-                body = solar[name]
-                texture_directory = 'solar'
-            except KeyError:
-                sys.stderr.write("Unknwon body '%s'\n" % name)
-                sys.exit(1)
+            sys.stderr.write("Unknwon body '%s'\n" % name)
+            sys.exit(1)
 
-        return cls(body, texture_directory)
+        return cls(body)
 
     def draw_orbit(self, orbit):
         """Draw an orbit using focus as origin"""

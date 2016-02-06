@@ -40,5 +40,21 @@ def load_bodies(filename):
         load_body(bodies, data, name)
     return bodies
 
+
 kerbol = load_bodies(os.path.join("data", "kerbol.json"))
 solar = load_bodies(os.path.join("data", "solar.json"))
+
+
+def from_name(name):
+    """Locate celestial body in any system by name"""
+    for system in (kerbol, solar):
+        try:
+            return system[name]
+        except KeyError:
+            pass
+    else:
+        raise KeyError(name)
+
+
+kerbol['Kerbol']._texture_directory = 'kerbol'
+solar['Sun']._texture_directory = 'solar'
