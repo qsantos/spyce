@@ -123,6 +123,7 @@ class TerminalGUI(gui.hud.HUD):
         super(TerminalGUI, self).__init__(title)
 
         self.console = Console()
+        interact.namespace["gui"] = self
         self.interpreter = code.InteractiveConsole(interact.namespace)
         self.completer = rlcompleter.Completer(interact.namespace)
         self.readline = Readline(self.interpreter, self.completer.complete)
