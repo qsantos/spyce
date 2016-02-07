@@ -31,6 +31,8 @@ class Readline(object):
         self.completer = completer
         self.input_buffer = ""
         self.more = False
+        self.history = [""]
+        self.history_index = 0
 
     def press(self, k):
         """Handle key press"""
@@ -63,7 +65,26 @@ class Readline(object):
         elif k == "\n" or k == "\r":
             print(self.current_line())
             self.more = self.interpreter.push(self.input_buffer)
+            self.history[-1] = self.input_buffer
+            self.history_index = len(self.history)
+            self.history.append("")
             self.input_buffer = ""
+
+    def up(self):
+        """Handle up key press"""
+        self.history[self.history_index] = self.input_buffer
+        self.history_index -= 1
+        if self.history_index < 0:
+            self.history_index = 0
+        self.input_buffer = self.history[self.history_index]
+
+    def down(self):
+        """Handle down key press"""
+        self.history[self.history_index] = self.input_buffer
+        self.history_index += 1
+        if self.history_index >= len(self.history):
+            self.history_index = len(self.history) - 1
+        self.input_buffer = self.history[self.history_index]
 
     def current_line(self):
         """Return the current buffer"""
@@ -141,6 +162,19 @@ class TerminalGUI(gui.hud.HUD):
         with self.console:
             self.readline.press(k.decode())
         super(TerminalGUI, self).keyboardFunc(k, x, y)
+
+    @glut_callback
+    def specialFunc(self, k, x, y):
+        """Handle special key presses (GLUT callback)"""
+        self.update()
+        if k == GLUT_KEY_UP:
+            with self.console:
+                self.readline.up()
+        elif k == GLUT_KEY_DOWN:
+            with self.console:
+                self.readline.down()
+        else:
+            super(TerminalGUI, self).specialFunc(k, x, y)
 
     def draw_hud(self):
         """Draw the HUD"""
