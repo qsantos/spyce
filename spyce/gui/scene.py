@@ -23,6 +23,7 @@ class Scene(object):
                       GLUT_ACTION_GLUTMAINLOOP_RETURNS)
         glutInitWindowSize(1024, 768)
         glutCreateWindow(title)
+        self.fullscreen = False
 
         # callbacks
         glutDisplayFunc(self.displayFunc)
@@ -78,7 +79,14 @@ class Scene(object):
     @glut_callback
     def specialFunc(self, k, x, y):
         """Handle special key presses (GLUT callback)"""
-        pass
+        if k == GLUT_KEY_F11:
+            if self.fullscreen:
+                glutReshapeWindow(self.window_width, self.window_height)
+                self.fullscreen = False
+            else:
+                self.window_width, self.window_height = self.width, self.height
+                glutFullScreen()
+                self.fullscreen = True
 
     def projection_matrix(self):
         """Make projection matrix"""
