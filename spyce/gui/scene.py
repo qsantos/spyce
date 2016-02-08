@@ -44,7 +44,7 @@ class Scene(object):
 
     def draw(self):
         """Draw the scene"""
-        glRotate(90, 1, 0, 0)
+        glRotatef(90, 1, 0, 0)
         glutWireTeapot(1)
 
     def set_and_draw(self):
@@ -55,9 +55,9 @@ class Scene(object):
         glLoadIdentity()
 
         # set camera
-        glTranslate(0, 0, -1/self.zoom)
-        glRotate(self.phi,   1, 0, 0)
-        glRotate(self.theta, 0, 0, 1)
+        glTranslatef(0, 0, -1/self.zoom)
+        glRotatef(self.phi,   1, 0, 0)
+        glRotatef(self.theta, 0, 0, 1)
 
         # draw!
         self.draw()

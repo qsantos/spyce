@@ -115,9 +115,9 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         glPushMatrix()
 
         # make tilted ellipse from a circle or tilted hyperbola from a parabola
-        glRotate(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
-        glRotate(math.degrees(orbit.inclination),                 1, 0, 0)
-        glRotate(math.degrees(orbit.argument_of_periapsis),       0, 0, 1)
+        glRotatef(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
+        glRotatef(math.degrees(orbit.inclination),                 1, 0, 0)
+        glRotatef(math.degrees(orbit.argument_of_periapsis),       0, 0, 1)
         glTranslatef(-orbit.focus, 0, 0)
         glScalef(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
 
@@ -188,14 +188,14 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             # using linear transforms spreads points more naturally (3.)
 
             # make tilted ellipse from a circle
-            glRotate(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
-            glRotate(math.degrees(orbit.inclination),                 1, 0, 0)
-            glRotate(math.degrees(orbit.argument_of_periapsis),       0, 0, 1)
+            glRotatef(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
+            glRotatef(math.degrees(orbit.inclination),                 1, 0, 0)
+            glRotatef(math.degrees(orbit.argument_of_periapsis),       0, 0, 1)
             glScalef(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
 
             # account for current position of the body (use circle symmetry)
             anomaly = orbit.eccentric_anomaly(self.time)
-            glRotate(math.degrees(anomaly) - 180., 0, 0, 1)
+            glRotatef(math.degrees(anomaly) - 180., 0, 0, 1)
 
             draw_vbo(self.shifted_circle, 256)
 
@@ -325,9 +325,9 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         # set up camera
         self.pick_reset()
 
-        glTranslate(0, 0, -1/self.zoom)
-        glRotate(self.phi,   1, 0, 0)
-        glRotate(self.theta, 0, 0, 1)
+        glTranslatef(0, 0, -1/self.zoom)
+        glRotatef(self.phi,   1, 0, 0)
+        glRotatef(self.theta, 0, 0, 1)
         self.skybox.draw(1e19)  # skybox
 
         self.draw()

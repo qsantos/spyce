@@ -116,23 +116,23 @@ class PickingGUI(gui.hud.HUD):
         glutSolidSphere(1, 16, 16)
 
         glColor4f(1, 0, 0, 1)
-        glTranslate(-4, -4, 0)
+        glTranslatef(-4, -4, 0)
         self.add_pick_object("the cube")
         glutSolidCube(2)
 
         glColor4f(1, 1, 0, 1)
-        glTranslate(0, 8, 0)
+        glTranslatef(0, 8, 0)
         self.add_pick_object("the torus")
         glutSolidTorus(1, 2, 16, 16)
 
         glColor4f(0, 0, 1, 1)
-        glTranslate(8, 0, -1)
+        glTranslatef(8, 0, -1)
         self.add_pick_object("the cone")
         glutSolidCone(1, 2, 16, 16)
 
         glColor4f(0, 1, 1, 1)
-        glTranslate(0, -8, 1)
-        glScale(.5, .5, .5)
+        glTranslatef(0, -8, 1)
+        glScalef(.5, .5, .5)
         self.add_pick_object("the dodecahedron")
         glutSolidDodecahedron(1, 2, 16, 16)
 
