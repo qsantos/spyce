@@ -57,7 +57,10 @@ def make_program(*files):
 
     # make `Texture0` refer to the first texture
     variable = glGetUniformLocation(program, b"Texture0")
-    glProgramUniform1i(program, variable, 0)
+    current_program = glGetIntegerv(GL_CURRENT_PROGRAM)
+    glUseProgram(program)
+    glUniform1i(variable, 0)
+    glUseProgram(current_program)
 
     return program
 
