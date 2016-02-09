@@ -20,8 +20,8 @@ class HUD(gui.scene.Scene):
         self.font = gui.textures.load("font.png")
 
         # set up buffer objects
-        self.text_vbo = glGenBuffers(1)
-        self.text_tbo = glGenBuffers(1)
+        self.text_vbo = BufferObject()
+        self.text_tbo = BufferObject()
 
         # sliding window of frame timings
         self.frame_timings = collections.deque([time.time()], 60)
@@ -119,19 +119,11 @@ class HUD(gui.scene.Scene):
         # fill vertex lists
         self.draw_hud()
 
-        # fill buffer objects
-        make_vbo(self.vertcoords, self.text_vbo)
-        glVertexPointer(2, GL_FLOAT, 0, None)
-        make_vbo(self.texcoords, self.text_tbo)
-        glTexCoordPointer(2, GL_FLOAT, 0, None)
-
         # actually draw the HUD
         gui.textures.bind(self.font)
-        glEnableClientState(GL_VERTEX_ARRAY)
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
-        glDrawArrays(GL_QUADS, 0, len(self.vertcoords)//2)
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
-        glDisableClientState(GL_VERTEX_ARRAY)
+        self.text_vbo.load(self.vertcoords)
+        self.text_tbo.load(self.texcoords)
+        self.text_vbo.draw(GL_QUADS, texcoords=self.text_tbo, size=2)
         gui.textures.unbind()
 
         # restore OpenGL context

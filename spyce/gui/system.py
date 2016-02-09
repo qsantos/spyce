@@ -46,7 +46,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
             theta = math.pi * x
             vertices += [math.cos(theta), math.sin(theta), 0.]
-        self.circle = make_vbo(vertices)
+        self.circle = BufferObject(vertices)
 
         # unit circle centered on (1, 0)
         n = 256
@@ -55,7 +55,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
             theta = math.pi * x**3
             vertices += [1. - math.cos(theta), math.sin(theta), 0.]
-        self.shifted_circle = make_vbo(vertices)
+        self.shifted_circle = BufferObject(vertices)
 
         # unit parabola centered on (0, 0)
         n = 256
@@ -64,7 +64,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
             theta = math.pi * x
             vertices += [math.cosh(theta), math.sinh(theta), 0.]
-        self.parabola = make_vbo(vertices)
+        self.parabola = BufferObject(vertices)
 
         # make call lists for orbits
         def make_orbit_call_list(body):
@@ -123,10 +123,9 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         # draw circle or parabola
         if orbit.eccentricity < 1.:
-            draw_vbo(self.circle, 512)
+            self.circle.draw(GL_LINE_STRIP)
         else:
-            draw_vbo(self.parabola, 256)
-        vbo = self.circle if orbit.eccentricity < 1. else self.parabola
+            self.parabola.draw(GL_LINE_STRIP)
 
         # apses
         glPointSize(5)
@@ -197,7 +196,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             anomaly = orbit.eccentric_anomaly(self.time)
             glRotatef(math.degrees(anomaly) - 180., 0, 0, 1)
 
-            draw_vbo(self.shifted_circle, 256)
+            self.shifted_circle.draw(GL_LINE_STRIP)
 
             glPopMatrix()
 

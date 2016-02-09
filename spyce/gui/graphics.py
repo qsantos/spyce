@@ -6,23 +6,53 @@ from OpenGL.GLU import *
 from OpenGL.GL import *
 
 
-def make_vbo(vertices, vbo_index=None):
-    """Return a VBO of the given vertices"""
-    if vbo_index is None:
-        vbo_index = glGenBuffers(1)
-    data_buffer = (ctypes.c_float*len(vertices))(*vertices)
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_index)
-    glBufferData(GL_ARRAY_BUFFER, data_buffer, GL_STATIC_DRAW)
-    return vbo_index
+class BufferObject(object):
+    """OpenGL Buffer Object helper"""
+    def __init__(self, data=None):
+        """Create a new Buffer Object, optionally fill it (see `load()`)"""
+        self.index = glGenBuffers(1)
+        self.size = 0
+        if data is not None:
+            self.load(data)
 
+    def bind(self):
+        """Bind the Buffer Object to GL_ARRAY_BUFFER"""
+        glBindBuffer(GL_ARRAY_BUFFER, self.index)
 
-def draw_vbo(vbo_index, n_vertices):
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_index)
-    glVertexPointer(3, GL_FLOAT, 0, None)
-    glEnableClientState(GL_VERTEX_ARRAY)
-    glDrawArrays(GL_LINE_STRIP, 0, n_vertices)
-    glDisableClientState(GL_VERTEX_ARRAY)
-    glBindBuffer(GL_ARRAY_BUFFER, 0)
+    def load(self, data):
+        """Fill the Buffer Object with data (assume list of floats)"""
+        # pack as float[]
+        data = list(data)  # need length for ctypes array
+        self.size = len(data)
+        data_buffer = (ctypes.c_float*self.size)(*data)
+        # send to GPU
+        self.bind()
+        glBufferData(GL_ARRAY_BUFFER, data_buffer, GL_STATIC_DRAW)
+
+    def draw(vertices, mode, texcoords=None, size=3):
+        """Draw the Buffer Object (assumed to contain vertices)
+
+        mode       passed to glDrawArrays() (GL_POINTS, GL_LINES, ...)
+        texcoords  Buffer Object to use as texture coordinates
+        size       passed to glVertexPointer (number of values per vertex)
+        """
+        # select vertex buffer object
+        vertices.bind()
+        glVertexPointer(size, GL_FLOAT, 0, None)
+        glEnableClientState(GL_VERTEX_ARRAY)
+
+        if texcoords is not None:
+            # select texture coordinatess buffer object
+            texcoords.bind()
+            glTexCoordPointer(2, GL_FLOAT, 0, None)
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+
+        # actually draw
+        glDrawArrays(mode, 0, vertices.size // size)
+
+        # disable buffer objects
+        glDisableClientState(GL_VERTEX_ARRAY)
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
 
 
 def make_shader(program, filename):
