@@ -1,6 +1,5 @@
 import os
 import sys
-import math
 import itertools
 import functools
 from OpenGL.GLUT import *
@@ -58,33 +57,6 @@ class BufferObject(object):
         # disable buffer objects
         glDisableClientState(GL_VERTEX_ARRAY)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
-
-
-def sphere(slices, stacks):
-    """Generate sphere vertices for quad strip"""
-    for j in range(stacks):
-        for i in range(slices+1):
-            angle_i = (2*math.pi * i) / slices
-            angle_j = (math.pi * (j+1)) / stacks
-            yield (
-                math.sin(angle_j) * math.sin(angle_i),
-                math.sin(angle_j) * math.cos(angle_i),
-                math.cos(angle_j),
-            )
-            angle_j = (math.pi * j) / stacks
-            yield (
-                math.sin(angle_j) * math.sin(angle_i),
-                math.sin(angle_j) * math.cos(angle_i),
-                math.cos(angle_j),
-            )
-
-
-def sphere_tex(slices, stacks):
-    """Generate sphere texture coordinates for quad strip"""
-    for j in range(stacks):
-        for i in range(slices+1):
-            yield 1 - float(i) / slices, 1 - float(j+1) / stacks
-            yield 1 - float(i) / slices, 1 - float(j) / stacks
 
 
 def make_shader(program, filename):

@@ -6,6 +6,7 @@ import gui.textures
 import gui.skybox
 import gui.picking
 import gui.terminal
+import gui.mesh
 from gui.graphics import *
 
 
@@ -28,9 +29,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         self.shader_position_marker = main_program(None, "circle_point.frag")
 
         # sphere VBO for drawing bodies
-        n = 64
-        self.sphere_vertices = BufferObject(sphere(n, n), flatten=True)
-        self.sphere_texcoords = BufferObject(sphere_tex(n, n), flatten=True)
+        self.sphere = gui.mesh.Sphere(1, 64, 64)
 
         # VBOs for drawing orbits
 
@@ -206,7 +205,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         """Draw a sphere of given radius"""
         glPushMatrix()
         glScalef(radius, radius, radius)
-        self.sphere_vertices.draw(GL_QUAD_STRIP, self.sphere_texcoords)
+        self.sphere.draw()
         glPopMatrix()
 
     def draw_body(self, body):
