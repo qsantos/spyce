@@ -1,4 +1,5 @@
 import os
+import sys
 from OpenGL.GLU import *
 from OpenGL.GL import *
 
@@ -34,7 +35,6 @@ def unbind():
 try:
     from PIL import Image
 except ImportError:
-    import sys
     if sys.version_info[0] == 3:  # Python 3
         sys.stderr.write("Install python3-pil for textures\n")
     else:  # Python 2
@@ -52,7 +52,7 @@ else:
         try:
             im = Image.open(filename)
         except:  # FileNotFoundError in Python 3, IOError in Python 2
-            print("Missing %s" % filename)
+            sys.stderr.write("Missing %s\n" % filename)
             return 0
 
         w, h = im.size

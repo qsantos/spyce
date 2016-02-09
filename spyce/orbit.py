@@ -1,3 +1,4 @@
+import sys
 import math
 
 import vector
@@ -366,7 +367,7 @@ except ImportError:
     try:  # Python 2
         import cext.orbit_py2 as cext
     except ImportError:
-        print("Note: to improve performances, run `make` in cext/")
+        sys.stderr.write("Note: to improve performances, run `make` in cext/")
         cext = None
 
 if cext is not None:
