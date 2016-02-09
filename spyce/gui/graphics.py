@@ -1,26 +1,31 @@
 import os
 import sys
+import math
+import itertools
 import functools
 from OpenGL.GLUT import *
-from OpenGL.GLU import *
 from OpenGL.GL import *
 
 
 class BufferObject(object):
     """OpenGL Buffer Object helper"""
-    def __init__(self, data=None):
+    def __init__(self, data=None, flatten=False):
         """Create a new Buffer Object, optionally fill it (see `load()`)"""
         self.index = glGenBuffers(1)
         self.size = 0
         if data is not None:
-            self.load(data)
+            self.load(data, flatten)
 
     def bind(self):
         """Bind the Buffer Object to GL_ARRAY_BUFFER"""
         glBindBuffer(GL_ARRAY_BUFFER, self.index)
 
-    def load(self, data):
-        """Fill the Buffer Object with data (assume list of floats)"""
+    def load(self, data, flatten=False):
+        """Fill the Buffer Object with data (assume list of floats)
+
+        If `flatten`, assume data is an iterable of iterables and flatten it"""
+        if flatten:
+            data = itertools.chain(*data)
         # pack as float[]
         data = list(data)  # need length for ctypes array
         self.size = len(data)
@@ -53,6 +58,33 @@ class BufferObject(object):
         # disable buffer objects
         glDisableClientState(GL_VERTEX_ARRAY)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+
+
+def sphere(slices, stacks):
+    """Generate sphere vertices for quad strip"""
+    for j in range(stacks):
+        for i in range(slices+1):
+            angle_i = (2*math.pi * i) / slices
+            angle_j = (math.pi * (j+1)) / stacks
+            yield (
+                math.sin(angle_j) * math.sin(angle_i),
+                math.sin(angle_j) * math.cos(angle_i),
+                math.cos(angle_j),
+            )
+            angle_j = (math.pi * j) / stacks
+            yield (
+                math.sin(angle_j) * math.sin(angle_i),
+                math.sin(angle_j) * math.cos(angle_i),
+                math.cos(angle_j),
+            )
+
+
+def sphere_tex(slices, stacks):
+    """Generate sphere texture coordinates for quad strip"""
+    for j in range(stacks):
+        for i in range(slices+1):
+            yield 1 - float(i) / slices, 1 - float(j+1) / stacks
+            yield 1 - float(i) / slices, 1 - float(j) / stacks
 
 
 def make_shader(program, filename):

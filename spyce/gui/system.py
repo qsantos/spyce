@@ -18,16 +18,6 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         self.time = 0
         self.zoom = 1e-7
 
-        # generic sphere for drawing bodies
-        sphere = gluNewQuadric()
-        gluQuadricNormals(sphere, GLU_SMOOTH)
-        gluQuadricTexture(sphere, GL_TRUE)
-        # make it a call list for efficiency
-        self.call_list_sphere = glGenLists(1)
-        glNewList(self.call_list_sphere, GL_COMPILE)
-        gluSphere(sphere, 1, 64, 64)
-        glEndList()
-
         # detect current system
         self.focus = focus
         self.system = self.focus
@@ -36,6 +26,11 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         glEnable(GL_POINT_SPRITE)
         self.shader_position_marker = main_program(None, "circle_point.frag")
+
+        # sphere VBO for drawing bodies
+        n = 64
+        self.sphere_vertices = BufferObject(sphere(n, n), flatten=True)
+        self.sphere_texcoords = BufferObject(sphere_tex(n, n), flatten=True)
 
         # VBOs for drawing orbits
 
@@ -211,7 +206,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         """Draw a sphere of given radius"""
         glPushMatrix()
         glScalef(radius, radius, radius)
-        glCallList(self.call_list_sphere)
+        self.sphere_vertices.draw(GL_QUAD_STRIP, self.sphere_texcoords)
         glPopMatrix()
 
     def draw_body(self, body):
