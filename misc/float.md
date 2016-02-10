@@ -1,7 +1,7 @@
 There are various way to represent decimal numbers on computers:
 
 * single-precision floating-point numbers: 23 bits (`float` in most languages)
-* double-precision floating-point numbers: 53 bits (`double` in most languages)
+* double-precision floating-point numbers: 52 bits (`double` in most languages)
 * double-word fixed-precision numbers: 31 bit
 * quad-word fixed-precision numbers: 63 bits
 
@@ -14,14 +14,14 @@ for scientific computation.
 On the CPU however, other representations are often useful in large scenes. The
 table below gives the precision allowed by each type.
 
-| Scale             |           |  23 bits |  31 bits |  53 bits |  63 bits |
+| Scale             |           |  23 bits |  31 bits |  52 bits |  63 bits |
 | :----             | --------: | -------: | -------: | -------: | -------: |
-| Earth radius      |  (6.4 Mm) |    76 cm |     2 mm |   700 pm |   690 fm |
-| Earth orbit       |  (150 Gm) |    18 km |     72 m |    17 µm |    16 nm |
-| Netpune orbit     |  (4.5 Tm) |   540 km |     2 km |   500 µm |   490 nm |
-| Sedna orbit       |  (140 Tm) |    17 Mm |    65 km |    16 mm |    15 µm |
-| Proxima Centauri  |   (40 Pm) |   4.8 Gm |    19 Mm |      4 m |   4.4 mm |
-| Milky Way         |  (1.7 Zm) |   200 Tm |   790 Gm |   190 km |    180 m |
+| Earth radius      |  (6.4 Mm) |    76 cm |     2 mm |   1.4 µm |   690 fm |
+| Earth orbit       |  (150 Gm) |    18 km |     72 m |    34 µm |    16 nm |
+| Netpune orbit     |  (4.5 Tm) |   540 km |     2 km |   1.0 mm |   490 nm |
+| Sedna orbit       |  (140 Tm) |    17 Mm |    65 km |    31 mm |    15 µm |
+| Proxima Centauri  |   (40 Pm) |   4.8 Gm |    19 Mm |    8.9 m |   4.4 mm |
+| Milky Way         |  (1.7 Zm) |   200 Tm |   790 Gm |   380 km |    180 m |
 
 
 These values can be computed with:
