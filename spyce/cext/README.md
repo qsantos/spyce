@@ -9,8 +9,8 @@ Dependencies
 
 For:
 
-* Python 2.x: `gcc make libpython-dev`
-* Python 3.x: `gcc make libpython3-dev`
+* Python 2.x: `gcc make pkg-config python-dev`
+* Python 3.x: `gcc make pkg-config python3-dev`
 
 Compile
 -------
