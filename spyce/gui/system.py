@@ -251,10 +251,10 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
     def draw_system(self, body, skip=None):
         """Draw the whole system a body belongs to"""
-        self.draw_satellites(body, skip, 1)
-
         self.add_pick_object(body)
         self.draw_body(body)
+
+        self.draw_satellites(body, skip, 1)
 
         # recursively draw primary
         if body.orbit is not None:

@@ -58,7 +58,9 @@ class PickingGUI(gui.hud.HUD):
         self.shader_set(self.pick_shader)
 
     def pick(self, x, y, default=None):
-        """Find object at given screen coordinates"""
+        """Find object around given screen coordinates
+
+        If several objects match, return the one that was provided first."""
 
         # draw with color picking
         self.pick_enabled = True
@@ -72,40 +74,31 @@ class PickingGUI(gui.hud.HUD):
         y = viewport[3] - y
 
         # retrieve names
-        search_radius = 10
+        search_radius = 30
         r = search_radius
         size = 2*r + 1
-        red = glReadPixels(x-r, y-r, size, size, GL_RED, GL_UNSIGNED_BYTE)
+        pixels = glReadPixels(x-r, y-r, size, size, GL_RED, GL_UNSIGNED_BYTE)
         # in Python 3: grid of int
         # in Python 2: str of "ASCII bytes"
         # in Windows: bytes
 
-        if isinstance(red, str):
+        if isinstance(pixels, str):
             # make it list of int
-            red = list(map(ord, red))
+            pixels = list(map(ord, pixels))
 
         try:
-            red[0][0]
+            pixels[0][0]
         except TypeError:
             # make it a grid
-            red = [red[i:i+size] for i in range(0, len(red), size)]
+            pixels = [pixels[i:i+size] for i in range(0, len(pixels), size)]
 
-        # find best match
-        best = float("inf")
-        closest = 0
-        for i, row in enumerate(red):
-            for j, pixel in enumerate(row):
-                # no match
-                if pixel == 0:
-                    continue
-
-                # compute distance to mouse pointer
-                distance = math.hypot(i - search_radius, j - search_radius)
-                if distance < best and distance <= search_radius:
-                    best = distance
-                    closest = pixel
-
-        return self.pick_objects[closest-1] if closest > 0 else default
+        # interpret each pixel as an object id, and return the best match
+        try:
+            best_match = min(pixel for row in pixels for pixel in row if pixel)
+        except ValueError:  # no match
+            return default
+        else:
+            return self.pick_objects[best_match-1]
 
     # demo code
 
