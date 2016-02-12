@@ -314,15 +314,22 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         # reset everything
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()
 
-        # set up camera
         self.pick_reset()
 
+        # skybox
+        glLoadIdentity()
+        glRotatef(self.phi,   1, 0, 0)
+        glRotatef(self.theta, 0, 0, 1)
+        glDisable(GL_DEPTH_TEST)
+        self.skybox.draw()
+        glEnable(GL_DEPTH_TEST)
+
+        # set up camera
+        glLoadIdentity()
         glTranslatef(0, 0, -1/self.zoom)
         glRotatef(self.phi,   1, 0, 0)
         glRotatef(self.theta, 0, 0, 1)
-        self.skybox.draw(1e19)  # skybox
 
         self.draw()
         self.pick_clear()
