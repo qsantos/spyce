@@ -52,10 +52,10 @@ class Skybox(object):
 
         gui.textures.bind(self.faces[3], (0, 0, 0))
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0) or glVertex3f(-1.0, -1.0, +1.0)
-        glTexCoord2f(0.0, 1.0) or glVertex3f(-1.0, -1.0, -1.0)
-        glTexCoord2f(1.0, 1.0) or glVertex3f(+1.0, -1.0, -1.0)
-        glTexCoord2f(1.0, 0.0) or glVertex3f(+1.0, -1.0, +1.0)
+        glTexCoord2f(0.0, 0.0) or glVertex3f(+1.0, -1.0, +1.0)
+        glTexCoord2f(0.0, 1.0) or glVertex3f(-1.0, -1.0, +1.0)
+        glTexCoord2f(1.0, 1.0) or glVertex3f(-1.0, -1.0, -1.0)
+        glTexCoord2f(1.0, 0.0) or glVertex3f(+1.0, -1.0, -1.0)
         glEnd()
 
         gui.textures.bind(self.faces[4], (0, 0, 0))
