@@ -31,34 +31,10 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         # sphere VBO for drawing bodies
         self.sphere = gui.mesh.Sphere(1, 64, 64)
 
-        # VBOs for drawing orbits
-
-        # unit circle centered on (0, 0)
-        n = 512
-        vertices = []
-        for i in range(n):
-            x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
-            theta = math.pi * x
-            vertices += [math.cos(theta), math.sin(theta), 0.]
-        self.circle = BufferObject(vertices)
-
-        # unit circle centered on (1, 0)
-        n = 256
-        vertices = []
-        for i in range(n):
-            x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
-            theta = math.pi * x**3
-            vertices += [1. - math.cos(theta), math.sin(theta), 0.]
-        self.shifted_circle = BufferObject(vertices)
-
-        # unit parabola centered on (0, 0)
-        n = 256
-        vertices = []
-        for i in range(n):
-            x = 2.*i/(n-1) - 1  # from -1.0 to +1.0
-            theta = math.pi * x
-            vertices += [math.cosh(theta), math.sinh(theta), 0.]
-        self.parabola = BufferObject(vertices)
+        # meshes for drawing orbits
+        self.circle = gui.mesh.Circle(1, 512)
+        self.circle_through_origin = gui.mesh.CircleThroughOrigin(1, 256)
+        self.parabola = gui.mesh.Parabola(256)
 
         # make call lists for orbits
         def make_orbit_call_list(body):
@@ -117,9 +93,9 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         # draw circle or parabola
         if orbit.eccentricity < 1.:
-            self.circle.draw(GL_LINE_STRIP)
+            self.circle.draw()
         else:
-            self.parabola.draw(GL_LINE_STRIP)
+            self.parabola.draw()
 
         # apses
         glPointSize(5)
@@ -177,7 +153,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
             glPushMatrix()
 
-            # the first point of shifted_circle is (0,0) (2.)
+            # the first point of circle_through_origin is (0,0) (2.)
             # using linear transforms spreads points more naturally (3.)
 
             # make tilted ellipse from a circle
@@ -190,7 +166,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             anomaly = orbit.eccentric_anomaly(self.time)
             glRotatef(math.degrees(anomaly) - 180., 0, 0, 1)
 
-            self.shifted_circle.draw(GL_LINE_STRIP)
+            self.circle_through_origin.draw()
 
             glPopMatrix()
 
