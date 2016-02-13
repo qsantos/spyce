@@ -1,9 +1,7 @@
 import time
-import collections
 
 import gui.simulation
 import gui.textures
-from load import solar, kerbol
 from gui.graphics import *
 
 
