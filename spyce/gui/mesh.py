@@ -10,6 +10,7 @@ class Mesh(object):
 
         A Vertex Buffer Object is filled with data from self.vertices()
         A Texcoord Buffer Object is filled with data from self.texcoords()
+        A Normal Buffer Object is filled with data from self.normals()
         Mesh will be drawn using given OpenGL mode (GL_TRIANGLES, etc.)
         """
         # save meta-data
@@ -25,6 +26,10 @@ class Mesh(object):
         if hasattr(self, "texcoords"):
             self.texcoord_buffer = BufferObject(self.texcoords(), flatten=True)
 
+        # fill normal buffer boject
+        if hasattr(self, "normals"):
+            self.normal_buffer = BufferObject(self.normals(), flatten=True)
+
     def draw(self):
         """Draw the mesh"""
         # select vertex buffer object
@@ -38,10 +43,17 @@ class Mesh(object):
             glTexCoordPointer(2, GL_FLOAT, 0, None)
             glEnableClientState(GL_TEXTURE_COORD_ARRAY)
 
+        # select normal buffer object
+        if hasattr(self, "normal_buffer"):
+            self.normal_buffer.bind()
+            glNormalPointer(GL_FLOAT, 0, None)
+            glEnableClientState(GL_NORMAL_ARRAY)
+
         # actually draw
         glDrawArrays(self.mode, 0, self.length)
 
         # disable buffer objects
+        glDisableClientState(GL_NORMAL_ARRAY)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
         glDisableClientState(GL_VERTEX_ARRAY)
 
@@ -76,3 +88,21 @@ class Sphere(Mesh):
             for i in range(self.slices+1):
                 yield 1 - float(i) / self.slices, 1 - float(j+1) / self.stacks
                 yield 1 - float(i) / self.slices, 1 - float(j) / self.stacks
+
+    def normals(self):
+        """Generate normals for sphere mesh"""
+        for j in range(self.stacks):
+            for i in range(self.slices+1):
+                angle_i = (2*math.pi * i) / self.slices
+                angle_j = (math.pi * (j+1)) / self.stacks
+                yield (
+                    math.sin(angle_i) * math.sin(angle_j),
+                    math.cos(angle_i) * math.sin(angle_j),
+                    math.cos(angle_j),
+                )
+                angle_j = (math.pi * j) / self.stacks
+                yield (
+                    math.sin(angle_i) * math.sin(angle_j),
+                    math.cos(angle_i) * math.sin(angle_j),
+                    math.cos(angle_j),
+                )
