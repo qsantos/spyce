@@ -33,31 +33,6 @@ class BufferObject(object):
         self.bind()
         glBufferData(GL_ARRAY_BUFFER, data_buffer, GL_STATIC_DRAW)
 
-    def draw(vertices, mode, texcoords=None, size=3):
-        """Draw the Buffer Object (assumed to contain vertices)
-
-        mode       passed to glDrawArrays() (GL_POINTS, GL_LINES, ...)
-        texcoords  Buffer Object to use as texture coordinates
-        size       passed to glVertexPointer (number of values per vertex)
-        """
-        # select vertex buffer object
-        vertices.bind()
-        glVertexPointer(size, GL_FLOAT, 0, None)
-        glEnableClientState(GL_VERTEX_ARRAY)
-
-        if texcoords is not None:
-            # select texture coordinatess buffer object
-            texcoords.bind()
-            glTexCoordPointer(2, GL_FLOAT, 0, None)
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY)
-
-        # actually draw
-        glDrawArrays(mode, 0, vertices.size // size)
-
-        # disable buffer objects
-        glDisableClientState(GL_VERTEX_ARRAY)
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
-
 
 def make_shader(program, filename):
     """Compile and attach a shader of given type"""

@@ -119,14 +119,26 @@ class HUD(gui.scene.Scene):
         # fill vertex lists
         self.draw_hud()
 
-        # actually draw the HUD
-        gui.textures.bind(self.font)
+        # vertices
         self.text_vbo.load(self.vertcoords)
+        self.text_vbo.bind()
+        glVertexPointer(2, GL_FLOAT, 0, None)
+        glEnableClientState(GL_VERTEX_ARRAY)
+
+        # texture coordinatess
         self.text_tbo.load(self.texcoords)
-        self.text_vbo.draw(GL_QUADS, texcoords=self.text_tbo, size=2)
+        self.text_tbo.bind()
+        glTexCoordPointer(2, GL_FLOAT, 0, None)
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+
+        # actually draw
+        gui.textures.bind(self.font)
+        glDrawArrays(GL_QUADS, 0, self.text_vbo.size // 2)
         gui.textures.unbind()
 
         # restore OpenGL context
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+        glDisableClientState(GL_VERTEX_ARRAY)
         glPopMatrix()
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
