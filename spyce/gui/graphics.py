@@ -63,6 +63,9 @@ def make_program(*files):
     for filename in files:
         make_shader(program, filename)
     glLinkProgram(program)
+    error = glGetProgramInfoLog(program)
+    if error:
+        raise SyntaxError('while linking shaders\n' + error.decode())
 
     # make `Texture0` refer to the first texture
     variable = glGetUniformLocation(program, b"Texture0")
