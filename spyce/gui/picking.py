@@ -13,23 +13,25 @@ class PickingGUI(gui.hud.HUD):
         self.pick_current_name = 0
         self.shader_reset()
 
-    def add_pick_object(self, thing, primitive_group=None):
-        """Add thing to pick list and setup shader"""
+    def add_pick_object(self, thing, mode=None):
+        """Register `thing` for picking
+
+        Anything drawn afterwards is assumed to be part of `thing`.
+        Can be used within a glBegin/glEnd scope, if `mode` is given"""
         self.pick_objects.append(thing)
         name = len(self.pick_objects)
         self.pick_current_name = name
-        if not self.pick_enabled:
-            return
 
-        if primitive_group is None:
-            glUniform1i(self.pick_name, name)
-        else:
-            # pause the current glBegin/glEnd group
-            glEnd()
-            glUniform1i(self.pick_name, name)
-            glBegin(primitive_group)
+        if self.pick_enabled:
+            if mode is None:
+                glUniform1i(self.pick_name, name)
+            else:
+                # pause the current glBegin/glEnd group
+                glEnd()
+                glUniform1i(self.pick_name, name)
+                glBegin(mode)
 
-    def pick_clear(self):
+    def clear_pick_object(self):
         """Clear the current pickable object"""
         self.pick_current_name = 0
         if self.pick_enabled:
@@ -43,7 +45,7 @@ class PickingGUI(gui.hud.HUD):
         """Setup the camera and draw"""
         self.pick_reset()
         super(PickingGUI, self).set_and_draw()
-        self.pick_clear()
+        self.clear_pick_object()
 
     def shader_set(self, program):
         """Switch the current shader, set pick uniforms to correct values"""

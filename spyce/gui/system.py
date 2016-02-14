@@ -307,7 +307,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         glRotatef(self.theta, 0, 0, 1)
 
         self.draw()
-        self.pick_clear()
+        self.clear_pick_object()
 
     def draw_hud(self):
         """Draw the HUD"""
