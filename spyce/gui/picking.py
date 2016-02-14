@@ -65,7 +65,9 @@ class PickingGUI(gui.hud.HUD):
         # draw with color picking
         self.pick_enabled = True
         self.shader_reset()
+        glDisable(GL_MULTISAMPLE)
         self.set_and_draw()
+        glEnable(GL_MULTISAMPLE)
         self.pick_enabled = False
         self.shader_reset()
 

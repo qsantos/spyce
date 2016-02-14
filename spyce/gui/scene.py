@@ -17,7 +17,8 @@ class Scene(object):
 
         # GLUT init
         glutInit(sys.argv)
-        glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH)
+        glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH |
+                            GLUT_MULTISAMPLE)
         glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,
                       GLUT_ACTION_GLUTMAINLOOP_RETURNS)
         glutInitWindowSize(1024, 768)
@@ -39,6 +40,7 @@ class Scene(object):
         glEnable(GL_POINT_SMOOTH)  # may make GL_POINTS round
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
+        glEnable(GL_MULTISAMPLE)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glClearColor(0.0, 0.0, 0.0, 1.0)
 
