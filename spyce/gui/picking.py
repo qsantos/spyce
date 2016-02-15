@@ -50,9 +50,9 @@ class PickingGUI(gui.hud.HUD):
     def shader_set(self, program):
         """Switch the current shader, set pick uniforms to correct values"""
         glUseProgram(program)
-        var_flag = glGetUniformLocation(program, b"pick_enabled")
+        var_flag = glGetUniformLocation(program, b"picking_enabled")
         glUniform1i(var_flag, int(self.pick_enabled))
-        self.pick_name = glGetUniformLocation(program, b"pick_name")
+        self.pick_name = glGetUniformLocation(program, b"picking_name")
         glUniform1i(self.pick_name, self.pick_current_name)
 
     def shader_reset(self):

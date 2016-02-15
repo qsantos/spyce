@@ -62,7 +62,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             self.system = self.system.orbit.primary
 
         glEnable(GL_POINT_SPRITE)
-        self.shader_position_marker = main_program(None, "circle_point.frag")
+        self.shader_position_marker = main_program("circle_point")
 
         # sphere VBO for drawing bodies
         self.sphere = gui.mesh.Sphere(1, 64, 64)

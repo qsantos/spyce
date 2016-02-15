@@ -34,18 +34,8 @@ class BufferObject(object):
         glBufferData(GL_ARRAY_BUFFER, data_buffer, GL_STATIC_DRAW)
 
 
-def make_shader(program, filename):
-    """Compile and attach a shader of given type"""
-
-    if filename.endswith(".vert"):
-        type_ = GL_VERTEX_SHADER
-    elif filename.endswith(".frag"):
-        type_ = GL_FRAGMENT_SHADER
-    else:
-        raise Exception("Unable to determine type of shader '%s'" % filename)
-    path = os.path.join("data", "shaders", filename)
-    source = open(path).read()
-
+def make_shader_source(program, source, type_, filename="-"):
+    """Compile and attach shader of given type from source"""
     shader = glCreateShader(type_)
     glShaderSource(shader, source)
     glCompileShader(shader)
@@ -57,11 +47,34 @@ def make_shader(program, filename):
     glAttachShader(program, shader)
 
 
-def make_program(*files):
-    """Make a program from shader files"""
+def make_shader_filename(program, filename, type_):
+    """Compile and attach shader of given type from file"""
+    path = os.path.join("data", "shaders", filename)
+    source = open(path).read()
+    return make_shader_source(program, source, type_)
+
+
+def make_program(*features):
+    """Create a program with only given features"""
+    # compile features
     program = glCreateProgram()
-    for filename in files:
-        make_shader(program, filename)
+    for feature in features:
+        make_shader_filename(program, feature + '.vert', GL_VERTEX_SHADER)
+        make_shader_filename(program, feature + '.frag', GL_FRAGMENT_SHADER)
+
+    # main() functions just call each feature in given order
+    main = (
+        "#version 110\n" +
+        # declarations
+        "\n".join("void %s();" % feature for feature in features) +
+        "void main(){\n" +
+        "\n".join("%s();" % feature for feature in features) +  # calls
+        "}"
+    )
+    make_shader_source(program, main, GL_VERTEX_SHADER, "<main>")
+    make_shader_source(program, main, GL_FRAGMENT_SHADER, "<main>")
+
+    # link program
     glLinkProgram(program)
     error = glGetProgramInfoLog(program)
     if error:
@@ -77,13 +90,10 @@ def make_program(*files):
     return program
 
 
-def main_program(vertex_shader=None, fragment_shader=None):
-    """Make a program from local shaders and fixed global shaders"""
-    return make_program(
-        "main.vert", "main.frag",  # global shader
-        vertex_shader or "default.vert",  # local vertex shader
-        fragment_shader or "default.frag",  # local fragment shader
-    )
+def main_program(*features):
+    """Create a program with some preset features"""
+    features = ("setdefaults", "logdepth") + features + ("picking",)
+    return make_program(*features)
 
 
 def glut_callback(f):
