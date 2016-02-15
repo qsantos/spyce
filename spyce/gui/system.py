@@ -10,6 +10,42 @@ import gui.mesh
 from gui.graphics import *
 
 
+def ancestors_descendants(body, max_depth=1):
+    """Return the ancestors of a body and their descendants
+
+    Return two lists: ancestors and descendants.
+    ancestors are `body` itself, its primary, its primary's primary and so on
+    descendants are the children of each ancestors, their children and so on
+
+    `max_depth` limits the level of recursion when search for descendants.
+
+    With max_depth=-1, it will return all the bodies, except that the ancestors
+    will be in a separate list.
+    """
+    ancestors = []
+    descendants = []
+
+    def down(body, skip, max_depth):
+        """Explore down the tree and collect other nodes"""
+        if not max_depth:
+            return
+        for satellite in body.satellites:
+            if satellite is skip:
+                continue
+            descendants.append(satellite)
+            down(satellite, skip, max_depth-1)
+
+    def up(body, skip=None):
+        """Climb up the tree and collect ancestors"""
+        ancestors.append(body)
+        down(body, skip, max_depth)
+        if body.orbit is not None:
+            up(body.orbit.primary, body)
+
+    up(body)
+    return ancestors, descendants
+
+
 class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
     """GUI for showing a planetary system"""
     def __init__(self, focus):
