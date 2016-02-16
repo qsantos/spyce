@@ -1,6 +1,7 @@
 import re
 import math
 
+import vector
 import physics
 
 
@@ -74,6 +75,13 @@ class CelestialBody(object):
     def __str__(self):
         """Cast to string using the name"""
         return self.name
+
+    def global_position(self, time):
+        """Global position of the celestial body within the stellar system"""
+        if self.orbit is None:
+            return vector.Vector([0, 0, 0])
+        primary_position = self.orbit.primary.global_position(time)
+        return primary_position + self.orbit.position_t(time)
 
     def gravity(self, distance=None):
         """Gravity at given distance from center

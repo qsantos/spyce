@@ -1,5 +1,6 @@
 import vector
 import physics
+import body
 import orbit
 import analysis
 
@@ -48,7 +49,7 @@ class RocketPart(object):
         self.propellant = propellant
 
 
-class Rocket(object):
+class Rocket(body.CelestialBody):
     """A rocket, or a spaceship, or a duck"""
     def __init__(self, primary=None, program=None):
         self.parts = set()
