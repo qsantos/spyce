@@ -213,17 +213,14 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             glVertex3f(*corrected_orbit_position(math.pi))
             glEnd()
 
-    def draw_sphere(self, radius):
-        """Draw a sphere of given radius"""
-        glPushMatrix()
-        glScalef(radius, radius, radius)
-        self.sphere.draw()
-        glPopMatrix()
-
     def draw_body(self, body):
         """Draw a CelestialBody"""
 
         glPushMatrix()
+
+        glTranslatef(*body._relative_position)
+        self.add_pick_object(body)
+
         # OpenGL use single precision while Python has double precision
         # reducing modulo 2 PI in Python reduces loss of significance
         turn_fraction, _ = math.modf(self.time / body.rotational_period)
@@ -232,7 +229,8 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         # textured quadric (representation from close by)
         # sphere with radius proportional to that of the body
         gui.textures.bind(body.texture, (0.5, 0.5, 1.0))
-        self.draw_sphere(body.radius)
+        glScalef(body.radius, body.radius, body.radius)
+        self.sphere.draw()
         gui.textures.unbind()
 
         glPopMatrix()
@@ -254,11 +252,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         # draw celestial bodies
         for body in bodies:
-            glPushMatrix()
-            glTranslatef(*body._relative_position)
-            self.add_pick_object(body)
             self.draw_body(body)
-            glPopMatrix()
 
         # draw circles around celestial bodies when from far away
         glPointSize(20)
