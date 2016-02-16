@@ -239,86 +239,65 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         glDepthMask(True)
 
-    def draw_satellites(self, body, skip=None, max_depth=None):
-        """Recursively draw the satellites of a body"""
-        if max_depth is not None:
-            if max_depth == 0:
-                return
-            max_depth -= 1
-
-        for satellite in body.satellites:
-            if satellite != skip:
-                self.add_pick_object(satellite)
-                glPushMatrix()
-                glColor4f(1.0, 1.0, 0.0, 0.2)
-                if hasattr(satellite.orbit, "call_list"):
-                    glCallList(satellite.orbit.call_list)
-                else:
-                    self.draw_orbit(satellite.orbit)
-                glTranslatef(*satellite.orbit.position_t(self.time))
-                self.draw_body(satellite)
-                self.draw_satellites(satellite, body, max_depth)
-                glPopMatrix()
-
-    def draw_system(self, body, skip=None):
-        """Draw the whole system a body belongs to"""
-        self.add_pick_object(body)
-        self.draw_body(body)
-
-        self.draw_satellites(body, skip, 1)
-
-        # recursively draw primary
-        if body.orbit is not None:
-            glPushMatrix()
-            glColor4f(1.0, 1.0, 0.0, 1.0)
-            self.draw_orbit_focused(body)
-            glTranslatef(*-body.orbit.position_t(self.time))
-            self.draw_system(body.orbit.primary, body)
-            glPopMatrix()
-
-    def draw_satellite_points(self, body, offset, skip=None, max_depth=None):
-        """Recursively draw the satellites of a body as points"""
-        if max_depth is not None:
-            if max_depth == 0:
-                return
-            max_depth -= 1
-
-        for satellite in body.satellites:
-            if satellite == skip:
-                continue
-
-            self.add_pick_object(satellite, GL_POINTS)
-            new_offset = offset + satellite.orbit.position_t(self.time)
-            glVertex3f(*new_offset)
-            self.draw_satellite_points(satellite, new_offset, body, max_depth)
-
-    def draw_system_points(self, body, offset, skip=None):
-        """Draw the whole system as points"""
-        self.draw_satellite_points(body, offset, skip, 1)
-
-        self.add_pick_object(body, GL_POINTS)
-        glVertex3f(*offset)
-
-        # recursively draw primary
-        if body.orbit is not None:
-            new_offset = offset - body.orbit.position_t(self.time)
-            self.draw_system_points(body.orbit.primary, new_offset, body)
-
     def draw(self):
         """Draw the scene"""
-        self.draw_system(self.focus)
+        # ancestors_descendants() can just be assumed to return all celestial
+        # bodies, except that ancestors are in a separate list
+        ancestors, descendants = ancestors_descendants(self.focus)
+        bodies = ancestors + descendants
 
-        # point (representation from far away)
-        # draw spheres of constant visible radius at body positions
+        # cache position of celestial bodies relative to the scene origin
+        scene_origin = self.focus.global_position(self.time)
+        for body in bodies:
+            body_position = body.global_position(self.time)
+            body._relative_position = body_position - scene_origin
+
+        # draw celestial bodies
+        for body in bodies:
+            glPushMatrix()
+            glTranslatef(*body._relative_position)
+            self.add_pick_object(body)
+            self.draw_body(body)
+            glPopMatrix()
+
+        # draw circles around celestial bodies when from far away
         glPointSize(20)
         glDepthMask(False)
         self.shader_set(self.shader_position_marker)
         glBegin(GL_POINTS)
         glColor4f(1, 0, 0, 0.5)
-        self.draw_system_points(self.focus, vector.Vector([0, 0, 0]))
+        for body in bodies:
+            self.add_pick_object(body, GL_POINTS)
+            glVertex3f(*body._relative_position)
         glEnd()
         self.shader_reset()
         glDepthMask(True)
+
+        # draw orbits
+        glColor4f(1.0, 1.0, 0.0, 0.2)
+        for body in descendants:  # skip ancestors (see below)
+            glPushMatrix()
+            glTranslatef(*body.orbit.primary._relative_position)
+            self.add_pick_object(body)
+            if hasattr(body.orbit, "call_list"):
+                glCallList(body.orbit.call_list)
+            else:
+                self.draw_orbit(body.orbit)
+            glPopMatrix()
+
+        # separately draw orbits of ancestors
+        # since the focused celestial body  and its ancestors are relatively
+        # close to the camera, it is best to draw them with the origin the
+        # orbit, rather than at the primary
+        glColor4f(1.0, 1.0, 0.0, 1.0)
+        for body in ancestors:
+            if body.orbit is None:
+                continue
+            glPushMatrix()
+            glTranslatef(*body._relative_position)
+            self.add_pick_object(body)
+            self.draw_orbit_focused(body)
+            glPopMatrix()
 
     def set_and_draw(self):
         """Setup the camera and draw"""
