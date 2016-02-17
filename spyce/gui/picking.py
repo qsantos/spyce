@@ -82,26 +82,12 @@ class PickingGUI(gui.hud.HUD):
 
         # retrieve names
         search_radius = 30
-        r = search_radius
-        size = 2*r + 1
-        pixels = glReadPixels(x-r, y-r, size, size, GL_RED, GL_UNSIGNED_BYTE)
-        # in Python 3: grid of int
-        # in Python 2: str of "ASCII bytes"
-        # in Windows: bytes
-
-        if isinstance(pixels, str):
-            # make it list of int
-            pixels = list(map(ord, pixels))
-
-        try:
-            pixels[0][0]
-        except TypeError:
-            # make it a grid
-            pixels = [pixels[i:i+size] for i in range(0, len(pixels), size)]
+        size = 2*search_radius + 1
+        pixels = read_pixels(x-search_radius, y-search_radius, size, size)
 
         # interpret each pixel as an object id, and return the best match
         try:
-            best_match = min(pixel for row in pixels for pixel in row if pixel)
+            best_match = min(pixel[0] for row in pixels for pixel in row)
         except ValueError:  # no match
             return default
         else:

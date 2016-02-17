@@ -6,6 +6,23 @@ from OpenGL.GLUT import *
 from OpenGL.GL import *
 
 
+def read_pixels(x, y, w, h):
+    """Wrapper function to fix inconsistencies PyOpenGL's glReadPixels()"""
+    # setting `outputType` forces output to be a grid
+    # (this avoids Python 2 vs 3 and Linux vs Windows issues)
+    data = glReadPixels(x, y, w, h, GL_RGB, GL_UNSIGNED_BYTE, outputType=0)
+
+    # fix for inversion of dimensions when Numpy is not installed
+    if isinstance(data, ctypes.Array):
+        # flatten grid (names show how PyOpenGL interprets the data)
+        data = [pixel for color in data for row in color for pixel in row]
+        # group colors into pixels
+        data = [data[i:i+3] for i in range(0, len(data), 3)]
+        # group pixels into rows
+        data = [data[i:i+w] for i in range(0, len(data), w)]
+    return data
+
+
 class BufferObject(object):
     """OpenGL Buffer Object helper"""
     def __init__(self, data=None, flatten=False):
