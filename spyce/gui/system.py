@@ -260,19 +260,17 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             body_position = body.global_position(self.time)
             body._relative_position = body_position - scene_origin
 
-        # draw celestial bodies (except system star)
-        star = None
+        # draw celestial bodies
         self.sphere.bind()
+        # draw system star individually (without lighting)
+        self.draw_body(self.system)
+        # draw planets and moons (with lighting)
         self.shader_set(self.shader_lighting)
         for body in bodies:
-            if body.orbit is None:
-                star = body
+            if body is self.system:
                 continue
             self.draw_body(body)
         self.shader_reset()
-
-        # draw light source (system star) individually
-        self.draw_body(star)
         self.sphere.unbind()
 
         # draw circles around celestial bodies when from far away
