@@ -20,6 +20,7 @@ class MissionGUI(gui.simulation.SimulationGUI):
     def draw_rocket(self):
         """Draw the rocket"""
 
+        self.shader_reset()  # TODO: avoid state change
         glPushMatrix()
         glScalef(1e4, 1e4, 1e4)
 
@@ -48,6 +49,7 @@ class MissionGUI(gui.simulation.SimulationGUI):
         # all done
         gui.textures.unbind()
         glPopMatrix()
+        self.shader_set(self.shader_lighting)
 
     def draw_path(self):
         """Draw the path used by the rocket"""

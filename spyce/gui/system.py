@@ -64,6 +64,16 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         glEnable(GL_POINT_SPRITE)
         self.shader_position_marker = main_program("circle_point")
 
+        # lighting shader
+        self.shader_lighting = main_program("lighting")
+        # set up light
+        glLightfv(GL_LIGHT0, GL_AMBIENT,  [1, 1, 1, 1])
+        glLightfv(GL_LIGHT0, GL_DIFFUSE,  [3, 3, 3, 1])
+        glLightfv(GL_LIGHT0, GL_SPECULAR, [1, 1, 1, 1])
+        # set up material for planets
+        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.3, 0.3, 0.3, 1])
+        glMateriali(GL_FRONT, GL_SHININESS, 16)
+
         # sphere VBO for drawing bodies
         self.sphere = gui.mesh.Sphere(1, 64, 64)
 
@@ -250,9 +260,18 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             body_position = body.global_position(self.time)
             body._relative_position = body_position - scene_origin
 
-        # draw celestial bodies
+        # draw celestial bodies (except system star)
+        star = None
+        self.shader_set(self.shader_lighting)
         for body in bodies:
+            if body.orbit is None:
+                star = body
+                continue
             self.draw_body(body)
+        self.shader_reset()
+
+        # draw light source (system star) individually
+        self.draw_body(star)
 
         # draw circles around celestial bodies when from far away
         glPointSize(20)
@@ -314,6 +333,14 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         glTranslatef(0, 0, -1/self.zoom)
         glRotatef(self.phi,   1, 0, 0)
         glRotatef(self.theta, 0, 0, 1)
+
+        # position light
+        shift = vector.Vector([0, 0, 0])
+        body = self.focus
+        while body.orbit is not None:
+            shift -= body.orbit.position_t(self.time)
+            body = body.orbit.primary
+        glLightfv(GL_LIGHT0, GL_POSITION, shift)
 
         self.draw()
         self.clear_pick_object()
