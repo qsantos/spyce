@@ -14,7 +14,10 @@ class PickingGUI(gui.hud.HUD):
         self.shader_reset()
 
     def set_pick_name(self, name):
-        glUniform1i(self.pick_name, name)
+        r = ((name >> 16) & 0xff) / 255.
+        g = ((name >> +8) & 0xff) / 255.
+        b = ((name >> +0) & 0xff) / 255.
+        glUniform3f(self.pick_name, r, g, b)
 
     def add_pick_object(self, thing, mode=None):
         """Register `thing` for picking
@@ -85,9 +88,11 @@ class PickingGUI(gui.hud.HUD):
         size = 2*search_radius + 1
         pixels = read_pixels(x-search_radius, y-search_radius, size, size)
 
-        # interpret each pixel as an object id, and return the best match
+        # interpret each pixel as a name
+        names = ((r << 16) | (g << 8) | b for row in pixels for r, g, b in row)
+        # find best match
         try:
-            best_match = min(pixel[0] for row in pixels for pixel in row)
+            best_match = min(name for name in names if name)
         except ValueError:  # no match
             return default
         else:
