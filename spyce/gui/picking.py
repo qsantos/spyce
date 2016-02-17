@@ -13,6 +13,9 @@ class PickingGUI(gui.hud.HUD):
         self.pick_current_name = 0
         self.shader_reset()
 
+    def set_pick_name(self, name):
+        glUniform1i(self.pick_name, name)
+
     def add_pick_object(self, thing, mode=None):
         """Register `thing` for picking
 
@@ -24,18 +27,18 @@ class PickingGUI(gui.hud.HUD):
 
         if self.pick_enabled:
             if mode is None:
-                glUniform1i(self.pick_name, name)
+                self.set_pick_name(name)
             else:
                 # pause the current glBegin/glEnd group
                 glEnd()
-                glUniform1i(self.pick_name, name)
+                self.set_pick_name(name)
                 glBegin(mode)
 
     def clear_pick_object(self):
         """Clear the current pickable object"""
         self.pick_current_name = 0
         if self.pick_enabled:
-            glUniform1i(self.pick_name, 0)
+            self.set_pick_name(0)
 
     def pick_reset(self):
         """Reset the list of pickable objects"""
@@ -53,7 +56,7 @@ class PickingGUI(gui.hud.HUD):
         var_flag = glGetUniformLocation(program, b"picking_enabled")
         glUniform1i(var_flag, int(self.pick_enabled))
         self.pick_name = glGetUniformLocation(program, b"picking_name")
-        glUniform1i(self.pick_name, self.pick_current_name)
+        self.set_pick_name(self.pick_current_name)
 
     def shader_reset(self):
         """Restore the default shader"""
