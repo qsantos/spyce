@@ -265,6 +265,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         # draw system star individually (without lighting)
         self.draw_body(self.system)
         # draw planets and moons (with lighting)
+        glLightfv(GL_LIGHT0, GL_POSITION, self.system._relative_position)
         self.shader_set(self.shader_lighting)
         for body in bodies:
             if body is self.system:
@@ -333,14 +334,6 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         glTranslatef(0, 0, -1/self.zoom)
         glRotatef(self.phi,   1, 0, 0)
         glRotatef(self.theta, 0, 0, 1)
-
-        # position light
-        shift = vector.Vector([0, 0, 0])
-        body = self.focus
-        while body.orbit is not None:
-            shift -= body.orbit.position_t(self.time)
-            body = body.orbit.primary
-        glLightfv(GL_LIGHT0, GL_POSITION, shift)
 
         self.draw()
         self.clear_pick_object()
