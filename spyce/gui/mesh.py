@@ -5,6 +5,8 @@ from gui.graphics import *
 
 class Mesh(object):
     """A 2D or 3D mesh"""
+    bound_mesh = None
+
     def __init__(self, mode):
         """Create a new mesh
 
@@ -30,8 +32,17 @@ class Mesh(object):
         if hasattr(self, "normals"):
             self.normal_buffer = BufferObject(self.normals(), flatten=True)
 
-    def draw(self):
-        """Draw the mesh"""
+    def bind(self):
+        """"Bind the mesh for glDrawArrays()
+
+        Return True if the mesh was already bound"""
+        if Mesh.bound_mesh is not None:
+            if Mesh.bound_mesh is self:
+                return True
+            else:
+                raise RuntimeError("Another mesh is already bound")
+        Mesh.bound_mesh = self
+
         # select vertex buffer object
         self.vertex_buffer.bind()
         glVertexPointer(self.components, GL_FLOAT, 0, None)
@@ -49,13 +60,21 @@ class Mesh(object):
             glNormalPointer(GL_FLOAT, 0, None)
             glEnableClientState(GL_NORMAL_ARRAY)
 
-        # actually draw
-        glDrawArrays(self.mode, 0, self.length)
+        return False
 
-        # disable buffer objects
+    def unbind(self):
+        """Unbind the mesh"""
         glDisableClientState(GL_NORMAL_ARRAY)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
         glDisableClientState(GL_VERTEX_ARRAY)
+        Mesh.bound_mesh = None
+
+    def draw(self):
+        """Draw the mesh"""
+        was_bound = self.bind()
+        glDrawArrays(self.mode, 0, self.length)
+        if not was_bound:
+            self.unbind()
 
 
 class Sphere(Mesh):

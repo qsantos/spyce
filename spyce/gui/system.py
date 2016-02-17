@@ -262,6 +262,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         # draw celestial bodies (except system star)
         star = None
+        self.sphere.bind()
         self.shader_set(self.shader_lighting)
         for body in bodies:
             if body.orbit is None:
@@ -272,6 +273,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         # draw light source (system star) individually
         self.draw_body(star)
+        self.sphere.unbind()
 
         # draw circles around celestial bodies when from far away
         glPointSize(20)
