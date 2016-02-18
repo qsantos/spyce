@@ -140,7 +140,7 @@ class Console(object):
 
 class TerminalGUI(gui.hud.HUD):
     """GUI with an interactive text terminal"""
-    def __init__(self, title="Terminal in GUI"):
+    def __init__(self, title=b"Terminal in GUI"):
         super(TerminalGUI, self).__init__(title)
 
         self.console = Console()
