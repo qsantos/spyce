@@ -125,7 +125,7 @@ class Matrix(list):
 
     @classmethod
     def from_euler_angles(cls, alpha, beta, gamma):
-        """Return the Z1X2Z3 rotation matrix from the given Euler angles"""
+        """Return the rotation matrix from the given Z1X2Z3 Euler angles"""
         # see https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
         c1, s1 = math.cos(alpha), math.sin(alpha)
         c2, s2 = math.cos(beta),  math.sin(beta)
