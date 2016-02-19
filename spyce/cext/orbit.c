@@ -1,4 +1,4 @@
-/* To use this in a Pytohn script, run:
+/* To use this in a Python script, run:
 $ gcc std=c99 -shared -fPIC elements.c -o elements.so
 
 Then, use:
