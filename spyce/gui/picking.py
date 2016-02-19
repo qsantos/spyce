@@ -134,7 +134,7 @@ class PickingGUI(gui.hud.HUD):
         glTranslatef(0, -8, 1)
         glScalef(.5, .5, .5)
         self.add_pick_object("the dodecahedron")
-        glutSolidDodecahedron(1, 2, 16, 16)
+        glutSolidDodecahedron()
 
     @glut_callback
     def mouseFunc(self, button, state, x, y):
