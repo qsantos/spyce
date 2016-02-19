@@ -270,14 +270,6 @@ class Orbit(object):
         mu = self.primary.gravitational_parameter
         return math.sqrt(mu * (2./distance - 1./self.semi_major_axis))
 
-    def visviva_peri(self):
-        """Orbital speed at periapsis"""
-        return self.visviva(self.periapsis)
-
-    def visviva_apo(self):
-        """Orbital speed at apoapsis"""
-        return self.visviva(self.apoapsis)
-
     def distance(self, true_anomaly):
         """Distance from focus (m) at a given true anomaly (rad)"""
         c = math.cos(true_anomaly)
