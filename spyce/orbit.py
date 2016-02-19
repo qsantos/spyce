@@ -367,7 +367,7 @@ except ImportError:
     try:  # Python 2
         import cext.orbit_py2 as cext
     except ImportError:
-        sys.stderr.write("Note: to improve performances, run `make` in cext/")
+        sys.stderr.write("Note: to improve performance, run `make` in cext/\n")
         cext = None
 
 if cext is not None:
