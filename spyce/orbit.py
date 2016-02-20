@@ -32,6 +32,10 @@ class Orbit(object):
         mean_anomaly_at_epoch       rad, optional
         """
 
+        # normalize inclination within [0, math.pi[
+        half_turns, inclination = divmod(inclination, math.pi)
+        longitude_of_ascending_node += half_turns*math.pi
+
         self.primary = primary
         self.periapsis = float(periapsis)
         self.eccentricity = float(eccentricity)
