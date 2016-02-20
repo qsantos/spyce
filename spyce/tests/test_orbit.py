@@ -14,7 +14,12 @@ except ImportError:
 
 
 # dummy primary object
-primary = type('Object', (), {'gravitational_parameter': 1e20})()
+class DummyPrimary(object):
+    gravitational_parameter = 1e20
+
+    def __repr__(self):
+        return 'X'
+primary = DummyPrimary()
 
 
 def random_angle():
@@ -48,6 +53,8 @@ def random_orbit():
 
 
 class TestOrbit(unittest.TestCase):
+    longMessage = True
+
     def assertIsClose(self, first, second, rel_tol=1e-9, msg=None, abs_tol=0.):
         ok = isclose(first, second, rel_tol=rel_tol, abs_tol=abs_tol)
         self.assertTrue(ok, msg=msg)
@@ -58,14 +65,16 @@ class TestOrbit(unittest.TestCase):
         self.assertAlmostEqual(angle_diff, 0, places, msg, delta)
 
     def assertAlmostEqualOrbits(self, a, b):
-        self.assertIsClose(a.periapsis, b.periapsis)
-        self.assertAlmostEqual(a.eccentricity, b.eccentricity)
-        self.assertAlmostEqualAngle(a.inclination, b.inclination)
+        msg = '\n' + str(a) + ' != ' + str(b)
+
+        self.assertIsClose(a.periapsis, b.periapsis, msg=msg)
+        self.assertAlmostEqual(a.eccentricity, b.eccentricity, msg=msg)
+        self.assertAlmostEqualAngle(a.inclination, b.inclination, msg=msg)
 
         # longitude of ascending node
         if a.inclination not in (0., math.pi):
             self.assertAlmostEqualAngle(a.longitude_of_ascending_node,
-                                        b.longitude_of_ascending_node)
+                                        b.longitude_of_ascending_node, msg=msg)
 
         # argument of periapsis
         if a.eccentricity != 0:
@@ -78,13 +87,13 @@ class TestOrbit(unittest.TestCase):
                 argument_of_periapsis_a -= a.longitude_of_ascending_node
                 argument_of_periapsis_b -= b.longitude_of_ascending_node
             self.assertAlmostEqualAngle(argument_of_periapsis_a,
-                                        argument_of_periapsis_b)
+                                        argument_of_periapsis_b, msg=msg)
 
         # mean anomaly
         if 0 < a.eccentricity < 1:
             instant = random.uniform(-1e6, 1e6)
             self.assertAlmostEqualAngle(a.mean_anomaly(instant),
-                                        b.mean_anomaly(instant))
+                                        b.mean_anomaly(instant), msg=msg)
 
     def orbit(self, o):
         # check true anomaly at periapsis and apoapsis
