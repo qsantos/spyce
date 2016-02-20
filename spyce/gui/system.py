@@ -87,7 +87,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             if body.orbit:
                 body.orbit.call_list = glGenLists(1)
                 glNewList(body.orbit.call_list, GL_COMPILE)
-                self.draw_orbit(body.orbit)
+                self.draw_orbit(body.orbit, use_vbo=False)
                 glEndList()
             for satellite in body.satellites:
                 make_orbit_call_list(satellite)
@@ -126,7 +126,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         return cls(body)
 
-    def draw_orbit(self, orbit):
+    def draw_orbit(self, orbit, use_vbo=True):
         """Draw an orbit using focus as origin"""
         glPushMatrix()
 
@@ -138,10 +138,16 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         glScalef(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
 
         # draw circle or parabola
-        if orbit.eccentricity < 1.:
-            self.circle.draw()
+        mesh = self.circle if orbit.eccentricity < 1. else self.parabola
+        if use_vbo:
+            mesh.draw()
         else:
-            self.parabola.draw()
+            # quick fix to allow drawing in display lists
+            # TODO: not use display lists
+            glBegin(mesh.mode)
+            for v in mesh.vertices():
+                glVertex(*v)
+            glEnd()
 
         # apses
         glPointSize(5)
