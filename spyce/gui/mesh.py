@@ -46,18 +46,21 @@ class Mesh(object):
         # select vertex buffer object
         self.vertex_buffer.bind()
         glVertexPointer(self.components, GL_FLOAT, 0, None)
+        self.vertex_buffer.unbind()
         glEnableClientState(GL_VERTEX_ARRAY)
 
         # select texcoord buffer object
         if hasattr(self, "texcoord_buffer"):
             self.texcoord_buffer.bind()
             glTexCoordPointer(2, GL_FLOAT, 0, None)
+            self.texcoord_buffer.unbind()
             glEnableClientState(GL_TEXTURE_COORD_ARRAY)
 
         # select normal buffer object
         if hasattr(self, "normal_buffer"):
             self.normal_buffer.bind()
             glNormalPointer(GL_FLOAT, 0, None)
+            self.normal_buffer.unbind()
             glEnableClientState(GL_NORMAL_ARRAY)
 
         return False

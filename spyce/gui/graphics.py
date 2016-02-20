@@ -19,6 +19,10 @@ class BufferObject(object):
         """Bind the Buffer Object to GL_ARRAY_BUFFER"""
         glBindBuffer(GL_ARRAY_BUFFER, self.index)
 
+    def unbind(self):
+        """Unbind the Buffer Object off GL_ARRAY_BUFFER"""
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+
     def fill(self, data, flatten=False):
         """Fill the Buffer Object with data (assume list of floats)
 
@@ -32,6 +36,7 @@ class BufferObject(object):
         # send to GPU
         self.bind()
         glBufferData(GL_ARRAY_BUFFER, data_buffer, GL_STATIC_DRAW)
+        self.unbind()
 
 
 def make_shader_source(program, source, type_, filename="-"):
