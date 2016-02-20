@@ -9,17 +9,17 @@ from OpenGL.GL import *
 class BufferObject(object):
     """OpenGL Buffer Object helper"""
     def __init__(self, data=None, flatten=False):
-        """Create a new Buffer Object, optionally fill it (see `load()`)"""
+        """Create a new Buffer Object, optionally fill it (see `fill()`)"""
         self.index = glGenBuffers(1)
         self.size = 0
         if data is not None:
-            self.load(data, flatten)
+            self.fill(data, flatten)
 
     def bind(self):
         """Bind the Buffer Object to GL_ARRAY_BUFFER"""
         glBindBuffer(GL_ARRAY_BUFFER, self.index)
 
-    def load(self, data, flatten=False):
+    def fill(self, data, flatten=False):
         """Fill the Buffer Object with data (assume list of floats)
 
         If `flatten`, assume data is an iterable of iterables and flatten it"""

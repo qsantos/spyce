@@ -120,13 +120,13 @@ class HUD(gui.scene.Scene):
         self.draw_hud()
 
         # vertices
-        self.text_vbo.load(self.vertcoords)
+        self.text_vbo.fill(self.vertcoords)
         self.text_vbo.bind()
         glVertexPointer(2, GL_FLOAT, 0, None)
         glEnableClientState(GL_VERTEX_ARRAY)
 
         # texture coordinatess
-        self.text_tbo.load(self.texcoords)
+        self.text_tbo.fill(self.texcoords)
         self.text_tbo.bind()
         glTexCoordPointer(2, GL_FLOAT, 0, None)
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
