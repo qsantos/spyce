@@ -1,6 +1,6 @@
 import unittest
 import math
-import random
+import itertools
 
 import orbit
 
@@ -20,36 +20,6 @@ class DummyPrimary(object):
     def __repr__(self):
         return 'X'
 primary = DummyPrimary()
-
-
-def random_angle():
-    if random.randrange(2):
-        return random.choice([-1, 1]) * random.choice(
-            [0, math.pi/4, math.pi/2, math.pi])
-    else:
-        return random.uniform(-math.pi, math.pi)
-
-
-def random_eccentricity():
-    return random.choice([
-        0.0,
-        random.uniform(0.0, 1.0),
-        1.0,
-        1.0 + random.expovariate(0.25),
-    ])
-
-
-def random_orbit():
-    periapsis = random.expovariate(1e-9)
-    eccentricity = random_eccentricity()
-    inclination = abs(random_angle())
-    longitude_of_ascending_node = random_angle()
-    argument_of_periapsis = random_angle()
-
-    return orbit.Orbit(
-        primary, periapsis, eccentricity,
-        inclination, longitude_of_ascending_node, argument_of_periapsis,
-    )
 
 
 class TestOrbit(unittest.TestCase):
@@ -90,10 +60,9 @@ class TestOrbit(unittest.TestCase):
                                         argument_of_periapsis_b, msg=msg)
 
         # mean anomaly
-        if 0 < a.eccentricity < 1:
-            instant = random.uniform(-1e6, 1e6)
-            self.assertAlmostEqualAngle(a.mean_anomaly(instant),
-                                        b.mean_anomaly(instant), msg=msg)
+        if a.eccentricity != 0:
+            self.assertAlmostEqualAngle(a.mean_anomaly(0), b.mean_anomaly(0),
+                                        msg=msg)
 
     def orbit(self, o):
         # check true anomaly at periapsis and apoapsis
@@ -104,11 +73,6 @@ class TestOrbit(unittest.TestCase):
 
         # gather orbit characteristics
         args = o.__dict__
-        args["apsis"] = o.periapsis if random.randrange(2) else o.apoapsis
-        if random.randrange(2):
-            args["apsis1"], args["apsis2"] = o.periapsis, o.apoapsis
-        else:
-            args["apsis1"], args["apsis2"] = o.apoapsis, o.periapsis
 
         # re-generate from semi-major axis
         if o.eccentricity != 1:  # semi-major axis is infinite
@@ -116,7 +80,11 @@ class TestOrbit(unittest.TestCase):
             self.assertAlmostEqualOrbits(o, new_orbit)
 
         # re-generate from apses
-        self.assertAlmostEqualOrbits(o, orbit.Orbit.from_apses(**args))
+        self.assertAlmostEqualOrbits(o, orbit.Orbit.from_apses(
+            apsis1=o.periapsis, apsis2=o.apoapsis, **args))
+        # also try with inverted apses
+        self.assertAlmostEqualOrbits(o, orbit.Orbit.from_apses(
+            apsis1=o.apoapsis, apsis2=o.periapsis, **args))
 
         # re-generate from orbital period
         if o.eccentricity != 1:  # no period
@@ -124,19 +92,25 @@ class TestOrbit(unittest.TestCase):
 
         # re-generate from orbital period and apsis
         if o.eccentricity < 1:  # can't tell hyperbolic from elliptic
-            new_orbit = orbit.Orbit.from_period_apsis(**args)
-            self.assertAlmostEqualOrbits(o, new_orbit)
+            self.assertAlmostEqualOrbits(o, orbit.Orbit.from_period_apsis(
+                apsis=o.periapsis, **args))
+            # also try with apoapsis
+            self.assertAlmostEqualOrbits(o, orbit.Orbit.from_period_apsis(
+                apsis=o.apoapsis, **args))
 
-        # re-generate from state point
-        instant = random.expovariate(1e-6) * random.choice([-1, 1])
-        p, v = o.position_t(instant), o.velocity_t(instant)
-        new_orbit = orbit.Orbit.from_state(primary, p, v, instant)
+        # re-generate from state point at arbitrary time
+        time = 1e4
+        position, velocity = o.position_t(time), o.velocity_t(time)
+        new_orbit = orbit.Orbit.from_state(primary, position, velocity, time)
         self.assertAlmostEqualOrbits(o, new_orbit)
 
-    def test_random(self):
-        for _ in range(400):
-            self.orbit(random_orbit())
-
+    def test_all(self):
+        periapsis = (1e9, 1e13)
+        eccentricity = (0.0, 0.00001, 0.5, 0.99999, 1.0, 1.00001, 10.0)
+        angle = (-math.pi/2, 0, math.pi/4, math.pi/2, math.pi)
+        for elements in itertools.product(periapsis, eccentricity, angle,
+                                          angle, angle):
+            self.orbit(orbit.Orbit(primary, *elements))
 
 if __name__ == '__main__':
     unittest.main()
