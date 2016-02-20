@@ -40,8 +40,10 @@ class SimulationGUI(gui.system.SystemGUI):
             self.is_running = False
         elif k == b',':
             self.timewarp /= 10.
+            self.update()
         elif k == b';':
             self.timewarp *= 10.
+            self.update()
         else:
             super(SimulationGUI, self).keyboardFunc(k, x, y)
 
