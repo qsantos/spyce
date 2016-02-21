@@ -67,9 +67,13 @@ class TestOrbit(unittest.TestCase):
     def orbit(self, o):
         # check true anomaly at periapsis and apoapsis
         self.assertAlmostEqual(o.true_anomaly(0), 0)
+        # also try Python version
+        self.assertAlmostEqual(o._true_anomaly(0), 0)
         if o.eccentricity < 1:
             apoapsis_time = (math.pi - o.mean_anomaly_at_epoch) / o.mean_motion
             self.assertAlmostEqual(o.true_anomaly(apoapsis_time), math.pi)
+            # also try Python version
+            self.assertAlmostEqual(o._true_anomaly(apoapsis_time), math.pi)
 
         # gather orbit characteristics
         args = o.__dict__
@@ -102,6 +106,9 @@ class TestOrbit(unittest.TestCase):
         time = 1e4
         position, velocity = o.position_t(time), o.velocity_t(time)
         new_orbit = orbit.Orbit.from_state(primary, position, velocity, time)
+        self.assertAlmostEqualOrbits(o, new_orbit)
+        # also try Python version
+        new_orbit = orbit.Orbit._from_state(primary, position, velocity, time)
         self.assertAlmostEqualOrbits(o, new_orbit)
 
     def test_all(self):
