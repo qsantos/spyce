@@ -93,6 +93,9 @@ class Orbit(object):
             raise InvalidElements("eccentricity < 1 but semi-major axis <= 0")
         if eccentricity > 1 and semi_major_axis >= 0:
             raise InvalidElements("eccentricity > 1 but semi-major axis >= 0")
+        if eccentricity == 1:
+            raise InvalidElements(
+                "cannot define parabolic trajectory from semi-major axis")
 
         periapsis = semi_major_axis * (1 - eccentricity)
 
