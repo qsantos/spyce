@@ -152,8 +152,10 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         # apses
         glPointSize(5)
         glBegin(GL_POINTS)
+        # periapsis
         glVertex3f(+1, 0, 0)
-        if orbit.eccentricity < 1.:
+        if orbit.eccentricity < 1.:  # circular and elliptic orbits
+            # apoapsis
             glVertex3f(-1, 0, 0)
         glEnd()
 
@@ -178,7 +180,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
         orbit = body.orbit
 
-        if orbit.eccentricity >= 1.:
+        if orbit.eccentricity >= 1.:  # open orbits
             # path
             glBegin(GL_LINE_STRIP)
             n = 128
@@ -193,12 +195,12 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
                 glVertex3f(*relative_p)
             glEnd()
 
-            # apses
+            # periapsis
             glPointSize(5)
             glBegin(GL_POINTS)
             glVertex3f(*corrected_orbit_position(0))
             glEnd()
-        else:
+        else:  # closed orbits
             # nice hack with circle symetry to draw the orbit from the body
             # while still using VBOs
             # unsure it can be adapted for parabolic and hyperbolic orbits

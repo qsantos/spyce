@@ -42,25 +42,23 @@ class TestOrbit(unittest.TestCase):
         self.assertAlmostEqualAngle(a.inclination, b.inclination, msg=msg)
 
         # longitude of ascending node
-        if a.inclination not in (0., math.pi):
+        if a.inclination != 0:  # gimpbal lock when inclination is null
             self.assertAlmostEqualAngle(a.longitude_of_ascending_node,
                                         b.longitude_of_ascending_node, msg=msg)
 
         # argument of periapsis
-        if a.eccentricity != 0:
+        if a.eccentricity != 0:  # not well defined in circular orbits
             argument_of_periapsis_a = a.argument_of_periapsis
             argument_of_periapsis_b = b.argument_of_periapsis
-            if a.inclination == 0:
+            if a.inclination == 0:  # gimpbal lock when inclination is null
+                # merge argument and longitude
                 argument_of_periapsis_a += a.longitude_of_ascending_node
                 argument_of_periapsis_b += b.longitude_of_ascending_node
-            elif a.inclination == math.pi:
-                argument_of_periapsis_a -= a.longitude_of_ascending_node
-                argument_of_periapsis_b -= b.longitude_of_ascending_node
             self.assertAlmostEqualAngle(argument_of_periapsis_a,
                                         argument_of_periapsis_b, msg=msg)
 
         # mean anomaly
-        if a.eccentricity != 0:
+        if a.eccentricity != 0:  # not well defined in circular orbits
             self.assertAlmostEqualAngle(a.mean_anomaly(0), b.mean_anomaly(0),
                                         msg=msg)
 
@@ -69,7 +67,7 @@ class TestOrbit(unittest.TestCase):
         self.assertAlmostEqual(o.true_anomaly(0), 0)
         # also try Python version
         self.assertAlmostEqual(o._true_anomaly(0), 0)
-        if o.eccentricity < 1:
+        if o.eccentricity < 1:  # only circular / elliptic orbits have apoapses
             apoapsis_time = (math.pi - o.mean_anomaly_at_epoch) / o.mean_motion
             self.assertAlmostEqual(o.true_anomaly(apoapsis_time), math.pi)
             # also try Python version
@@ -79,7 +77,7 @@ class TestOrbit(unittest.TestCase):
         args = o.__dict__
 
         # re-generate from semi-major axis
-        if o.eccentricity != 1:  # semi-major axis is infinite
+        if o.eccentricity != 1:  # parabolic trajectories: infinite semi-major
             new_orbit = orbit.Orbit.from_semi_major_axis(**args)
             self.assertAlmostEqualOrbits(o, new_orbit)
 
