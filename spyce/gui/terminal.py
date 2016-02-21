@@ -160,7 +160,7 @@ class TerminalGUI(gui.hud.HUD):
         """Handle key presses (GLUT callback)"""
         self.update()
         with self.console:
-            self.readline.press(k.decode())
+            self.readline.press(k.decode('latin1'))
         super(TerminalGUI, self).keyboardFunc(k, x, y)
 
     @glut_callback
