@@ -90,15 +90,15 @@ class TestOrbit(unittest.TestCase):
         self.assertAlmostEqualOrbits(o, orbit.Orbit.from_apses(
             apsis1=o.apoapsis, apsis2=o.periapsis, **args))
 
-        # re-generate from orbital period
-        if o.eccentricity != 1:  # no period
+        # re-generate from orbital period ...
+        if o.eccentricity < 1:  # parabolic/hyperbolic trajectory has no period
+            # ... and eccentricity
             self.assertAlmostEqualOrbits(o, orbit.Orbit.from_period(**args))
 
-        # re-generate from orbital period and apsis
-        if o.eccentricity < 1:  # can't tell hyperbolic from elliptic
+            # ... and periapsis
             self.assertAlmostEqualOrbits(o, orbit.Orbit.from_period_apsis(
                 apsis=o.periapsis, **args))
-            # also try with apoapsis
+            # ... and apospsis
             self.assertAlmostEqualOrbits(o, orbit.Orbit.from_period_apsis(
                 apsis=o.apoapsis, **args))
 

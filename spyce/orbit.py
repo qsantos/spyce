@@ -47,13 +47,18 @@ class Orbit(object):
 
         mu = self.primary.gravitational_parameter
 
+        # semi-major axis, mean motion
         if self.eccentricity == 1:  # parabolic trajectory
             self.semi_major_axis = float("inf")
             self.mean_motion = 0
-            self.period = float("inf")
         else:
             self.semi_major_axis = self.periapsis / (1 - self.eccentricity)
             self.mean_motion = math.sqrt(mu / abs(self.semi_major_axis)**3)
+
+        # period
+        if self.eccentricity >= 1:  # parabolic/hyperbolic trajectory
+            self.period = float("inf")
+        else:  # circular/elliptic orbit
             self.period = 2*math.pi / self.mean_motion
 
         self.apoapsis = self.semi_major_axis * (1 + self.eccentricity)
@@ -126,13 +131,14 @@ class Orbit(object):
     ):
         """Orbit from orbital period (s)"""
 
+        if eccentricity >= 1:
+            raise InvalidElements(
+                "cannot define parabolic/hyperbolic trajectory from period")
+
         period = float(period)
         mu = primary.gravitational_parameter
         mean_motion = period / (2*math.pi)
         semi_major_axis = (mean_motion**2 * mu)**(1./3)
-
-        if eccentricity > 1:
-            semi_major_axis = -semi_major_axis
 
         return cls.from_semi_major_axis(
             primary, semi_major_axis, eccentricity,
@@ -147,6 +153,10 @@ class Orbit(object):
         epoch=0, mean_anomaly_at_epoch=0, **_
     ):
         """Orbit from orbital period (s) and one apsis (m)"""
+
+        if math.isinf(period):
+            raise InvalidElements(
+                "cannot define parabolic/hyperbolic trajectory from period")
 
         period = float(period)
         mu = primary.gravitational_parameter
