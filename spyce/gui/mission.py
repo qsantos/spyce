@@ -84,13 +84,13 @@ class MissionGUI(gui.simulation.SimulationGUI):
             last = now
 
             # physics simulation
-            accumulated_time += elapsed
-            dt = 2.**-8
+            accumulated_time += elapsed * self.timewarp
+            dt = 2.**-5
             if accumulated_time > dt:
                 while accumulated_time > dt:
                     accumulated_time -= dt
-                    self.rocket.simulate(self.time, dt * self.timewarp)
-                    self.time += dt * self.timewarp
+                    self.rocket.simulate(self.time, dt)
+                    self.time += dt
 
                 self.path.append(self.rocket.position)  # save rocket path
                 self.update()
