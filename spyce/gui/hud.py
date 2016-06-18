@@ -91,12 +91,14 @@ class HUD(gui.scene.Scene):
     def draw_hud(self):
         """Draw the HUD"""
 
-        # compute fps
+        # this is a fixed-length queue (automatically drops oldest timing)
         self.frame_timings.append(time.time())
+        # compute fps as the inverse of a moving average
         elapsed = self.frame_timings[-1] - self.frame_timings[0]
-        fps = len(self.frame_timings) / elapsed
+        # with n timings, we measure n-1 consecutives frames
+        fps = (len(self.frame_timings) - 1) / elapsed
 
-        self.hud_print("%i FPS\n" % fps)
+        self.hud_print("%i FPS\n" % round(fps))
         self.hud_print("Zoom x%g\n" % self.zoom)
 
     def set_and_draw_hud(self):
