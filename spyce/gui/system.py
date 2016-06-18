@@ -181,18 +181,30 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         orbit = body.orbit
 
         if orbit.eccentricity >= 1.:  # open orbits
-            # path
+            # choose interpolation points
+            def _():
+                true_anomaly = orbit.true_anomaly(self.time)
+                ejection_angle = orbit.ejection_angle() - 1e-2
+                n = 128
+                # normal hyperbola
+                for i in range(n+1):
+                    t = 2.*i/n - 1
+                    yield ejection_angle * t
+                n = 64
+                # ensure the body will be on the line (2.)
+                # more points close to the camera (3.)
+                for i in range(n+1):
+                    t = 2.*i/n - 1
+                    theta = true_anomaly + t * abs(t)
+                    if abs(theta) < ejection_angle:
+                        yield theta
+            angles = sorted(_())
+
+            # draw trajectory
+            glPointSize(2)
             glBegin(GL_LINE_STRIP)
-            n = 128
-            # ensure the body will be on the line (2.)
-            x = orbit.true_anomaly(self.time)
-            for i in range(n):
-                # we need more points close to the camera (3.)
-                # the function i -> 2.*i/n - 1
-                # has values in [-1, 1] and a lower slope around 0
-                theta = x + math.pi * (2.*i/n - 1)**3
-                relative_p = corrected_orbit_position(theta)
-                glVertex3f(*relative_p)
+            for angle in angles:
+                glVertex3f(*corrected_orbit_position(angle))
             glEnd()
 
             # periapsis
@@ -207,9 +219,6 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
 
             glPushMatrix()
 
-            # the first point of circle_through_origin is (0,0) (2.)
-            # using linear transforms spreads points more naturally (3.)
-
             # make tilted ellipse from a circle
             glRotatef(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
             glRotatef(math.degrees(orbit.inclination),                 1, 0, 0)
@@ -220,6 +229,8 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             anomaly = orbit.eccentric_anomaly(self.time)
             glRotatef(math.degrees(anomaly) - 180., 0, 0, 1)
 
+            # the first point of circle_through_origin is (0,0) (2.)
+            # more points are located near the origin (3.)
             self.circle_through_origin.draw()
 
             glPopMatrix()
