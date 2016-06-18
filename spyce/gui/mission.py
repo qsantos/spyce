@@ -20,8 +20,10 @@ class MissionGUI(gui.simulation.SimulationGUI):
     def draw_rocket(self):
         """Draw the rocket"""
 
-        self.shader_reset()  # TODO: avoid state change
+        self.add_pick_object(self.rocket)
+
         glPushMatrix()
+        glTranslatef(*self.rocket._relative_position)
         glScalef(1e4, 1e4, 1e4)
 
         # follow rocket orientation
@@ -49,27 +51,27 @@ class MissionGUI(gui.simulation.SimulationGUI):
         # all done
         gui.textures.unbind()
         glPopMatrix()
-        self.shader_set(self.shader_lighting)
 
-    def draw_path(self):
-        """Draw the path used by the rocket"""
+        # draw traveled path
+        offset = self.system._relative_position
         glColor4f(1, 0, 0, 1)
         glBegin(GL_LINE_STRIP)
         for position in self.path:
-            glVertex3f(*position)
+            glVertex3f(*(position + offset))
         glEnd()
 
     def draw_body(self, body):
         """Draw a CelestialBody (or a Rocket)"""
 
         if body == self.rocket:
-            self.draw_rocket()
             return
 
-        if body == self.rocket.primary:
-            self.draw_path()
-
         super(MissionGUI, self).draw_body(body)
+
+    def draw(self):
+        super(MissionGUI, self).draw()
+
+        self.draw_rocket()
 
     def main(self):
         """Main loop"""
@@ -92,7 +94,10 @@ class MissionGUI(gui.simulation.SimulationGUI):
                     self.rocket.simulate(self.time, dt)
                     self.time += dt
 
-                self.path.append(self.rocket.position)  # save rocket path
+                # save rocket path
+                rocket_position = self.rocket.global_position(self.time)
+                self.path.append(rocket_position)
+
                 self.update()
             else:
                 # avoid wasting cycles
