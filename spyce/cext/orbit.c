@@ -1,10 +1,10 @@
 /* To use this in a Python script, run:
-$ gcc std=c99 -shared -fPIC elements.c -o elements.so
+$ gcc std=c99 -shared -fPIC orbits.c -o orbits.so
 
 Then, use:
 
 import ctypes
-lib = ctypes.CDLL("./elements.so")
+lib = ctypes.CDLL("./orbits.so")
 
 def elements_from_state(mu, position, velocity):
 	mu = ctypes.c_double(mu)
@@ -14,11 +14,11 @@ def elements_from_state(mu, position, velocity):
 	lib.elements_from_state(mu, position, velocity, elements)
 	return elements
 
-lib.eccentric_anomaly.restype = ctypes.c_double
-def eccentric_anomaly(e, M):
+lib.eccentric_anomaly_at_mean_anomaly.restype = ctypes.c_double
+def eccentric_anomaly_at_mean_anomaly(e, M):
 	e = ctypes.c_double(e)
 	M = ctypes.c_double(M)
-	return lib.eccentric_anomaly(e, M)
+	return lib.eccentric_anomaly_at_mean_anomaly(e, M)
 */
 
 #include <math.h>
