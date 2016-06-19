@@ -346,7 +346,7 @@ class Orbit(object):
                 return M / (e - 1)
 
             return analysis.newton_raphson(
-                x_0=math.asinh(M),
+                x_0=1,
                 f=lambda E: e*math.sinh(E) - E - M,
                 f_prime=lambda E: e*math.cosh(E) - 1,
             )

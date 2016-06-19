@@ -208,7 +208,7 @@ double eccentric_anomaly(double e, double M)
 			return M / (e - 1.);
 
 		// M = e sinh E - E
-		double E = asinh(M);
+		double E = 1.;
 		inline double f     (double E) { return e*sinh(E) - E - M; }
 		inline double fprime(double E) { return e*cosh(E) - 1.; }
 
