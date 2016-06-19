@@ -403,19 +403,16 @@ if cext is not None:
         mu = primary.gravitational_parameter
         elements = cext.elements_from_state(mu, position, velocity, epoch)
         return cls(primary, *elements)
-    Orbit._from_state = Orbit.from_state  # save Python version
     Orbit.from_state = from_state
 
     def eccentric_anomaly(self, time):
         e = self.eccentricity
         M = self.mean_anomaly(time)
         return cext.eccentric_anomaly(e, M)
-    Orbit._eccentric_anomaly = Orbit.eccentric_anomaly  # save Python version
     Orbit.eccentric_anomaly = eccentric_anomaly
 
     def true_anomaly(self, time):
         e = self.eccentricity
         M = self.mean_anomaly(time)
         return cext.true_anomaly(e, M)
-    Orbit._true_anomaly = Orbit.true_anomaly  # save Python version
     Orbit.true_anomaly = true_anomaly
