@@ -62,15 +62,16 @@ class TestOrbit(unittest.TestCase):
 
         # mean anomaly
         if a.eccentricity != 0:  # not well defined in circular orbits
-            self.assertAlmostEqualAngle(a.mean_anomaly(0), b.mean_anomaly(0),
-                                        msg=msg)
+            self.assertAlmostEqualAngle(
+                a.mean_anomaly_at_time(0), b.mean_anomaly_at_time(0), msg=msg)
 
     def orbit(self, o):
         # check true anomaly at periapsis and apoapsis
-        self.assertAlmostEqual(o.true_anomaly(0), 0)
+        self.assertAlmostEqual(o.true_anomaly_at_time(0), 0)
         if o.eccentricity < 1:  # only circular / elliptic orbits have apoapses
             apoapsis_time = (math.pi - o.mean_anomaly_at_epoch) / o.mean_motion
-            self.assertAlmostEqual(o.true_anomaly(apoapsis_time), math.pi)
+            self.assertAlmostEqual(o.true_anomaly_at_time(apoapsis_time),
+                                   math.pi)
 
         # gather orbit characteristics
         args = o.__dict__

@@ -183,7 +183,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         if orbit.eccentricity >= 1.:  # open orbits
             # choose interpolation points
             def _():
-                true_anomaly = orbit.true_anomaly(self.time)
+                true_anomaly = orbit.true_anomaly_at_time(self.time)
                 ejection_angle = orbit.ejection_angle() - 1e-2
                 n = 128
                 # normal hyperbola
@@ -226,7 +226,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             glScalef(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
 
             # account for current position of the body (use circle symmetry)
-            anomaly = orbit.eccentric_anomaly(self.time)
+            anomaly = orbit.eccentric_anomaly_at_time(self.time)
             glRotatef(math.degrees(anomaly) - 180., 0, 0, 1)
 
             # the first point of circle_through_origin is (0,0) (2.)
