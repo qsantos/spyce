@@ -42,7 +42,7 @@ class TestOrbit(unittest.TestCase):
         self.assertAlmostEqualAngle(a.inclination, b.inclination, msg=msg)
 
         # longitude of ascending node
-        if a.inclination != 0:  # gimpbal lock when inclination is null
+        if a.inclination not in (0, math.pi):  # gimpbal lock
             self.assertAlmostEqualAngle(a.longitude_of_ascending_node,
                                         b.longitude_of_ascending_node, msg=msg)
 
@@ -50,10 +50,13 @@ class TestOrbit(unittest.TestCase):
         if a.eccentricity != 0:  # not well defined in circular orbits
             argument_of_periapsis_a = a.argument_of_periapsis
             argument_of_periapsis_b = b.argument_of_periapsis
-            if a.inclination == 0:  # gimpbal lock when inclination is null
+            if a.inclination == 0:  # gimbal lock when inclination is null
                 # merge argument and longitude
                 argument_of_periapsis_a += a.longitude_of_ascending_node
                 argument_of_periapsis_b += b.longitude_of_ascending_node
+            if a.inclination == math.pi:  # gimbal lock
+                argument_of_periapsis_a -= a.longitude_of_ascending_node
+                argument_of_periapsis_b -= b.longitude_of_ascending_node
             self.assertAlmostEqualAngle(argument_of_periapsis_a,
                                         argument_of_periapsis_b, msg=msg)
 
