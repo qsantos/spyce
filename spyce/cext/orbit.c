@@ -168,9 +168,14 @@ void elements_from_state(double mu, double* position, double* velocity, double e
 	};
 }
 
-double eccentric_anomaly(double e, double M)
+double eccentric_anomaly_at_mean_anomaly(double e, double M);
+double eccentric_anomaly_at_true_anomaly(double e, double v);
+double true_anomaly_at_mean_anomaly(double e, double M);
+double true_anomaly_at_eccentric_anomaly(double e, double E);
+
+double eccentric_anomaly_at_mean_anomaly(double e, double M)
 {
-	/* Computes the eccentric anomaly at a given time (s) */
+	/* Computes the eccentric anomaly at a given mean anomaly */
 
 	if (e < 1.)
 	{
@@ -227,12 +232,40 @@ double eccentric_anomaly(double e, double M)
 	}
 }
 
-double true_anomaly(double e, double M)
+double eccentric_anomaly_at_true_anomaly(double e, double v)
 {
-	/* Computes the true anomaly at a given time (s) */
+	/* Computes the eccentric anomaly at given true anomaly */
+	if (e < 1)  // circular or elliptic orbit
+	{
+		double x = sqrt(1+e)*cos(v/2);
+		double y = sqrt(1-e)*sin(v/2);
+		return 2 * atan2(y, x);
+	}
+	else if (e == 1)  // parabolic trajectory
+	{
+		return 0;
+	}
+	else  // hyperbolic trajectory
+	{
+		double x = sqrt(e+1)*cosh(v/2);
+		double y = sqrt(e-1)*sinh(v/2);
+		return 2 * atan2(y, x);
+	}
+}
+
+double true_anomaly_at_mean_anomaly(double e, double M)
+{
+	/* Computes the true anomaly at a given mean anomaly */
+
+    double E = eccentric_anomaly_at_mean_anomaly(e, M);
+    return true_anomaly_at_eccentric_anomaly(e, E);
+}
+
+double true_anomaly_at_eccentric_anomaly(double e, double E)
+{
+	/* Computes the true anomaly at a given eccentric anomaly */
 	if (e < 1.)
 	{
-		double E = eccentric_anomaly(e, M);
 		double x = sqrt(1.-e) * cos(E/2.);
 		double y = sqrt(1.+e) * sin(E/2.);
 		return 2. * atan2(y, x);
@@ -243,7 +276,6 @@ double true_anomaly(double e, double M)
 	}
 	else
 	{
-		double E = eccentric_anomaly(e, M);
 		double x = sqrt(e-1.) * cosh(E/2.);
 		double y = sqrt(e+1.) * sinh(E/2.);
 		return 2. * atan2(y, x);

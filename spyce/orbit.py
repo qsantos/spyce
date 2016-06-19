@@ -454,3 +454,9 @@ if cext is not None:
         elements = cext.elements_from_state(mu, position, velocity, epoch)
         return cls(primary, *elements)
     Orbit.from_state = from_state
+
+    def true_anomaly_at_mean_anomaly(self, mean_anomaly):
+        e = self.eccentricity
+        M = mean_anomaly
+        return cext.true_anomaly_at_mean_anomaly(e, M)
+    Orbit.true_anomaly_at_mean_anomaly = true_anomaly_at_mean_anomaly

@@ -32,7 +32,7 @@ static PyObject* wrapper_elements_from_state(PyObject* self, PyObject* args)
 	);
 }
 
-static PyObject* wrapper_eccentric_anomaly(PyObject* self, PyObject* args)
+static PyObject* wrapper_eccentric_anomaly_at_mean_anomaly(PyObject* self, PyObject* args)
 {
 	(void) self;
 
@@ -42,11 +42,25 @@ static PyObject* wrapper_eccentric_anomaly(PyObject* self, PyObject* args)
 	if (!PyArg_ParseTuple(args, "dd", &eccentricity, &mean_anomaly))
 		return NULL;
 
-	double ret = eccentric_anomaly(eccentricity, mean_anomaly);
+	double ret = eccentric_anomaly_at_mean_anomaly(eccentricity, mean_anomaly);
 	return Py_BuildValue("d", ret);
 }
 
-static PyObject* wrapper_true_anomaly(PyObject* self, PyObject* args)
+static PyObject* wrapper_eccentric_anomaly_at_true_anomaly(PyObject* self, PyObject* args)
+{
+	(void) self;
+
+	double eccentricity;
+	double true_anomaly;
+
+	if (!PyArg_ParseTuple(args, "dd", &eccentricity, &true_anomaly))
+		return NULL;
+
+	double ret = eccentric_anomaly_at_true_anomaly(eccentricity, true_anomaly);
+	return Py_BuildValue("d", ret);
+}
+
+static PyObject* wrapper_true_anomaly_at_mean_anomaly(PyObject* self, PyObject* args)
 {
 	(void) self;
 
@@ -56,16 +70,52 @@ static PyObject* wrapper_true_anomaly(PyObject* self, PyObject* args)
 	if (!PyArg_ParseTuple(args, "dd", &eccentricity, &mean_anomaly))
 		return NULL;
 
-	double ret = true_anomaly(eccentricity, mean_anomaly);
+	double ret = true_anomaly_at_mean_anomaly(eccentricity, mean_anomaly);
 	return Py_BuildValue("d", ret);
 }
+
+static PyObject* wrapper_true_anomaly_at_eccentric_anomaly(PyObject* self, PyObject* args)
+{
+	(void) self;
+
+	double eccentricity;
+	double eccentric_anomaly;
+
+	if (!PyArg_ParseTuple(args, "dd", &eccentricity, &eccentric_anomaly))
+		return NULL;
+
+	double ret = true_anomaly_at_eccentric_anomaly(eccentricity, eccentric_anomaly);
+	return Py_BuildValue("d", ret);
+}
+
 
 
 static PyMethodDef methods[] =
 {
-	{"elements_from_state", wrapper_elements_from_state, METH_VARARGS, "Compute orbital elements from given state vectors"},
-	{"eccentric_anomaly",   wrapper_eccentric_anomaly,   METH_VARARGS, "Computes the eccentric anomaly at a given time (s)"},
-	{"true_anomaly",        wrapper_true_anomaly,        METH_VARARGS, "Computes the true anomaly at a given time (s)"},
+	{
+        "elements_from_state", wrapper_elements_from_state, METH_VARARGS,
+        "Compute orbital elements from given state vectors",
+    },
+	{
+        "eccentric_anomaly_at_mean_anomaly",
+        wrapper_eccentric_anomaly_at_mean_anomaly, METH_VARARGS,
+        "Computes the eccentric anomaly at a given mean anomaly",
+    },
+	{
+        "eccentric_anomaly_at_true_anomaly",
+        wrapper_eccentric_anomaly_at_true_anomaly, METH_VARARGS,
+        "Computes the eccentric anomaly at a given true anomaly",
+    },
+	{
+        "true_anomaly_at_mean_anomaly",
+        wrapper_true_anomaly_at_mean_anomaly, METH_VARARGS,
+        "Computes the true anomaly at a given mean anomaly",
+    },
+	{
+        "true_anomaly_at_eccentric_anomaly",
+        wrapper_true_anomaly_at_eccentric_anomaly, METH_VARARGS,
+        "Computes the true anomaly at a given eccentric anomaly",
+    },
 	{NULL, NULL, 0, NULL}
 };
 
