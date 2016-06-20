@@ -306,6 +306,18 @@ class Orbit(object):
         v = self.transform * v
         return v
 
+    def ejection_angle(self):
+        """"Ejection angle (true anomaly at infinity)
+
+        Normally used for parabolic or hyperbolic trajectories
+        """
+        if self.eccentricity < 1:  # closed orbit
+            return float('inf')
+        else:
+            # when inf = p / (1 + e cos theta),
+            # 1 + e cos theta = 0
+            return math.acos(-1. / self.eccentricity)
+
     def mean_anomaly(self, time):
         """Mean anomaly at a given time (s)"""
         time_since_epoch = time - self.epoch
