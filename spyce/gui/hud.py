@@ -96,9 +96,12 @@ class HUD(gui.scene.Scene):
         # compute fps as the inverse of a moving average
         elapsed = self.frame_timings[-1] - self.frame_timings[0]
         # with n timings, we measure n-1 consecutives frames
-        fps = (len(self.frame_timings) - 1) / elapsed
+        fps = (len(self.frame_timings) - 1.) / elapsed
 
-        self.hud_print("%i FPS\n" % round(fps))
+        if fps < 9.5:  # 10 is even so 9.5 is rounded up
+            self.hud_print("%.1f FPS\n" % fps)
+        else:
+            self.hud_print("%i FPS\n" % round(fps))
         self.hud_print("Zoom x%g\n" % self.zoom)
 
     def set_and_draw_hud(self):
