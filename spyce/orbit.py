@@ -51,14 +51,24 @@ class Orbit(object):
         self.epoch = float(epoch)
         self.mean_anomaly_at_epoch = float(mean_anomaly_at_epoch)
 
-        mu = self.primary.gravitational_parameter
-
-        # semi-major axis, mean motion
+        # semi-major axis
         if self.eccentricity == 1:  # parabolic trajectory
             self.semi_major_axis = float("inf")
-            self.mean_motion = 0
         else:
             self.semi_major_axis = self.periapsis / (1 - self.eccentricity)
+
+        # other distances
+        self.apoapsis = self.semi_major_axis * (1 + self.eccentricity)
+        self.semi_latus_rectum = self.periapsis * (1 + self.eccentricity)
+        e2 = 1-self.eccentricity**2
+        self.semi_minor_axis = self.semi_major_axis * math.sqrt(abs(e2))
+        self.focus = self.semi_major_axis * self.eccentricity
+
+        # mean motion
+        mu = self.primary.gravitational_parameter
+        if self.eccentricity == 1:  # parabolic trajectory
+            self.mean_motion = 3 * math.sqrt(mu / (self.semi_latus_rectum)**3)
+        else:
             self.mean_motion = math.sqrt(mu / abs(self.semi_major_axis)**3)
 
         # period
@@ -66,12 +76,6 @@ class Orbit(object):
             self.period = float("inf")
         else:  # circular/elliptic orbit
             self.period = 2*math.pi / self.mean_motion
-
-        self.apoapsis = self.semi_major_axis * (1 + self.eccentricity)
-        self.semi_latus_rectum = self.periapsis * (1 + self.eccentricity)
-        e2 = 1-self.eccentricity**2
-        self.semi_minor_axis = self.semi_major_axis * math.sqrt(abs(e2))
-        self.focus = self.semi_major_axis * self.eccentricity
 
         self.transform = vector.Matrix.from_euler_angles(
             self.longitude_of_ascending_node,
@@ -245,7 +249,8 @@ class Orbit(object):
             E = 2 * math.atan2(y, x)
             M = E - eccentricity * math.sin(E)
         elif eccentricity == 1:  # parabolic trajectory
-            M = 0
+            E = math.tan(v / 2)
+            M = (E**3 + E*3) / 2
         else:  # hyperbolic trajectory
             x = math.sqrt(eccentricity+1)*math.cos(v/2)
             y = math.sqrt(eccentricity-1)*math.sin(v/2)
@@ -345,6 +350,8 @@ class Orbit(object):
         E = eccentric_anomaly
         if e < 1:
             return E - e*math.sin(E)
+        elif e == 1:
+            return (E**3 + E*3) / 2
         else:
             return e*math.sinh(E) - E
 
@@ -373,7 +380,8 @@ class Orbit(object):
                 f_prime=lambda E: 1 - e*math.cos(E),
             )
         elif e == 1:
-            return 0.
+            z = (M + math.sqrt(M**2+1))**(1./3)
+            return z - 1/z
         else:  # M = e sinh E - E
             # sinh(E) = E -> M = (e - 1) E
             if abs(M) < 2**-26:
@@ -393,19 +401,12 @@ class Orbit(object):
             y = math.sqrt(1-self.eccentricity)*math.sin(v/2)
             return 2 * math.atan2(y, x)
         elif self.eccentricity == 1:  # parabolic trajectory
-            return 0  # TODO
+            return math.tan(v / 2)
         else:  # hyperbolic trajectory
-            x = math.sqrt(self.eccentricity+1)*math.cosh(v/2)
-            y = math.sqrt(self.eccentricity-1)*math.sinh(v/2)
-            return 2 * math.atan2(y, x)
+            e = self.eccentricity
+            return 2 * math.atanh(math.sqrt((e-1)/(e+1)) * math.tan(v/2))
 
     def true_anomaly_at_time(self, time):
-        if self.eccentricity == 1:
-            time_since_epoch = time - self.epoch
-            mu = self.primary.gravitational_parameter
-            W = math.sqrt(mu / (2*self.periapsis**3)) * 3/2 * time_since_epoch
-            y = (W + math.sqrt(W**2+1))**(1./3)
-            true_anomaly = 2 * math.atan(y - 1/y) if y else - math.pi/2
         M = self.mean_anomaly_at_time(time)
         return self.true_anomaly_at_mean_anomaly(M)
 
@@ -418,14 +419,13 @@ class Orbit(object):
         if self.eccentricity < 1:  # circular or elliptic orbit
             x = math.sqrt(1-self.eccentricity)*math.cos(E/2)
             y = math.sqrt(1+self.eccentricity)*math.sin(E/2)
-            true_anomaly = 2 * math.atan2(y, x)
+            return 2 * math.atan2(y, x)
         elif self.eccentricity == 1:  # parabolic trajectory
-            return 0
+            return 2 * math.atan(E)
         else:  # hyperbolic trajectory
             x = math.sqrt(self.eccentricity-1)*math.cosh(E/2)
             y = math.sqrt(self.eccentricity+1)*math.sinh(E/2)
-            true_anomaly = 2 * math.atan2(y, x)
-        return true_anomaly
+            return 2 * math.atan2(y, x)
 
     def position_t(self, time):
         """Position vector at a given time (s)"""
