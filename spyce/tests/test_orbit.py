@@ -38,7 +38,8 @@ class TestOrbit(unittest.TestCase):
         msg = '\n' + str(a) + ' != ' + str(b)
 
         self.assertIsClose(a.periapsis, b.periapsis, msg=msg)
-        self.assertAlmostEqual(a.eccentricity, b.eccentricity, msg=msg)
+        self.assertIsClose(a.eccentricity, b.eccentricity, msg=msg,
+                           abs_tol=1e-7)
         self.assertAlmostEqualAngle(a.inclination, b.inclination, msg=msg)
 
         # longitude of ascending node
@@ -67,11 +68,11 @@ class TestOrbit(unittest.TestCase):
 
     def orbit(self, o):
         # check true anomaly at periapsis and apoapsis
-        self.assertAlmostEqual(o.true_anomaly_at_time(0), 0)
+        self.assertAlmostEqualAngle(o.true_anomaly_at_time(0), 0)
         if o.eccentricity < 1:  # only circular / elliptic orbits have apoapses
             apoapsis_time = (math.pi - o.mean_anomaly_at_epoch) / o.mean_motion
-            self.assertAlmostEqual(o.true_anomaly_at_time(apoapsis_time),
-                                   math.pi)
+            self.assertAlmostEqualAngle(o.true_anomaly_at_time(apoapsis_time),
+                                        math.pi)
 
         # gather orbit characteristics
         args = o.__dict__
