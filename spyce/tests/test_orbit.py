@@ -3,6 +3,7 @@ import math
 import itertools
 
 import orbit
+from orbit_determination import InvalidElements
 
 
 # isclose() from PEP 485
@@ -117,25 +118,25 @@ class TestOrbit(unittest.TestCase):
 
     def test_invalid(self):
         # circular or elliptic orbit should have positive semi-major axis
-        with self.assertRaises(orbit.InvalidElements):
+        with self.assertRaises(InvalidElements):
             orbit.Orbit.from_semi_major_axis(primary, -1e9, 0)
 
         # hyperbolic trajectory should have negative semi-major axis
-        with self.assertRaises(orbit.InvalidElements):
+        with self.assertRaises(InvalidElements):
             orbit.Orbit.from_semi_major_axis(primary, 1e9, 2)
 
         # parabolic trajectory cannot be defined from semi-major axis
-        with self.assertRaises(orbit.InvalidElements):
+        with self.assertRaises(InvalidElements):
             orbit.Orbit.from_semi_major_axis(primary, 1e9, 1)
-        with self.assertRaises(orbit.InvalidElements):
+        with self.assertRaises(InvalidElements):
             orbit.Orbit.from_semi_major_axis(primary, -1e9, 1)
 
         # parabolic trajectory cannot be defined from period
-        with self.assertRaises(orbit.InvalidElements):
+        with self.assertRaises(InvalidElements):
             orbit.Orbit.from_period(primary, 1e8, 1)
-        with self.assertRaises(orbit.InvalidElements):
+        with self.assertRaises(InvalidElements):
             orbit.Orbit.from_period_apsis(primary, float("inf"), 1e9)
-        with self.assertRaises(orbit.InvalidElements):
+        with self.assertRaises(InvalidElements):
             orbit.Orbit.from_period_apsis(primary, float("-inf"), 1e9)
 
 if __name__ == '__main__':
