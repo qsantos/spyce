@@ -103,7 +103,7 @@ class TestOrbit(unittest.TestCase):
 
         # re-generate from state point at arbitrary time
         time = 1e4
-        position, velocity = o.position_t(time), o.velocity_t(time)
+        position, velocity = o.position_at_time(time), o.velocity_at_time(time)
         new_orbit = orbit.Orbit.from_state(primary, position, velocity, time)
         self.assertAlmostEqualOrbits(o, new_orbit)
 

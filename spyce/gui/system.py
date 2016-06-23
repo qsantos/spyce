@@ -174,9 +174,9 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         # now, we fix the three issues mentioned above
         # draw the orbit from the body rather than from the orbit focus (1.)
 
-        def corrected_orbit_position(theta):
-            return body.orbit.position(theta) - focus_offset
-        focus_offset = body.orbit.position_t(self.time)
+        def corrected_orbit_position_at_true_anomaly(theta):
+            return body.orbit.position_at_true_anomaly(theta) - focus_offset
+        focus_offset = body.orbit.position_at_time(self.time)
 
         orbit = body.orbit
 
@@ -204,13 +204,13 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             glPointSize(2)
             glBegin(GL_LINE_STRIP)
             for angle in angles:
-                glVertex3f(*corrected_orbit_position(angle))
+                glVertex3f(*corrected_orbit_position_at_true_anomaly(angle))
             glEnd()
 
             # periapsis
             glPointSize(5)
             glBegin(GL_POINTS)
-            glVertex3f(*corrected_orbit_position(0))
+            glVertex3f(*corrected_orbit_position_at_true_anomaly(0))
             glEnd()
         else:  # closed orbits
             # nice hack with circle symetry to draw the orbit from the body
@@ -238,8 +238,8 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             # apses
             glPointSize(5)
             glBegin(GL_POINTS)
-            glVertex3f(*corrected_orbit_position(0))
-            glVertex3f(*corrected_orbit_position(math.pi))
+            glVertex3f(*corrected_orbit_position_at_true_anomaly(0))
+            glVertex3f(*corrected_orbit_position_at_true_anomaly(math.pi))
             glEnd()
 
     def draw_body(self, body):
@@ -274,9 +274,9 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         bodies = ancestors + descendants
 
         # cache position of celestial bodies relative to the scene origin
-        scene_origin = self.focus.global_position(self.time)
+        scene_origin = self.focus.global_position_at_time(self.time)
         for body in bodies:
-            body_position = body.global_position(self.time)
+            body_position = body.global_position_at_time(self.time)
             body._relative_position = body_position - scene_origin
 
         # draw celestial bodies

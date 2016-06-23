@@ -76,12 +76,12 @@ class CelestialBody(object):
         """Cast to string using the name"""
         return self.name
 
-    def global_position(self, time):
+    def global_position_at_time(self, time):
         """Global position of the celestial body within the stellar system"""
         if self.orbit is None:
             return vector.Vector([0, 0, 0])
-        primary_position = self.orbit.primary.global_position(time)
-        return primary_position + self.orbit.position_t(time)
+        primary_position = self.orbit.primary.global_position_at_time(time)
+        return primary_position + self.orbit.position_at_time(time)
 
     def gravity(self, distance=None):
         """Gravity at given distance from center
@@ -139,7 +139,7 @@ class CelestialBody(object):
         s += m * 60
         return -s if groups[0] == "-" else s
 
-    def escape_velocity(self, distance):
+    def escape_velocity_at_distance(self, distance):
         """Escape velocity at a given distance (m)"""
         return math.sqrt(2 * self.gravitational_parameter / distance)
 

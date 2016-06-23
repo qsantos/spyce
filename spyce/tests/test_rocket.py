@@ -22,8 +22,8 @@ class TestRocket(unittest.TestCase):
 
         # set ship on orbit
         o = orbit.Orbit(primary, 700e3, random.uniform(0., 2.))
-        ship.position = o.position(0.)
-        ship.velocity = o.velocity(0.)
+        ship.position = o.position_at_true_anomaly(0.)
+        ship.velocity = o.velocity_at_true_anomaly(0.)
 
         # ship simulation
         n = 1000
@@ -31,8 +31,8 @@ class TestRocket(unittest.TestCase):
         for i in range(n):
             ship.simulate(i * dt, dt)
 
-        self.assertAlmostEqual(o.position_t(n * dt), ship.position)
-        self.assertAlmostEqual(o.velocity_t(n * dt), ship.velocity)
+        self.assertAlmostEqual(o.position_at_time(n * dt), ship.position)
+        self.assertAlmostEqual(o.velocity_at_time(n * dt), ship.velocity)
 
 
 if __name__ == '__main__':

@@ -34,9 +34,9 @@ class TestBody(unittest.TestCase):
         local_time = planet.time2str(time)
         self.assertAlmostEqual(planet.str2time(local_time), time, places=0)
 
-    def test_escape_velocity(self):
+    def test_escape_velocity_at_distance(self):
         Earth = solar['Earth']
-        escape_velocity = Earth.escape_velocity(Earth.radius)
+        escape_velocity = Earth.escape_velocity_at_distance(Earth.radius)
         self.assertAlmostEqual(escape_velocity, 11186, places=0)
 
     def test_angular_diameter(self):

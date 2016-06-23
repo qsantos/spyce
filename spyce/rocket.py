@@ -124,14 +124,14 @@ class Rocket(body.CelestialBody):
                 continue
 
             # compare distance to radius of sphere of influence
-            satellite_position = satellite.orbit.position_t(t + dt)
+            satellite_position = satellite.orbit.position_at_time(t + dt)
             distance = (self.position - satellite_position).norm()
             if distance > satellite.sphere_of_influence:
                 continue
 
             # update information
             self.position -= satellite_position
-            self.velocity -= satellite.orbit.velocity_t(t + dt)
+            self.velocity -= satellite.orbit.velocity_at_time(t + dt)
             self.primary.satellites.remove(self)
             self.primary = satellite
             self.primary.satellites.append(self)
@@ -145,8 +145,8 @@ class Rocket(body.CelestialBody):
         # escaping sphere of influence
         if self.position.norm() > self.primary.sphere_of_influence:
             # update information
-            self.position += self.primary.orbit.position_t(t + dt)
-            self.velocity += self.primary.orbit.velocity_t(t + dt)
+            self.position += self.primary.orbit.position_at_time(t + dt)
+            self.velocity += self.primary.orbit.velocity_at_time(t + dt)
             self.primary.satellites.remove(self)
             self.primary = self.primary.orbit.primary
             self.primary.satellites.append(self)
@@ -156,8 +156,8 @@ class Rocket(body.CelestialBody):
     def update_physics(self, t, dt):
         """Run physics simulation"""
         if self.throttle == 0.:
-            self.position = self.orbit.position_t(t + dt)
-            self.velocity = self.orbit.velocity_t(t + dt)
+            self.position = self.orbit.position_at_time(t + dt)
+            self.velocity = self.orbit.velocity_at_time(t + dt)
             return
 
         # propulsion

@@ -95,8 +95,8 @@ class MissionGUI(gui.simulation.SimulationGUI):
                     self.time += dt
 
                 # save rocket path
-                rocket_position = self.rocket.global_position(self.time)
-                self.path.append(rocket_position)
+                self.path.append(
+                    self.rocket.global_position_at_time(self.time))
 
                 self.update()
             else:
