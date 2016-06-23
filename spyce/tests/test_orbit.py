@@ -108,6 +108,17 @@ class TestOrbit(unittest.TestCase):
         new_orbit = orbit.Orbit.from_state(primary, position, velocity, time)
         self.assertAlmostEqualOrbits(o, new_orbit)
 
+        # check conversions of anomalies
+        time = 1e4
+        M = o.mean_anomaly_at_time(time)
+        E = o.eccentric_anomaly_at_time(time)
+        v = o.true_anomaly_at_time(time)
+        self.assertIsClose(o.true_anomaly_at_mean_anomaly(M), v, msg=o)
+        self.assertIsClose(o.true_anomaly_at_eccentric_anomaly(E), v, msg=o)
+        self.assertIsClose(o.eccentric_anomaly_at_true_anomaly(v), E, msg=o)
+        self.assertIsClose(o.mean_anomaly_at_true_anomaly(v), M, msg=o)
+        self.assertIsClose(o.time_at_true_anomaly(v), time, msg=o)
+
     def test_all(self):
         periapsis = (1e9, 1e13)
         eccentricity = (0.0, 0.00001, 0.5, 0.99999, 1.0, 1.00001, 10.0)
