@@ -34,6 +34,30 @@ def newton_raphson(x_0, f, f_prime):
     return x
 
 
+def golden_section_search(f, a, b, tolerance=0):
+    """Golden section search
+
+    Look for a minima of unimodal function `f` within `(a, b)`"""
+    # golden_ratio = (math.sqrt(5) + 1) / 2
+    golden_ratio = 1.618033988749895
+
+    old_a, old_b = a, b
+    for _ in range(54):
+        c = b - (b - a) / golden_ratio
+        d = a + (b - a) / golden_ratio
+        fc = f(c)
+        if abs(fc) < tolerance:
+            return c
+        if fc < f(d):
+            b = d
+        else:
+            a = c
+
+    if a == old_a or b == old_b:
+        return None
+    return (b + a) / 2
+
+
 def euler(f, t, y, h):
     """Euler method
 
