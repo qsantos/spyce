@@ -126,6 +126,28 @@ class OrbitAngles(OrbitGeometry):
         M = self.mean_anomaly_at_time(time)
         return self.true_anomaly_at_mean_anomaly(M)
 
+    def true_anomaly_at_escape(self):
+        """True anomaly when escaping the primary's sphere of influence"""
+
+        # check for existence of escape
+        if 0 < self.apoapsis < self.primary.sphere_of_influence:
+            # no escape
+            return float('inf')
+
+        def f(t):
+            """Distance to escape"""
+            r = self.distance_at_true_anomaly(t)
+            return r - self.primary.sphere_of_influence
+
+        # upper bound of the search
+        if self.eccentricity < 1:
+            stop_angle = math.pi
+        else:
+            stop_angle = self.ejection_angle()
+
+        # find crossing point
+        return analysis.bisection_method(f, 0, stop_angle)
+
 
 # if available, use a C versions
 
