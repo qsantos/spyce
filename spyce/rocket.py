@@ -72,6 +72,8 @@ class Rocket(body.CelestialBody):
         self.orientation = vector.Matrix.identity()
         self.rotate_deg(90, 0, 1, 0)
 
+        self.update_resume_time()
+
         self.update_orbit(0.)
 
         # initialize flight program
@@ -199,6 +201,9 @@ class Rocket(body.CelestialBody):
         """Update current orbital trajectory"""
         self.orbit = orbit.Orbit.from_state(
             self.primary, self.position, self.velocity, epoch)
+
+    def update_resume_time(self):
+        self.resume_time = float('inf')
 
     def update_parts(self):
         """Update information about parts"""

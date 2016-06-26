@@ -102,7 +102,9 @@ class MissionGUI(gui.simulation.SimulationGUI):
                     delta_t = dt
                 else:
                     # logical simulation (just following Kepler orbits)
-                    delta_t = accumulated_time // dt * dt
+                    resume_delay = self.rocket.resume_time - self.time
+                    next_activity = max(dt, resume_delay)
+                    delta_t = (min(accumulated_time, next_activity) // dt) * dt
                 accumulated_time -= delta_t
                 self.rocket.simulate(self.time, delta_t)
                 self.time += delta_t
