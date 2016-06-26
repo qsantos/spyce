@@ -4,15 +4,20 @@ import vector
 import orbit_determination
 import orbit_angles
 import orbit_state
+import orbit_target
 
 
 # NOTE: to ease reading, Orbit is split into three base classes
 #       OrbitDetermination contains alternate constructors
 #       OrbitAngles contains methods to convert anomalies and times
 #       OrbitState contains methods to predict position and velocity
-class Orbit(orbit_determination.OrbitDetermination,
-            orbit_angles.OrbitAngles,
-            orbit_state.OrbitState):
+#       OrbitTarget contains methods to predict near approaches and encounters
+class Orbit(
+        orbit_determination.OrbitDetermination,
+        orbit_angles.OrbitAngles,
+        orbit_state.OrbitState,
+        orbit_target.OrbitTarget,
+        ):
     """Kepler orbit
 
     Two-body approximation of a body orbiting a mass-point.
