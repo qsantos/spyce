@@ -73,6 +73,7 @@ class Rocket(body.CelestialBody):
         self.rotate_deg(90, 0, 1, 0)
 
         self.resume_time_program = 0
+        self.resume_time_orbit = 0
 
         self.update_orbit(0.)
 
@@ -199,6 +200,14 @@ class Rocket(body.CelestialBody):
         self.orbit = orbit.Orbit.from_state(
             self.primary, self.position, self.velocity, epoch)
 
+        v = self.orbit.true_anomaly_at_escape()
+        if v == float('inf'):
+            self.resume_time_orbit = float('inf')
+        else:
+            self.resume_time_orbit = self.orbit.time_at_true_anomaly(v)
+
+        self.update_resume_time()
+
     def update_program(self, t, dt):
         while self.resume_time_program <= t + dt:
             program_delay = self.resume_condition()
@@ -217,7 +226,10 @@ class Rocket(body.CelestialBody):
         self.update_resume_time()
 
     def update_resume_time(self):
-        self.resume_time = self.resume_time_program
+        self.resume_time = min(
+            self.resume_time_program,
+            self.resume_time_orbit,
+        )
 
     def update_parts(self):
         """Update information about parts"""
