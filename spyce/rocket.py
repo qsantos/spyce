@@ -72,17 +72,18 @@ class Rocket(body.CelestialBody):
         self.orientation = vector.Matrix.identity()
         self.rotate_deg(90, 0, 1, 0)
 
-        self.update_resume_time()
+        self.resume_time_program = 0
 
         self.update_orbit(0.)
 
         # initialize flight program
         if program is None:
             self.program = None
-            self.resume_condition = lambda: False
+            self.resume_condition = lambda: float('inf')
         else:
             self.program = program(self)
             self.resume_condition = next(self.program)
+        self.update_program(0, 1e-6)  # TODO
 
     def __repr__(self):
         """Representation in Python console"""
@@ -96,11 +97,7 @@ class Rocket(body.CelestialBody):
         """Run simulation"""
 
         # run flight program
-        if self.resume_condition():
-            try:
-                self.resume_condition = next(self.program)
-            except StopIteration:
-                self.resume_condition = lambda: False
+        self.update_program(t, dt)
 
         # update state vectors
         self.update_physics(t, dt)
@@ -202,8 +199,25 @@ class Rocket(body.CelestialBody):
         self.orbit = orbit.Orbit.from_state(
             self.primary, self.position, self.velocity, epoch)
 
+    def update_program(self, t, dt):
+        while self.resume_time_program <= t + dt:
+            program_delay = self.resume_condition()
+            if isinstance(program_delay, bool):
+                program_delay = 0 if program_delay else dt
+            self.resume_time_program = t + program_delay
+
+            if program_delay >= dt:
+                break
+
+            try:
+                self.resume_condition = next(self.program)
+            except StopIteration:
+                self.resume_condition = lambda: float('inf')
+
+        self.update_resume_time()
+
     def update_resume_time(self):
-        self.resume_time = float('inf')
+        self.resume_time = self.resume_time_program
 
     def update_parts(self):
         """Update information about parts"""
