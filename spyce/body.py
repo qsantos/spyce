@@ -5,6 +5,10 @@ import vector
 import physics
 
 
+class InvalidConstellation(Exception):
+    pass
+
+
 class CelestialBody(object):
     """Celestial Body
 
@@ -146,3 +150,36 @@ class CelestialBody(object):
     def angular_diameter(self, distance):
         """Angular diameter / apparent size at a given distance (m)"""
         return 2 * math.asin(self.radius/distance)
+
+    def constellation_minimum_size(self, communication_range):
+        """Return the minimum size of a circular constellation
+
+        A circular constellation is a group of interconnected satellites evenly
+        distributed on the same circular orbit. This brings two constraints:
+
+        * line of sight above the horizon
+        * next satellite within communication range
+        """
+        # derived from constellation_radius() by solving "minimum > maximum"
+        return math.ceil(math.pi/math.atan(communication_range/self.radius/2))
+
+    def constellation_radius(self, communication_range, size):
+        """Return the range of possible radiuses for a circular constellation
+
+        A circular constellation is a group of interconnected satellites evenly
+        distributed on the same circular orbit. This brings two constraints:
+
+        * line of sight above the horizon
+        * next satellite within communication range
+
+        The `size` of the constellation refers to the number of satellites (at
+        least 3).
+
+        The value returned is of the form `(minimum_radius, maximum_radius)`.
+        """
+        if size < 3:
+            raise InvalidConstellation('need at least 3 satellites')
+        return (
+            self.radius / math.cos(math.pi/size),  # minimum (line of sight)
+            communication_range / math.sin(math.pi/size)/2,  # maximum (range)
+        )
