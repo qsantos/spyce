@@ -200,11 +200,22 @@ class Rocket(body.CelestialBody):
         self.orbit = orbit.Orbit.from_state(
             self.primary, self.position, self.velocity, epoch)
 
+        # escape
         v = self.orbit.true_anomaly_at_escape()
         if v == float('inf'):
             self.resume_time_orbit = float('inf')
         else:
             self.resume_time_orbit = self.orbit.time_at_true_anomaly(v)
+
+        # encounter
+        for satellite in self.primary.satellites:
+            if satellite is self:
+                continue
+            r = satellite.sphere_of_influence
+            t = self.orbit.time_at_next_encounter(satellite.orbit, epoch, r)
+            if t < epoch:
+                continue
+            self.resume_time_orbit = min(self.resume_time_orbit, t)
 
         self.update_resume_time()
 
