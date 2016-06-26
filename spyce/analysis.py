@@ -1,6 +1,23 @@
 """Numerical analysis methods"""
 
 
+def bisection_method(f, a, b):
+    """Bisection method
+
+    Look for a root of `f` in [a, b]"""
+    fa = f(a)
+    for _ in range(54):
+        c = (a + b) / 2.
+        fc = f(c)
+        if fa*fc >= 0:
+            # f(a) and f(c) have the same sign
+            a, fa = c, fc
+        else:
+            # f(a) and f(c) have opposite signs
+            b = c
+    return a
+
+
 def newton_raphson(x_0, f, f_prime):
     """Newton-Raphson method
 
