@@ -53,7 +53,7 @@ class Rocket(body.CelestialBody):
     """A rocket, or a spaceship, or a duck"""
     def __init__(self, primary=None, program=None):
         self.parts = set()
-        self.dry_mass = 0.
+        self.update_parts()
         self.throttle = 1.
 
         # make the rocket body-like
