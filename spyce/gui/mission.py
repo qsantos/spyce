@@ -84,26 +84,33 @@ class MissionGUI(gui.simulation.SimulationGUI):
             now = time.time()
             elapsed = now - last
             last = now
-
-            # physics simulation
             accumulated_time += elapsed * self.timewarp
+
             dt = 2.**-5
-            if accumulated_time > dt:
-                while accumulated_time > dt:
-                    accumulated_time -= dt
-                    self.rocket.simulate(self.time, dt)
-                    self.time += dt
 
-                # save rocket path
-                self.path.append(
-                    self.rocket.global_position_at_time(self.time))
-
-                self.update()
-            else:
-                # avoid wasting cycles
+            # avoid wasting cycles
+            if accumulated_time < dt:
                 pause = 1./60 - elapsed
                 if pause > 0.:
                     time.sleep(pause)
+                continue
+
+            # physics simulation
+            while accumulated_time > dt:
+                if self.rocket.throttle:
+                    # physical simulation (integration)
+                    delta_t = dt
+                else:
+                    # logical simulation (just following Kepler orbits)
+                    delta_t = accumulated_time // dt * dt
+                accumulated_time -= delta_t
+                self.rocket.simulate(self.time, delta_t)
+                self.time += delta_t
+
+            # save rocket path
+            self.path.append(self.rocket.global_position_at_time(self.time))
+
+            self.update()
 
         glutCloseFunc(None)
 
