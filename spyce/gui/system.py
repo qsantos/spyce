@@ -184,19 +184,22 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
             # choose interpolation points
             def _():
                 true_anomaly = orbit.true_anomaly_at_time(self.time)
-                ejection_angle = orbit.ejection_angle() - 1e-2
-                n = 128
+                # decide when to stop drawing
+                max_true_anomaly = orbit.true_anomaly_at_escape()
+                if max_true_anomaly == float('inf'):
+                    max_true_anomaly = orbit.ejection_angle() - 1e-2
                 # normal hyperbola
+                n = 128
                 for i in range(n+1):
                     t = 2.*i/n - 1
-                    yield ejection_angle * t
-                n = 64
+                    yield max_true_anomaly * t
                 # ensure the body will be on the line (2.)
                 # more points close to the camera (3.)
+                n = 64
                 for i in range(n+1):
                     t = 2.*i/n - 1
                     theta = true_anomaly + t * abs(t)
-                    if abs(theta) < ejection_angle:
+                    if abs(theta) < max_true_anomaly:
                         yield theta
             angles = sorted(_())
 
