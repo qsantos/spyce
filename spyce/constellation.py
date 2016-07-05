@@ -1,19 +1,9 @@
 #!/usr/bin/env python
-# encoding: utf-8
 import sys
-import math
 
 import orbit
 import load
 import human
-
-
-def si_prefix(value, unit=''):
-    """Format value with SI-prefix for easier reading"""
-    exponent_group = math.log(value, 10) // 3
-    mantissa = value / 10**(exponent_group*3)
-    prefix = u'afpnµm kMGTPE'[int(exponent_group) + 6].strip()
-    return '%.4g%s%s' % (mantissa, prefix, unit)
 
 
 if __name__ == '__main__':
@@ -45,8 +35,8 @@ if __name__ == '__main__':
         # compute period and altitude ranges
         min_period = human.to_human_time(orbit.Orbit(primary, min_a).period)
         max_period = human.to_human_time(orbit.Orbit(primary, max_a).period)
-        min_a = si_prefix(min_a - primary.radius, 'm')
-        max_a = si_prefix(max_a - primary.radius, 'm')
+        min_a = human.si_prefix(min_a - primary.radius, 'm')
+        max_a = human.si_prefix(max_a - primary.radius, 'm')
 
         # print everthing
         print(u'%-20s %i× %s (%s) -- %s (%s)' %
