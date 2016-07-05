@@ -5,7 +5,7 @@ import math
 
 import orbit
 import load
-import date
+import human
 
 
 def si_prefix(value, unit=''):
@@ -43,8 +43,8 @@ if __name__ == '__main__':
         min_a, max_a = primary.constellation_radius(communication_range, size)
 
         # compute period and altitude ranges
-        min_period = date.to_human_time(orbit.Orbit(primary, min_a).period)
-        max_period = date.to_human_time(orbit.Orbit(primary, max_a).period)
+        min_period = human.to_human_time(orbit.Orbit(primary, min_a).period)
+        max_period = human.to_human_time(orbit.Orbit(primary, max_a).period)
         min_a = si_prefix(min_a - primary.radius, 'm')
         max_a = si_prefix(max_a - primary.radius, 'm')
 

@@ -1,3 +1,4 @@
+"""Methods for conversion to and from human representation"""
 import re
 import datetime
 
