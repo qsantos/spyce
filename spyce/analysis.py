@@ -18,16 +18,27 @@ def bisection_method(f, a, b):
     return a
 
 
-def newton_raphson(x_0, f, f_prime):
+def newton_raphson(x_0, f=None, f_prime=None, ratio=None):
     """Newton-Raphson method
 
-    Look around `x_0` for a root of `f`, of derivative `f_prime`
+    Look around `x_0` for a root of `f`, of derivative `f_prime`. For
+    optimization, their ratio (`f` over `f_prime`) can be directly given
+    instead.
     """
+    # handle arguments
+    if ratio is None:
+        def ratio(x):
+            return f(x) / f_prime(x)
+    else:
+        if f is not None or f_prime is not None:
+            raise TypeError('specify either ratio or (f and f_prime)')
+
+    # run Newton-Raphson
     x = x_0
     previous_x = 0
     for _ in range(30):  # upper limit on iteration count
         previous_previous_x, previous_x = previous_x, x
-        x -= f(x) / f_prime(x)
+        x -= ratio(x)
         if x in (previous_x, previous_previous_x):
             # best accuracy reached
             break
