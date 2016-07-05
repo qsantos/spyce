@@ -1,7 +1,5 @@
 import unittest
 
-import random
-
 import orbit
 import ksp_cfg
 import rocket
@@ -9,7 +7,7 @@ from load import kerbol
 
 
 class TestRocket(unittest.TestCase):
-    def test_simulation(self):
+    def do_simulation(self, eccentricity):
         primary = kerbol['Kerbin']
         ship = rocket.Rocket(primary)
         ship |= ksp_cfg.PartSet().make(
@@ -25,7 +23,7 @@ class TestRocket(unittest.TestCase):
         primary.satellites = set()
 
         # set ship on orbit
-        o = orbit.Orbit(primary, 700e3, random.uniform(0., 2.))
+        o = orbit.Orbit(primary, 700e3, eccentricity)
         ship.position = o.position_at_true_anomaly(0.)
         ship.velocity = o.velocity_at_true_anomaly(0.)
 
@@ -41,6 +39,12 @@ class TestRocket(unittest.TestCase):
 
         # restore satellites
         primary.satellites = satellites
+
+    def test_simulation(self):
+        self.do_simulation(0.)
+        self.do_simulation(.5)
+        self.do_simulation(1.)
+        self.do_simulation(2.)
 
 
 if __name__ == '__main__':
