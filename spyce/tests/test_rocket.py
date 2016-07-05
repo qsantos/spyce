@@ -20,6 +20,10 @@ class TestRocket(unittest.TestCase):
         ship.throttle = 1.
         ship.propellant = 0.
 
+        # disable simulation of encounter with other satellites for performance
+        satellites = primary.satellites
+        primary.satellites = set()
+
         # set ship on orbit
         o = orbit.Orbit(primary, 700e3, random.uniform(0., 2.))
         ship.position = o.position_at_true_anomaly(0.)
@@ -31,8 +35,12 @@ class TestRocket(unittest.TestCase):
         for i in range(n):
             ship.simulate(i * dt, dt)
 
+        # check consistency of simulation with Kepler orbits
         self.assertAlmostEqual(o.position_at_time(n * dt), ship.position)
         self.assertAlmostEqual(o.velocity_at_time(n * dt), ship.velocity)
+
+        # restore satellites
+        primary.satellites = satellites
 
 
 if __name__ == '__main__':
