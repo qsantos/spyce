@@ -25,4 +25,4 @@ fi
 cd ..
 
 echo "Checking compliance with PEP 8"
-git ls-tree -rz --name-only HEAD | grep -z '\.py$' | xargs -0 pep8
+git ls-files -z | grep -z '\.py$' | xargs -0 pep8
