@@ -98,3 +98,19 @@ class Orbit(
             "%(argument_of_periapsis)g, %(epoch)g, %(mean_anomaly_at_epoch)g)"
             % self.__dict__
         )
+
+    def night_time(self):
+        """How long the object stays in the shadow of its primary
+
+        This assumes the object is in a circular orbit, the primary an opaque
+        sphere, and the referent is fixed with relation to the primary.
+
+        For instance, this gives how long a satellite orbiting a planet stays
+        in the dark (assuming the primary's rotation around the star is slow
+        relatively to that of the satellite around its primary).
+        """
+
+        if self.eccentricity != 0:
+            raise NotImplementedError
+        theta = 2 * math.asin(self.primary.radius / (2 * self.semi_major_axis))
+        return theta / self.mean_motion
