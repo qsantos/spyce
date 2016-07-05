@@ -6,7 +6,7 @@ import time
 import analysis
 
 
-class TestBody(unittest.TestCase):
+class TestAnalysis(unittest.TestCase):
     def test_newton_raphson(self):
         x = analysis.newton_raphson(
             x_0=1.4,
