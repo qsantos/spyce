@@ -73,7 +73,8 @@ class Rocket(body.CelestialBody):
         self.rotate_deg(90, 0, 1, 0)
 
         self.resume_time_program = 0
-        self.resume_time_orbit = 0
+        self.resume_time_escape = 0
+        self.resume_time_encounter = 0
 
         self.update_orbit(0.)
 
@@ -102,6 +103,9 @@ class Rocket(body.CelestialBody):
 
         # update state vectors
         self.update_physics(t, dt)
+
+        # update time to next encounter
+        self.update_encounters(t)
 
         # handle potential change of sphere of influence
         self.update_sphere_of_influence(t, dt)
@@ -203,19 +207,28 @@ class Rocket(body.CelestialBody):
         # escape
         v = self.orbit.true_anomaly_at_escape()
         if v == float('inf'):
-            self.resume_time_orbit = float('inf')
+            self.resume_time_escape = float('inf')
         else:
-            self.resume_time_orbit = self.orbit.time_at_true_anomaly(v)
+            self.resume_time_escape = self.orbit.time_at_true_anomaly(v)
 
-        # encounter
+        self.update_encounters(epoch, reset=True)
+        self.update_resume_time()
+
+    def update_encounters(self, epoch, reset=False):
+        """Update time to next encounter if necessary"""
+
+        if not reset and epoch < self.resume_time_encounter:
+            return
+
+        # encounters
+        self.resume_time_encounter = float('inf')
         for satellite in self.primary.satellites:
             if satellite is self:
                 continue
             r = satellite.sphere_of_influence
             t = self.orbit.time_at_next_encounter(satellite.orbit, epoch, r)
-            if t < epoch:
-                continue
-            self.resume_time_orbit = min(self.resume_time_orbit, t)
+            t = min(t, epoch + satellite.orbit.period/2)
+            self.resume_time_encounter = min(self.resume_time_encounter, t)
 
         self.update_resume_time()
 
@@ -239,7 +252,8 @@ class Rocket(body.CelestialBody):
     def update_resume_time(self):
         self.resume_time = min(
             self.resume_time_program,
-            self.resume_time_orbit,
+            self.resume_time_escape,
+            self.resume_time_encounter,
         )
 
     def update_parts(self):
