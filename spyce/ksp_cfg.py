@@ -7,11 +7,6 @@ import copy
 import rocket
 
 
-def unpack(a, *b):
-    """Short work-around for Python 2 lack of support of a, *b = ..."""
-    return a, b
-
-
 def locate(subpath="GameData"):
     """Locate path in KSP installation directory"""
 
@@ -50,7 +45,7 @@ def parse(f):
 
     cfg_dict = {}
     for line in f:
-        line, _ = unpack(*line.split("//", 1))  # strip comments
+        line = line.split("//", 1)[0]  # strip comments
         line = line.strip()
 
         if line == "}":  # end of block
@@ -63,9 +58,10 @@ def parse(f):
             key, value = line.split("=", 1)
             key, value = key.strip(), value.strip()
         else:  # start of block
-            key, end = unpack(*line.split(None, 1))
+            parts = line.split(None, 1)
+            key = parts[0]
 
-            if end == ["{"] or next(f).strip() == "{":
+            if parts[1:] == ["{"] or next(f).strip() == "{":
                 value = parse(f)  # parse recursively
             else:
                 raise SyntaxError("Expected '{'")
