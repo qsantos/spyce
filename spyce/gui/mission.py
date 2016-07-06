@@ -9,7 +9,6 @@ class MissionGUI(gui.simulation.SimulationGUI):
     def __init__(self, *args, **kwargs):
         super(MissionGUI, self).__init__(*args, **kwargs)
 
-        self.path = []
         self.texture_rocket_on = gui.textures.load("rocket_on.png")
         self.texture_rocket_off = gui.textures.load("rocket_off.png")
 
@@ -51,14 +50,6 @@ class MissionGUI(gui.simulation.SimulationGUI):
         # all done
         gui.textures.unbind()
         glPopMatrix()
-
-        # draw traveled path
-        offset = self.system._relative_position
-        glColor4f(1, 0, 0, 1)
-        glBegin(GL_LINE_STRIP)
-        for position in self.path:
-            glVertex3f(*(position + offset))
-        glEnd()
 
     def draw_body(self, body):
         """Draw a CelestialBody (or a Rocket)"""
@@ -108,9 +99,6 @@ class MissionGUI(gui.simulation.SimulationGUI):
                 accumulated_time -= delta_t
                 self.rocket.simulate(self.time, delta_t)
                 self.time += delta_t
-
-            # save rocket path
-            self.path.append(self.rocket.global_position_at_time(self.time))
 
             self.update()
 
