@@ -151,7 +151,8 @@ if __name__ == "__main__":
 
         sim.log("Onto the Mun!")
         rocket.throttle = 1.0
-        rocket.rotate_deg(59, 1, 0, 0)
+        rocket.rotate_deg(58.0515, 1, 0, 0)
+
         yield lambda: rocket.propellant <= 0.
         sim.log("Out of propellant!")
         rocket.throttle = 0
