@@ -44,7 +44,7 @@ class Orbit(
         # a retrograde orbit has an inclination of exactly math.pi
         inclination %= 2*math.pi
         if inclination > math.pi:
-            inclination -= math.pi
+            inclination = 2*math.pi - inclination
             longitude_of_ascending_node -= math.pi
             argument_of_periapsis -= math.pi
         longitude_of_ascending_node %= 2*math.pi
