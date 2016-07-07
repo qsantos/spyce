@@ -52,13 +52,18 @@ class TestOrbit(unittest.TestCase):
         if a.eccentricity != 0:  # not well defined in circular orbits
             argument_of_periapsis_a = a.argument_of_periapsis
             argument_of_periapsis_b = b.argument_of_periapsis
-            if a.inclination == 0:  # gimbal lock when inclination is null
-                # merge argument and longitude
+
+            # when inclination is 0 or Pi, argument of periapsis and longitude
+            # of ascending node must be merged into a single value (gimbal
+            # lock), normally called 'longitude of periapsis', since this is a
+            # special case, we will keep the name 'argument of periapsis' here
+            if a.inclination == 0:
                 argument_of_periapsis_a += a.longitude_of_ascending_node
                 argument_of_periapsis_b += b.longitude_of_ascending_node
-            if a.inclination == math.pi:  # gimbal lock
+            if a.inclination == math.pi:
                 argument_of_periapsis_a -= a.longitude_of_ascending_node
                 argument_of_periapsis_b -= b.longitude_of_ascending_node
+
             self.assertAlmostEqualAngle(argument_of_periapsis_a,
                                         argument_of_periapsis_b, msg=msg)
 
