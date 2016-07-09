@@ -72,6 +72,40 @@ def get_planets_physics(bodies):
         }
 
 
+def get_more_physics(bodies, body):
+    """Get more physical information on a body of the Solar System"""
+
+    # retrieve page for physical characteristics
+    url = "http://nssdc.gsfc.nasa.gov/planetary/factsheet/%sfact.html" \
+        % planet.lower()
+    html = urlopen(url).read().decode()
+    # in case it drives you crazy, uncomment this
+    # html = html.replace('\r', '\r\n')
+
+    # orientation of north pole (tilt)
+
+    # extract tilt
+    matches = re.search(r'Obliquity to orbit \(deg\) *([\-0-9\.]+)', html)
+    tilt = math.radians(float(matches.group(1)))
+
+    # extract right ascension
+    matches = re.search(r'Right Ascension *: *([\-0-9\.]+)', html)
+    right_ascension = math.radians(float(matches.group(1)))
+
+    # extract declination
+    matches = re.search(r'Declination *: *([\-0-9\.]+)', html)
+    declination = math.radians(float(matches.group(1)))
+
+    # extract epoch
+    matches = re.search(r'Reference Date.*\(JD ([0-9\.]+)\)', html)
+    epoch = (float(matches.group(1)) - 2451545) * 86400
+
+    bodies[planet]['north_pole'] = {
+        'right_ascension': right_ascension,
+        'declination': declination,
+    }
+
+
 def get_planets_orbits(bodies):
     """Get orbital information of planets of the Solar System"""
 
@@ -262,8 +296,14 @@ if __name__ == "__main__":
 
     get_sun_physics(bodies)
     get_planets_physics(bodies)
+    for planet in [
+        'Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus',
+        'Neptune', 'Pluto'
+    ]:
+        get_more_physics(bodies, planet)
     get_planets_orbits(bodies)
     get_moons_physics(bodies)
+    get_more_physics(bodies, 'Moon')
     get_moons_orbits(bodies)
 
     dwarf_planets = ["Ceres", "Pluto", "Sedna", "Haumea", "Makemake", "Eris"]

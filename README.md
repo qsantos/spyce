@@ -189,6 +189,7 @@ Information on the Solar System is publicly made available at [Solar System
 Dynamics](http://www.jpl.nasa.gov/) by the Jet Propulsion Laboratory (NASA):
 
 * [Physical data for planets](http://ssd.jpl.nasa.gov/?planet_phys_par)
+* [More physical data for planets (tilt)](http://nssdc.gsfc.nasa.gov/planetary/planetfact.html)
 * [Physical data for moons](http://ssd.jpl.nasa.gov/?sat_phys_par)
 * [Proper orbital elements for planets](http://ssd.jpl.nasa.gov/?planet_pos)
 ([from 1800 to 2050](http://ssd.jpl.nasa.gov/txt/p_elem_t1.txt))

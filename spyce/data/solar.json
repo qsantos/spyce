@@ -506,6 +506,10 @@
     },
     "Earth": {
         "gravitational_parameter": 398600682732000.0,
+        "north_pole": {
+            "declination": 1.5707963267948966,
+            "right_ascension": 0.0
+        },
         "orbit": {
             "argument_of_periapsis": 1.7974478410782888,
             "eccentricity": 0.016704641699383984,
@@ -1079,6 +1083,10 @@
     },
     "Jupiter": {
         "gravitational_parameter": 1.2668651096399998e+17,
+        "north_pole": {
+            "declination": 1.125650101073743,
+            "right_ascension": 4.67847723301844
+        },
         "orbit": {
             "argument_of_periapsis": 4.786665762597945,
             "eccentricity": 0.04836635959288158,
@@ -1303,6 +1311,10 @@
     },
     "Mars": {
         "gravitational_parameter": 42828387560400.0,
+        "north_pole": {
+            "declination": 0.9230522815022411,
+            "right_ascension": 5.544579421028105
+        },
         "orbit": {
             "argument_of_periapsis": 5.002242514659247,
             "eccentricity": 0.0934059235394935,
@@ -1332,6 +1344,10 @@
     },
     "Mercury": {
         "gravitational_parameter": 22032065251200.0,
+        "north_pole": {
+            "declination": 1.0718765068197975,
+            "right_ascension": 4.904549731029265
+        },
         "orbit": {
             "argument_of_periapsis": 0.5091108840687851,
             "eccentricity": 0.20563878913045858,
@@ -1473,6 +1489,10 @@
     },
     "Neptune": {
         "gravitational_parameter": 6835130147999999.0,
+        "north_pole": {
+            "declination": 0.7585200929167356,
+            "right_ascension": 5.224817648770225
+        },
         "orbit": {
             "argument_of_periapsis": 4.767069014143422,
             "eccentricity": 0.008598137849418206,
@@ -1698,6 +1718,10 @@
     },
     "Pluto": {
         "gravitational_parameter": 873663251999.9998,
+        "north_pole": {
+            "declination": -0.1075122819228507,
+            "right_ascension": 2.321113372227259
+        },
         "orbit": {
             "argument_of_periapsis": 1.9651908506066829,
             "eccentricity": 0.250248713478499,
@@ -2231,6 +2255,10 @@
     },
     "Saturn": {
         "gravitational_parameter": 3.793120135319999e+16,
+        "north_pole": {
+            "declination": 1.457995697238503,
+            "right_ascension": 0.7084116900919784
+        },
         "orbit": {
             "argument_of_periapsis": 5.9152159493318335,
             "eccentricity": 0.05378530000985626,
@@ -2642,6 +2670,10 @@
     },
     "Uranus": {
         "gravitational_parameter": 5793962490840000.0,
+        "north_pole": {
+            "declination": -0.2648537139901395,
+            "right_ascension": 4.4909241515991285
+        },
         "orbit": {
             "argument_of_periapsis": 1.6928332529025212,
             "eccentricity": 0.04725084419904175,
@@ -2657,6 +2689,10 @@
     },
     "Venus": {
         "gravitational_parameter": 324858565296000.0,
+        "north_pole": {
+            "declination": 1.1721631256393916,
+            "right_ascension": 4.760560067739733
+        },
         "orbit": {
             "argument_of_periapsis": 0.9593146936246696,
             "eccentricity": 0.006770559218891171,
