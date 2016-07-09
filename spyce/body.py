@@ -17,7 +17,7 @@ class CelestialBody(object):
     """
 
     def __init__(self, name, gravitational_parameter=0, radius=0,
-                 rotational_period=0, orbit=None, **_):
+                 rotational_period=0, north_pole=None, orbit=None, **_):
         """Definition of a celestial body
 
         Arguments:
@@ -30,6 +30,7 @@ class CelestialBody(object):
         self.name = name
         self.radius = float(radius)
         self.gravitational_parameter = float(gravitational_parameter)
+        self.north_pole = north_pole
         self.orbit = orbit
 
         self.mass = self.gravitational_parameter/physics.G

@@ -4,6 +4,7 @@ import json
 import body
 import human
 import orbit
+import coordinates
 
 
 def load_body(bodies, data, name):
@@ -21,10 +22,18 @@ def load_body(bodies, data, name):
     try:
         orbit_data = body_data["orbit"]
     except KeyError:
-        body_data["orbit"] = None
+        pass
     else:
         orbit_data["primary"] = load_body(bodies, data, orbit_data["primary"])
         body_data["orbit"] = orbit.Orbit.from_semi_major_axis(**orbit_data)
+
+    try:
+        north_pole = body_data["north_pole"]
+    except KeyError:
+        pass
+    else:
+        coords = coordinates.CelestialCoordinates.from_equatorial(**north_pole)
+        body_data["north_pole"] = coords
 
     bodies[name] = body.CelestialBody(name, **body_data)
     return bodies[name]
