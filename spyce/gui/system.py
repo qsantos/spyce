@@ -253,6 +253,13 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         glTranslatef(*body._relative_position)
         self.add_pick_object(body)
 
+        # axial tilt
+        if body.north_pole is not None:
+            z_angle = body.north_pole.ecliptic_longitude - math.pi/2
+            glRotatef(math.degrees(z_angle), 0, 0, 1)
+            x_angle = body.north_pole.ecliptic_latitude - math.pi/2
+            glRotatef(math.degrees(x_angle), 1, 0, 0)
+
         # OpenGL use single precision while Python has double precision
         # reducing modulo 2 PI in Python reduces loss of significance
         turn_fraction, _ = math.modf(self.time / body.rotational_period)
