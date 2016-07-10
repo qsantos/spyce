@@ -80,7 +80,7 @@ def from_kerbal_date(formatted_date):
 
 def to_si_prefix(value, unit=''):
     """Format value with SI-prefix for easier reading"""
-    exponent_group = math.log(value, 10) // 3
+    exponent_group = math.log(abs(value), 10) // 3
     mantissa = value / 10**(exponent_group*3)
     prefix = u'afpnµm kMGTPE'[int(exponent_group) + 6].strip()
     return '%.4g%s%s' % (mantissa, prefix, unit)
