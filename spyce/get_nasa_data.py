@@ -82,11 +82,7 @@ def get_more_physics(bodies, body):
     # in case it drives you crazy, uncomment this
     # html = html.replace('\r', '\r\n')
 
-    # orientation of north pole (tilt)
-
-    # extract tilt
-    matches = re.search(r'Obliquity to orbit \(deg\) *([\-0-9\.]+)', html)
-    tilt = math.radians(float(matches.group(1)))
+    # orientation of north pole (axial tilt)
 
     # extract right ascension
     matches = re.search(r'Right Ascension *: *([\-0-9\.]+)', html)
@@ -95,10 +91,6 @@ def get_more_physics(bodies, body):
     # extract declination
     matches = re.search(r'Declination *: *([\-0-9\.]+)', html)
     declination = math.radians(float(matches.group(1)))
-
-    # extract epoch
-    matches = re.search(r'Reference Date.*\(JD ([0-9\.]+)\)', html)
-    epoch = (float(matches.group(1)) - 2451545) * 86400
 
     bodies[planet]['north_pole'] = {
         'right_ascension': right_ascension,
@@ -117,7 +109,7 @@ def get_planets_orbits(bodies):
     lines = html.split("\n")
     lines = [re.split("\s{2,}", line) for line in lines[16:]]
 
-    epoch = tt_to_j2000(2015, 1, 1, 12)
+    epoch = tt_to_j2000(2000, 1, 1, 12)
 
     for i in range(0, len(lines)-1, 2):
         name = lines[i][0]
