@@ -45,6 +45,29 @@ class CelestialBody(object):
         else:
             self.rotational_period = float(rotational_period)
 
+        # axial tilt
+        if north_pole is None:
+            self.tilt = 0
+        else:
+            # from http://www.krysstal.com/sphertrig.html
+            # the blue great circle is the ecliptic
+            # A is the normal of the ecliptic
+            # B is the north pole of the body
+            # C is the normal of the orbital plane
+            # a is the axial tilt of the body
+            # b is the orbital inclination
+            # c is the complement of the ecliptic latitude of the north pole
+            # B' is the ecliptic longitude of the north pole
+            # C' is orthogonal to the line of nodes
+            b = orbit.inclination
+            c = north_pole.ecliptic_latitude - math.pi/2
+            if rotational_period < 0:  # retrograde rotation
+                c += math.pi
+            A = orbit.longitude_of_ascending_node+math.pi/2 - \
+                north_pole.ecliptic_longitude
+            ca = math.cos(b)*math.cos(c) + math.sin(b)*math.sin(c)*math.cos(A)
+            self.tilt = math.acos(ca)
+
         # sphere of influence
         if self.orbit is None:
             self.sphere_of_influence = float("inf")
