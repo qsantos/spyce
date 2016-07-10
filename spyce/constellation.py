@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding: utf-8
 import sys
 
 import orbit
@@ -35,8 +36,8 @@ if __name__ == '__main__':
         # compute period and altitude ranges
         min_period = human.to_human_time(orbit.Orbit(primary, min_a).period)
         max_period = human.to_human_time(orbit.Orbit(primary, max_a).period)
-        min_a = human.si_prefix(min_a - primary.radius, 'm')
-        max_a = human.si_prefix(max_a - primary.radius, 'm')
+        min_a = human.to_si_prefix(min_a - primary.radius, 'm')
+        max_a = human.to_si_prefix(max_a - primary.radius, 'm')
 
         # print everthing
         print(u'%-20s %i× %s (%s) -- %s (%s)' %
