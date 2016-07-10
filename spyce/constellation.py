@@ -10,7 +10,12 @@ import human
 if __name__ == '__main__':
     # parse orbited body
     if len(sys.argv) <= 1:
-        sys.stderr.write('Usage: %s BODY\n' % sys.argv[0])
+        sys.stderr.write(
+            'Usage: %s BODY [SIZE]\n'
+            'Give information on possible satellites constellations\n'
+            'BODY is the primary around which the constellation orbits\n'
+            'SIZE is the number of satellites in the constellation\n'
+            % sys.argv[0])
         sys.exit(1)
     primary = load.from_name(sys.argv[1])
 
@@ -30,7 +35,10 @@ if __name__ == '__main__':
 
     for antenna, communication_range in antennas:
         # get characteristics of constellation
-        size = primary.constellation_minimum_size(communication_range)
+        if len(sys.argv) <= 2:
+            size = primary.constellation_minimum_size(communication_range)
+        else:
+            size = int(sys.argv[2])
         min_a, max_a = primary.constellation_radius(communication_range, size)
 
         # compute period and altitude ranges
