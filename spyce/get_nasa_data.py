@@ -271,4 +271,5 @@ if __name__ == "__main__":
         get_dwarf_planet_data(bodies, dwarf_planet)
 
     with open("data/solar.json", "w") as f:
-        json.dump(bodies, f, sort_keys=True)
+        json.dump(bodies, f, sort_keys=True, indent=4, separators=(',', ': '))
+        f.write('\n')
