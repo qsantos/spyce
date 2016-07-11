@@ -8,6 +8,7 @@ except ImportError:  # python 2
     from urllib2 import urlopen
 
 import physics
+import coordinates
 
 
 def tt_to_j2000(year, month=1, day=1, hour=0, minute=0, second=0):
@@ -190,7 +191,7 @@ Epoch (.*) TD?T<BR>)?
 </TABLE>'''
         matches = re.findall(pattern, data)
 
-        for _, comment, _, epoch, data in matches:
+        for reference_plane, comment, _, epoch, data in matches:
             # missing epoch
             if not epoch and primary == "Pluto":
                 epoch = "2013 Jan. 1.00"
@@ -221,19 +222,69 @@ Epoch (.*) TD?T<BR>)?
                 if re.match("^S/[0-9]{4} [A-Z] [0-9]*$", name):
                     name = "".join(name.rsplit(" ", 1))
 
+                # convert to standard units
+                semi_major_axis = float(semi_major_axis)*1e3
+                eccentricity = float(eccentricity)
+                inclination = math.radians(float(inclination))
+                longitude_of_ascending_node = \
+                    math.radians(float(longitude_of_ascending_node))
+                argument_of_periapsis = \
+                    math.radians(float(argument_of_periapsis))
+                mean_anomaly_at_epoch = \
+                    math.radians(float(mean_anomaly_at_epoch))
+
+                # when given equatorial elements, convert to ecliptic elements
+                # when given Laplacian elements, handle as equatorial elements
+                if 'ecliptic' not in reference_plane.lower():
+                    # inclination is given relative to the equatorial plane of
+                    # the primary; longitude of the ascending node is given
+                    # relative to the northward equinox
+
+                    # recover ecliptic coordinates of the primary's north pole
+                    north_pole = bodies[primary]['north_pole']
+                    north_pole = coordinates.CelestialCoordinates. \
+                        from_equatorial(north_pole['right_ascension'],
+                                        north_pole['declination'])
+
+                    # from http://www.krysstal.com/sphertrig.html
+                    # the blue great circle is the ecliptic
+                    # A is the normal of the ecliptic
+                    # B is the primary's north pole
+                    # C is the normal of the satellite's orbital plane
+                    # a is the equatorial orbital inclination of the satellite
+                    # b is the ecliptic orbital inclination of the satellite
+                    # c is the orbital inclination of the primary
+                    # B' is orthogonal to the line of nodes of the primary
+                    # C' is orthogonal to the line of nodes of the satellite
+
+                    # compute ecliptic inclination
+                    a = inclination
+                    c = math.pi/2 - north_pole.ecliptic_latitude
+                    B = longitude_of_ascending_node + math.pi/2
+                    cb = math.cos(a)*math.cos(c) + \
+                        math.sin(a)*math.sin(c)*math.cos(B)
+                    b = math.acos(cb)
+
+                    # compute ecliptic longitude of the orbital normal
+                    sA = math.sin(B) * math.sin(a) / math.sin(b)
+                    A = math.asin(sA)
+                    A += north_pole.ecliptic_longitude
+
+                    # ecliptic elements
+                    inclination = b  # relative to the ecliptic
+                    longitude_of_ascending_node = A + math.pi/2
+
+                # save orbit
                 body = bodies.setdefault(name, {})
                 body["orbit"] = {
                     "primary": primary,
-                    "semi_major_axis": float(semi_major_axis)*1e3,
-                    "eccentricity": float(eccentricity),
-                    "inclination": math.radians(float(inclination)),
-                    "longitude_of_ascending_node":
-                        math.radians(float(longitude_of_ascending_node)),
-                    "argument_of_periapsis":
-                        math.radians(float(argument_of_periapsis)),
+                    "semi_major_axis": semi_major_axis,
+                    "eccentricity": eccentricity,
+                    "inclination": inclination,
+                    "longitude_of_ascending_node": longitude_of_ascending_node,
+                    "argument_of_periapsis": argument_of_periapsis,
                     "epoch": epoch,
-                    "mean_anomaly_at_epoch":
-                        math.radians(float(mean_anomaly_at_epoch)),
+                    "mean_anomaly_at_epoch": mean_anomaly_at_epoch,
                 }
 
 
