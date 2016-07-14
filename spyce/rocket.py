@@ -206,7 +206,7 @@ class Rocket(body.CelestialBody):
 
         # escape
         v = self.orbit.true_anomaly_at_escape()
-        if v == float('inf'):
+        if v is None:
             self.resume_time_escape = float('inf')
         else:
             self.resume_time_escape = self.orbit.time_at_true_anomaly(v)

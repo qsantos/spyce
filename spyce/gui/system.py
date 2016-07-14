@@ -186,7 +186,7 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
                 true_anomaly = orbit.true_anomaly_at_time(self.time)
                 # decide when to stop drawing
                 max_true_anomaly = orbit.true_anomaly_at_escape()
-                if max_true_anomaly == float('inf'):
+                if max_true_anomaly is None:
                     max_true_anomaly = orbit.ejection_angle() - 1e-2
                 # normal hyperbola
                 n = 128
