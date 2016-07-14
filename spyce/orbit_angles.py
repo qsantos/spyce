@@ -126,6 +126,34 @@ class OrbitAngles(OrbitGeometry):
         M = self.mean_anomaly_at_time(time)
         return self.true_anomaly_at_mean_anomaly(M)
 
+    def true_anomaly_at_distance(self, distance):
+        """Positive true anomaly when at the given distance from focus
+
+        A non-circular orbit may reach a specific distance either once
+        (periapsis and apoapsis), twice (anything in between) or never. Those
+        two points always have opposite true anomalies. The positive one is
+        returned if it exists; otherwise, None is returnd.
+
+        A circular orbit is either always or never at the distance. For this
+        reason, they always return None.
+        """
+
+        # circular orbit
+        if self.eccentricity == 0:
+            return None
+
+        # too high a periapsis
+        if distance < self.periapsis:
+            return None
+
+        # parabolic orbit with too low an apoapsis
+        if 0 < self.apoapsis <= distance:
+            return None
+
+        return math.acos(
+            (self.semi_latus_rectum / distance - 1) / self.eccentricity
+        )
+
     def true_anomaly_at_escape(self):
         """True anomaly when escaping the primary's sphere of influence"""
 
