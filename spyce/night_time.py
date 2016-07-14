@@ -11,7 +11,11 @@ import analysis
 if __name__ == '__main__':
     # parse orbited body
     if len(sys.argv) <= 1:
-        sys.stderr.write('Usage: %s BODY\n' % sys.argv[0])
+        sys.stderr.write(
+            'Usage: %s BODY [ALTITUDE]\n'
+            'Compute the time spent in the dark by a satellite\n'
+            'If ALTITUDE is not given, the best one is computed\n'
+            % sys.argv[0])
         sys.exit(1)
     primary = load.from_name(sys.argv[1])
 
@@ -28,6 +32,16 @@ if __name__ == '__main__':
         x = 1 - r*r
         s = math.asin(r)/r * math.sqrt(x)
         return a * (1.5*s - 1) / (.75*s - 2 + 1/x)
+
+    if len(sys.argv) > 2:
+        altitude = float(sys.argv[2])
+        semi_major_axis = primary.radius + altitude
+        altitude = human.to_si_prefix(altitude, 'm')
+        night_time = human.to_human_time(f(semi_major_axis))
+        print('Consider a satellite in a circular orbit around %s' % primary)
+        print('Time in the dark at altitude %s: %s' % (altitude, night_time))
+        print('This ignores possible eclipses from natural satellites')
+        sys.exit(0)
 
     # find a root of f'
     # i.e. a local extremum of f
