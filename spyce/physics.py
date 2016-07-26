@@ -19,11 +19,11 @@ def _(tabulated, uncertainty=None, computed=None):
         error = abs(tabulated-computed)
         assert error < uncertainty, \
             "absolute error (%g) above threshold (%g)" % (error, uncertainty)
-    return computed
+    return float(computed)
 
 
 # universal constants
-c = _(299792458)               # speed of ligth in vacuum (m/s)
+c = _(299792458.)              # speed of ligth in vacuum (m/s)
 G = _(6.67384e-11, 80e-16)     # gravitational constant (N.(m/kg)^2)
 h = _(6.62606957e-34, 29e-42)  # Planck constant (J.s)
 
@@ -67,11 +67,11 @@ m_u = _(1.660538921e-27, 73e-36, m_e / A_r_e)  # atomic mass constant (kg)
 # adopted values
 g0 = _(9.80665)  # standard gravity (m/s^2)
 T0 = _(288.15)   # standard temperature (K)
-p0 = _(101325)   # standard pressure (Pa)
+p0 = _(101325.)  # standard pressure (Pa)
 atm = p0
 
 # miscellaneous (not CODATA)
 M_air = _(0.0289644, 50e-9)                          # air mass (kg/mol)
-ly = _(9460730472580800, None, 365.25*86400*c)       # light year (m)
-au = _(149597870700)                                 # astronomical unit (m)
+ly = _(9460730472580800., None, 365.25*86400*c)      # light year (m)
+au = _(149597870700.)                                # astronomical unit (m)
 parsec = _(3.0856775815e16, None, 648e3/math.pi*au)  # parsec (m)
