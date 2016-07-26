@@ -1,5 +1,6 @@
 import sys
 import math
+import platform
 
 import vector
 import orbit_angles
@@ -177,14 +178,20 @@ class OrbitDetermination(object):
 
 # if available, use a C versions
 
-try:  # Python 3
-    import cext.orbit_py3 as cext
-except ImportError:
-    try:  # Python 2
-        import cext.orbit_py2 as cext
-    except ImportError:
+cext = None
+if platform.python_implementation() == 'CPython':
+    if platform.python_version() >= '3':
+        try:  # Python 3
+            import cext.orbit_py3 as cext
+        except ImportError:
+            pass
+    else:
+        try:  # Python 2
+            import cext.orbit_py2 as cext
+        except ImportError:
+            pass
+    if cext is None:
         sys.stderr.write("Note: to improve performance, run `make` in cext/\n")
-        cext = None
 
 if cext is not None:
     @classmethod
