@@ -9,6 +9,7 @@ except ImportError:  # Windows
     pass
 else:
     import os
+    import atexit
     import rlcompleter
 
     completer = rlcompleter.Completer(interact.namespace)
@@ -20,6 +21,10 @@ else:
         readline.read_history_file(histfile)
     except:  # FileNotFoundError in Python 3, IOError in Python 2
         pass
+
+    def save_history():
+        readline.write_history_file(histfile)
+    atexit.register(save_history)
 
 
 banner = """===== Welcome to Spyce! =====
@@ -40,8 +45,3 @@ Session example:
 """
 
 code.interact(banner=banner, local=interact.namespace)
-
-try:
-    readline.write_history_file(histfile)
-except NameError:  # Windows
-    pass
