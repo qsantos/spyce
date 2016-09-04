@@ -1,16 +1,16 @@
 import unittest
 
-import orbit
-import ksp_cfg
-import rocket
-from load import kerbol
+import spyce.orbit
+import spyce.ksp_cfg
+import spyce.rocket
+import spyce.load
 
 
 class TestRocket(unittest.TestCase):
     def do_simulation(self, eccentricity):
-        primary = kerbol['Kerbin']
-        ship = rocket.Rocket(primary)
-        ship |= ksp_cfg.PartSet().make(
+        primary = spyce.load.kerbol['Kerbin']
+        ship = spyce.rocket.Rocket(primary)
+        ship |= spyce.ksp_cfg.PartSet().make(
             'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
         )
 
@@ -23,7 +23,7 @@ class TestRocket(unittest.TestCase):
         primary.satellites = set()
 
         # set ship on orbit
-        o = orbit.Orbit(primary, 700e3, eccentricity)
+        o = spyce.orbit.Orbit(primary, 700e3, eccentricity)
         ship.position = o.position_at_true_anomaly(0.)
         ship.velocity = o.velocity_at_true_anomaly(0.)
 

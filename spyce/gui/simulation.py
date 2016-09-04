@@ -1,13 +1,11 @@
 import time
 import collections
 
-import gui.system
-import gui.textures
-from load import solar, kerbol
-from gui.graphics import *
+import spyce.gui.system
+from spyce.gui.graphics import *
 
 
-class SimulationGUI(gui.system.SystemGUI):
+class SimulationGUI(spyce.gui.system.SystemGUI):
     def __init__(self, *args, **kwargs):
         super(SimulationGUI, self).__init__(*args, **kwargs)
 

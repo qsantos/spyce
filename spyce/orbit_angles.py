@@ -2,7 +2,7 @@ import sys
 import math
 import platform
 
-import analysis
+import spyce.analysis
 
 
 class OrbitGeometry(object):
@@ -49,7 +49,7 @@ class OrbitGeometry(object):
             if abs(M) < 2**-26:
                 return M / (1 - e)
 
-            return analysis.newton_raphson(
+            return spyce.analysis.newton_raphson(
                 x_0=math.pi,
                 f=lambda E: E - e*math.sin(E) - M,
                 f_prime=lambda E: 1 - e*math.cos(E),
@@ -62,7 +62,7 @@ class OrbitGeometry(object):
             if abs(M) < 2**-26:
                 return M / (e - 1)
 
-            return analysis.newton_raphson(
+            return spyce.analysis.newton_raphson(
                 x_0=1,
                 f=lambda E: e*math.sinh(E) - E - M,
                 f_prime=lambda E: e*math.cosh(E) - 1,
@@ -166,12 +166,12 @@ cext = None
 if platform.python_implementation() == 'CPython':
     if platform.python_version() >= '3':
         try:  # Python 3
-            import cext.orbit_py3 as cext
+            from spyce.cext import orbit_py3 as cext
         except ImportError:
             pass
     else:
         try:  # Python 2
-            import cext.orbit_py2 as cext
+            from spyce.cext import orbit_py2 as cext
         except ImportError:
             pass
     if cext is None:

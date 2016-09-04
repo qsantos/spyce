@@ -7,8 +7,8 @@ try:  # python 3
 except ImportError:  # python 2
     from urllib2 import urlopen
 
-import physics
-import coordinates
+import spyce.physics
+import spyce.coordinates
 
 
 def tt_to_j2000(year, month=1, day=1, hour=0, minute=0, second=0):
@@ -136,7 +136,7 @@ def get_planets_orbits(bodies):
         body = bodies.setdefault(name, {})
         body["orbit"] = {
             "primary": "Sun",
-            "semi_major_axis": semi_major_axis * physics.au,
+            "semi_major_axis": semi_major_axis * spyce.physics.au,
             "eccentricity": eccentricity,
             "inclination": math.radians(inclination % 360),
             "longitude_of_ascending_node":
@@ -243,7 +243,7 @@ Epoch (.*) TD?T<BR>)?
 
                     # recover ecliptic coordinates of the primary's north pole
                     north_pole = bodies[primary]['north_pole']
-                    north_pole = coordinates.CelestialCoordinates. \
+                    north_pole = spyce.coordinates.CelestialCoordinates. \
                         from_equatorial(north_pole['right_ascension'],
                                         north_pole['declination'])
 
@@ -326,7 +326,7 @@ def get_dwarf_planet_data(bodies, name):
 
     body["orbit"] = {
         "primary": "Sun",
-        "semi_major_axis": float(elements["a"]) * physics.au,
+        "semi_major_axis": float(elements["a"]) * spyce.physics.au,
         "eccentricity": float(elements["e"]),
         "inclination": math.radians(float(elements["i"])),
         "longitude_of_ascending_node": math.radians(float(elements["node"])),

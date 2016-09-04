@@ -1,7 +1,7 @@
 import unittest
 
-import physics
-import load
+import spyce.physics
+import spyce.load
 
 
 class TestSystems(unittest.TestCase):
@@ -18,9 +18,9 @@ class TestSystems(unittest.TestCase):
                 self.assertGreater(body.orbit.period, 3600)
 
     def test_kerbol(self):
-        self.system(load.kerbol)
+        self.system(spyce.load.kerbol)
 
-        Kerbol = load.kerbol['Kerbol']
+        Kerbol = spyce.load.kerbol['Kerbol']
 
         # planet count
         n_planets = len(Kerbol.satellites)
@@ -28,12 +28,12 @@ class TestSystems(unittest.TestCase):
 
         # system radius
         for satellite in Kerbol.satellites:
-            self.assertLess(satellite.orbit.apoapsis, physics.au)
+            self.assertLess(satellite.orbit.apoapsis, spyce.physics.au)
 
     def test_solar(self):
-        self.system(load.solar)
+        self.system(spyce.load.solar)
 
-        Sun = load.solar['Sun']
+        Sun = spyce.load.solar['Sun']
 
         # planet count
         n_planets = sum(1 for planet in Sun.satellites if planet.mass > 1e23)
@@ -41,7 +41,7 @@ class TestSystems(unittest.TestCase):
 
         # system radius
         for satellite in Sun.satellites:
-            self.assertLess(satellite.orbit.apoapsis, 1e3 * physics.au)
+            self.assertLess(satellite.orbit.apoapsis, 1e3 * spyce.physics.au)
 
 
 if __name__ == '__main__':

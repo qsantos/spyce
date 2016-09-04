@@ -1,8 +1,8 @@
 import re
 import math
 
-import vector
-import physics
+import spyce.vector
+import spyce.physics
 
 
 class InvalidConstellation(Exception):
@@ -33,7 +33,7 @@ class CelestialBody(object):
         self.north_pole = north_pole
         self.orbit = orbit
 
-        self.mass = self.gravitational_parameter/physics.G
+        self.mass = self.gravitational_parameter/spyce.physics.G
 
         self.satellites = []
         if self.orbit is not None:
@@ -107,7 +107,7 @@ class CelestialBody(object):
     def global_position_at_time(self, time):
         """Global position of the celestial body within the stellar system"""
         if self.orbit is None:
-            return vector.Vector([0, 0, 0])
+            return spyce.vector.Vector([0, 0, 0])
         primary_position = self.orbit.primary.global_position_at_time(time)
         return primary_position + self.orbit.position_at_time(time)
 

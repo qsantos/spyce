@@ -1,23 +1,23 @@
 import math
 
-import load
-import human
-import orbit
-import physics
+import spyce.load
+import spyce.human
+import spyce.orbit
+import spyce.physics
 
 namespace = {
-    "Orbit": orbit.Orbit,
+    "Orbit": spyce.orbit.Orbit,
     "math": math,
-    "physics": physics,
-    "human": human,
-    "kerbol": load.kerbol,
-    "solar": load.solar,
+    "physics": spyce.physics,
+    "human": spyce.human,
+    "kerbol": spyce.load.kerbol,
+    "solar": spyce.load.solar,
 }
 namespace.update(math.__dict__)
-namespace.update(physics.__dict__)
-namespace.update(human.__dict__)
-namespace.update(load.kerbol)
-namespace.update(load.solar)
+namespace.update(spyce.physics.__dict__)
+namespace.update(spyce.human.__dict__)
+namespace.update(spyce.load.kerbol)
+namespace.update(spyce.load.solar)
 
 # filter out symbols starting with "_"
 for k in list(namespace):
@@ -40,7 +40,7 @@ def ask(prompt, default=None):
 def ask_orbit(cls):
     """Interactively ask orbital elements"""
     args = {}
-    args["primary"] = ask("Primary [Kerbin]: ", load.kerbol["Kerbin"])
+    args["primary"] = ask("Primary [Kerbin]: ", spyce.load.kerbol["Kerbin"])
 
     print("== Orbit shape ==")
     print("   1 Periapsis and eccentricity")
@@ -85,4 +85,4 @@ def ask_orbit(cls):
 
     return constructor(**args)
 
-orbit.Orbit.ask = ask_orbit
+spyce.orbit.Orbit.ask = ask_orbit

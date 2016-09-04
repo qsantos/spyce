@@ -1,6 +1,6 @@
 import math
 
-from gui.graphics import *
+from spyce.gui.graphics import *
 
 
 class Mesh(object):

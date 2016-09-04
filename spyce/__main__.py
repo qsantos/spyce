@@ -1,6 +1,6 @@
 import code
 
-import interact
+import spyce.interact
 
 
 try:
@@ -12,7 +12,7 @@ else:
     import atexit
     import rlcompleter
 
-    completer = rlcompleter.Completer(interact.namespace)
+    completer = rlcompleter.Completer(spyce.interact.namespace)
     readline.set_completer(completer.complete)
     readline.parse_and_bind("tab: complete")
 
@@ -44,4 +44,4 @@ Session example:
     >>> help(Orbit)
 """
 
-code.interact(banner=banner, local=interact.namespace)
+code.interact(banner=banner, local=spyce.interact.namespace)

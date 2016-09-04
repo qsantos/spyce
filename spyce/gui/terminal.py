@@ -4,9 +4,9 @@ import code
 import collections
 import rlcompleter
 
-import interact
-import gui.hud
-from gui.graphics import *
+import spyce.interact
+import spyce.gui.hud
+from spyce.gui.graphics import *
 
 
 class Readline(object):
@@ -138,15 +138,15 @@ class Console(object):
             self.lines.append(line)
 
 
-class TerminalGUI(gui.hud.HUD):
+class TerminalGUI(spyce.gui.hud.HUD):
     """GUI with an interactive text terminal"""
     def __init__(self, title=b"Terminal in GUI"):
         super(TerminalGUI, self).__init__(title)
 
         self.console = Console()
-        interact.namespace["gui"] = self
-        self.interpreter = code.InteractiveConsole(interact.namespace)
-        self.completer = rlcompleter.Completer(interact.namespace)
+        spyce.interact.namespace["gui"] = self
+        self.interpreter = code.InteractiveConsole(spyce.interact.namespace)
+        self.completer = rlcompleter.Completer(spyce.interact.namespace)
         self.readline = Readline(self.interpreter, self.completer.complete)
 
         v = sys.version_info

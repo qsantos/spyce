@@ -3,12 +3,12 @@ import unittest
 import math
 import time
 
-import analysis
+import spyce.analysis
 
 
 class TestAnalysis(unittest.TestCase):
     def test_newton_raphson(self):
-        x = analysis.newton_raphson(
+        x = spyce.analysis.newton_raphson(
             x_0=1.4,
             f=lambda x: x**2 - 2,
             f_prime=lambda x: 2*x,
@@ -34,12 +34,12 @@ class TestAnalysis(unittest.TestCase):
         return error, elapsed
 
     def test_euler(self):
-        error, elapsed = self.integration(analysis.euler, 100000, 0.1)
+        error, elapsed = self.integration(spyce.analysis.euler, 100000, 0.1)
         self.assertLess(error, 1e-4)
         self.assertLess(elapsed, 1.0)
 
     def test_rk4(self):
-        error, elapsed = self.integration(analysis.runge_kutta_4, 100000, 0.1)
+        error, elapsed = self.integration(spyce.analysis.runge_kutta_4, 100000, 0.1)
         self.assertLess(error, 1e-12)
         self.assertLess(elapsed, 1.0)
 

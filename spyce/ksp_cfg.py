@@ -4,7 +4,7 @@ import os
 import io
 import copy
 
-import rocket
+import spyce.rocket
 
 
 def locate(subpath="GameData"):
@@ -106,7 +106,7 @@ def part_from_cfg(cfg_dict):
     title = cfg_dict.get('title', name)
     dry_mass = float(cfg_dict.get('mass', 100.)) * 1e3  # given in tons
     coefficient_of_drag = float(cfg_dict.get('maximum_drag', .2))
-    part = rocket.RocketPart(name, title, dry_mass, coefficient_of_drag)
+    part = spyce.rocket.RocketPart(name, title, dry_mass, coefficient_of_drag)
 
     # engine
     r = dict_get_group(cfg_dict, 'MODULE', 'ModuleEngines') or \

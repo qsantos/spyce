@@ -1,8 +1,8 @@
-import vector
-import physics
-import body
-import orbit
-import analysis
+import spyce.vector
+import spyce.physics
+import spyce.body
+import spyce.orbit
+import spyce.analysis
 
 
 class RocketPart(object):
@@ -41,7 +41,7 @@ class RocketPart(object):
         """Configure a part as an engine"""
         self.max_thrust = max_thrust
         self.specific_impulse = specific_impulse
-        self.exhaust_velocity = self.specific_impulse * physics.g0
+        self.exhaust_velocity = self.specific_impulse * spyce.physics.g0
         self.expulsion_rate = self.max_thrust / self.exhaust_velocity
 
     def make_tank(self, propellant):
@@ -49,7 +49,7 @@ class RocketPart(object):
         self.propellant = propellant
 
 
-class Rocket(body.CelestialBody):
+class Rocket(spyce.body.CelestialBody):
     """A rocket, or a spaceship, or a duck"""
     def __init__(self, primary=None, program=None):
         self.parts = set()
@@ -60,16 +60,16 @@ class Rocket(body.CelestialBody):
         self.name = "rocket"
         self.satellites = []
 
-        self.acceleration = vector.Vector([0, 0, 0])
+        self.acceleration = spyce.vector.Vector([0, 0, 0])
         if primary is None:
-            self.velocity = vector.Vector([0, 0, 0])
-            self.position = vector.Vector([0, 0, 0])
+            self.velocity = spyce.vector.Vector([0, 0, 0])
+            self.position = spyce.vector.Vector([0, 0, 0])
         else:
-            self.velocity = vector.Vector([0, primary.surface_velocity, 0])
-            self.position = vector.Vector([primary.radius, 0, 0])
+            self.velocity = spyce.vector.Vector([0, primary.surface_velocity, 0])
+            self.position = spyce.vector.Vector([primary.radius, 0, 0])
         self.primary = primary
 
-        self.orientation = vector.Matrix.identity()
+        self.orientation = spyce.vector.Matrix.identity()
         self.rotate_deg(90, 0, 1, 0)
 
         self.resume_time_program = 0
@@ -173,10 +173,10 @@ class Rocket(body.CelestialBody):
             mass = self.dry_mass + self.propellant
             thrust = self.prograde*(self.max_thrust*thrust_ratio/mass)
         else:
-            thrust = vector.Vector([0, 0, 0])
+            thrust = spyce.vector.Vector([0, 0, 0])
 
         def f(t, y):
-            position, velocity = vector.Vector(y[:3]), y[3:]
+            position, velocity = spyce.vector.Vector(y[:3]), y[3:]
 
             # gravity
             if self.primary:
@@ -184,7 +184,7 @@ class Rocket(body.CelestialBody):
                 g = self.primary.gravity(distance)
                 acceleration = position * (-g/distance)
             else:
-                acceleration = vector.Vector([0, 0, 0])
+                acceleration = spyce.vector.Vector([0, 0, 0])
 
             # propulsion
             acceleration += thrust
@@ -193,15 +193,15 @@ class Rocket(body.CelestialBody):
 
         # update velocity and position
         y = self.position[:] + self.velocity
-        y = analysis.runge_kutta_4(f, t, y, dt)
-        self.position = vector.Vector(y[:3])
-        self.velocity = vector.Vector(y[3:])
+        y = spyce.analysis.runge_kutta_4(f, t, y, dt)
+        self.position = spyce.vector.Vector(y[:3])
+        self.velocity = spyce.vector.Vector(y[3:])
 
         self.update_orbit(t + dt)
 
     def update_orbit(self, epoch):
         """Update current orbital trajectory"""
-        self.orbit = orbit.Orbit.from_state(
+        self.orbit = spyce.orbit.Orbit.from_state(
             self.primary, self.position, self.velocity, epoch)
 
         # escape
@@ -277,5 +277,5 @@ class Rocket(body.CelestialBody):
 
     def rotate_deg(self, angle, x, y, z):
         """Rotate `angle` degrees along axis (x,y,z)"""
-        self.orientation *= vector.Matrix.rotation_deg(angle, x, y, z)
+        self.orientation *= spyce.vector.Matrix.rotation_deg(angle, x, y, z)
         self.prograde = self.orientation * [0, 0, 1]

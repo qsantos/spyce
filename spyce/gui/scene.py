@@ -1,6 +1,6 @@
 import sys
 
-from gui.graphics import *
+from spyce.gui.graphics import *
 
 
 class Scene(object):

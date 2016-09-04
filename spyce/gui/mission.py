@@ -1,16 +1,16 @@
 import time
 
-import gui.simulation
-import gui.textures
-from gui.graphics import *
+import spyce.gui.simulation
+import spyce.gui.textures
+from spyce.gui.graphics import *
 
 
-class MissionGUI(gui.simulation.SimulationGUI):
+class MissionGUI(spyce.gui.simulation.SimulationGUI):
     def __init__(self, *args, **kwargs):
         super(MissionGUI, self).__init__(*args, **kwargs)
 
-        self.texture_rocket_on = gui.textures.load("rocket_on.png")
-        self.texture_rocket_off = gui.textures.load("rocket_off.png")
+        self.texture_rocket_on = spyce.gui.textures.load("rocket_on.png")
+        self.texture_rocket_off = spyce.gui.textures.load("rocket_off.png")
 
         # texture transparency
         glAlphaFunc(GL_GREATER, 0.)
@@ -33,9 +33,9 @@ class MissionGUI(gui.simulation.SimulationGUI):
 
         # pick correct texture
         if self.rocket.throttle == 0:
-            gui.textures.bind(self.texture_rocket_off)
+            spyce.gui.textures.bind(self.texture_rocket_off)
         else:
-            gui.textures.bind(self.texture_rocket_on)
+            spyce.gui.textures.bind(self.texture_rocket_on)
 
         # draw texture
         glDisable(GL_CULL_FACE)
@@ -48,7 +48,7 @@ class MissionGUI(gui.simulation.SimulationGUI):
         glEnable(GL_CULL_FACE)
 
         # all done
-        gui.textures.unbind()
+        spyce.gui.textures.unbind()
         glPopMatrix()
 
     def draw_body(self, body):
@@ -106,9 +106,8 @@ class MissionGUI(gui.simulation.SimulationGUI):
 
 
 def main():
-    from load import kerbol
-    import ksp_cfg
-    import rocket
+    import spyce.ksp_cfg
+    import spyce.rocket
 
     sim = MissionGUI.from_cli_args()
 
@@ -147,8 +146,8 @@ def main():
         rocket.throttle = 0
 
     body = sim.focus
-    rocket = rocket.Rocket(body, program)
-    rocket |= ksp_cfg.PartSet().make(
+    rocket = spyce.rocket.Rocket(body, program)
+    rocket |= spyce.ksp_cfg.PartSet().make(
         'Size3LargeTank', 'Size3LargeTank', 'Size3EngineCluster',
     )
     rocket.orbit.primary.satellites.append(rocket)

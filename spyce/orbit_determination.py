@@ -2,8 +2,8 @@ import sys
 import math
 import platform
 
-import vector
-import orbit_angles
+import spyce.vector
+import spyce.orbit_angles
 
 
 class InvalidElements(Exception):
@@ -124,13 +124,13 @@ class OrbitDetermination(object):
         speed = velocity.norm()
         mu = primary.gravitational_parameter
 
-        x_axis = vector.Vector([1, 0, 0])
-        z_axis = vector.Vector([0, 0, 1])
+        x_axis = spyce.vector.Vector([1, 0, 0])
+        z_axis = spyce.vector.Vector([0, 0, 1])
         orbital_plane_normal_vector = position.cross(velocity)
 
         # eccentricity
         rv = position.dot(velocity)
-        eccentricity_vector = vector.Vector([
+        eccentricity_vector = spyce.vector.Vector([
             (speed**2 * p - rv*v)/mu - p/distance
             for p, v in zip(position, velocity)
         ])
@@ -164,7 +164,7 @@ class OrbitDetermination(object):
         true_anomaly_at_epoch = periapsis_dir.oriented_angle(
             position, orbital_plane_normal_vector)
 
-        o = orbit_angles.OrbitGeometry(eccentricity)
+        o = spyce.orbit_angles.OrbitGeometry(eccentricity)
         v = true_anomaly_at_epoch
         M = o.mean_anomaly_at_true_anomaly(v)
         mean_anomaly_at_epoch = M
@@ -182,12 +182,12 @@ cext = None
 if platform.python_implementation() == 'CPython':
     if platform.python_version() >= '3':
         try:  # Python 3
-            import cext.orbit_py3 as cext
+            from spyce.cext import orbit_py3 as cext
         except ImportError:
             pass
     else:
         try:  # Python 2
-            import cext.orbit_py2 as cext
+            from spyce.cext import orbit_py2 as cext
         except ImportError:
             pass
     if cext is None:

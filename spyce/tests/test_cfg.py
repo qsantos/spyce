@@ -1,10 +1,11 @@
 import unittest
 
-import ksp_cfg
 try:  # Python 2
     from StringIO import StringIO
 except ImportError:  # Python 3
     from io import StringIO
+
+import spyce.ksp_cfg
 
 
 class TestCfg(unittest.TestCase):
@@ -16,7 +17,7 @@ class TestCfg(unittest.TestCase):
         }
         """)
         part = {"PART": {"name": "somepart"}}
-        self.assertEqual(ksp_cfg.parse(cfg), part)
+        self.assertEqual(spyce.ksp_cfg.parse(cfg), part)
 
     def test_module(self):
         cfg = StringIO("""
@@ -28,7 +29,7 @@ class TestCfg(unittest.TestCase):
         }
         }""")
         part = {"PART": {"MODULE": {"name": "somemodule"}}}
-        self.assertEqual(ksp_cfg.parse(cfg), part)
+        self.assertEqual(spyce.ksp_cfg.parse(cfg), part)
 
     def test_groups(self):
         cfg = StringIO("""
@@ -45,11 +46,11 @@ class TestCfg(unittest.TestCase):
         }
         """)
         part = {"PART": {"MODULE": [{"name": "first"}, {"name": "second"}]}}
-        self.assertEqual(ksp_cfg.parse(cfg), part)
+        self.assertEqual(spyce.ksp_cfg.parse(cfg), part)
 
     def test_get_group(self):
         module = {"MODULE": [{"name": "first"}, {"name": "second"}]}
-        result = ksp_cfg.dict_get_group(module, "MODULE", "first")
+        result = spyce.ksp_cfg.dict_get_group(module, "MODULE", "first")
         expected = {"name": "first"}
         self.assertEqual(result, expected)
 

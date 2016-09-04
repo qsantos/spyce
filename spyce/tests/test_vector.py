@@ -3,7 +3,7 @@ import unittest
 import math
 import random
 
-from vector import Vector, Matrix
+from spyce.vector import Vector, Matrix
 
 
 class TestVector(unittest.TestCase):

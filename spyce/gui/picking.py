@@ -1,10 +1,10 @@
 import math
 
-import gui.hud
-from gui.graphics import *
+import spyce.gui.hud
+from spyce.gui.graphics import *
 
 
-class PickingGUI(gui.hud.HUD):
+class PickingGUI(spyce.gui.hud.HUD):
     """GUI with object picking using a fragment shader"""
     def __init__(self, title=b"Click to pick!"):
         super(PickingGUI, self).__init__(title)

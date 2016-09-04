@@ -2,9 +2,9 @@
 # encoding: utf-8
 import sys
 
-import orbit
-import load
-import human
+import spyce.orbit
+import spyce.load
+import spyce.human
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
             'SIZE is the number of satellites in the constellation\n'
             % sys.argv[0])
         sys.exit(1)
-    primary = load.from_name(sys.argv[1])
+    primary = spyce.load.from_name(sys.argv[1])
 
     # antennas from RemoteTech
     antennas = [
@@ -42,10 +42,10 @@ def main():
         min_a, max_a = primary.constellation_radius(communication_range, size)
 
         # compute period and altitude ranges
-        min_period = human.to_human_time(orbit.Orbit(primary, min_a).period)
-        max_period = human.to_human_time(orbit.Orbit(primary, max_a).period)
-        min_a = human.to_si_prefix(min_a - primary.radius, 'm')
-        max_a = human.to_si_prefix(max_a - primary.radius, 'm')
+        min_period = spyce.human.to_human_time(spyce.orbit.Orbit(primary, min_a).period)
+        max_period = spyce.human.to_human_time(spyce.orbit.Orbit(primary, max_a).period)
+        min_a = spyce.human.to_si_prefix(min_a - primary.radius, 'm')
+        max_a = spyce.human.to_si_prefix(max_a - primary.radius, 'm')
 
         # print everthing
         print(u'%-20s %i× %s (%s) -- %s (%s)' %

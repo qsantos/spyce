@@ -1,10 +1,10 @@
 import math
 
-import vector
-import orbit_determination
-import orbit_angles
-import orbit_state
-import orbit_target
+import spyce.vector
+import spyce.orbit_determination
+import spyce.orbit_angles
+import spyce.orbit_state
+import spyce.orbit_target
 
 
 # NOTE: to ease reading, Orbit is split into three base classes
@@ -13,10 +13,10 @@ import orbit_target
 #       OrbitState contains methods to predict position and velocity
 #       OrbitTarget contains methods to predict near approaches and encounters
 class Orbit(
-        orbit_determination.OrbitDetermination,
-        orbit_angles.OrbitAngles,
-        orbit_state.OrbitState,
-        orbit_target.OrbitTarget,
+        spyce.orbit_determination.OrbitDetermination,
+        spyce.orbit_angles.OrbitAngles,
+        spyce.orbit_state.OrbitState,
+        spyce.orbit_target.OrbitTarget,
         ):
     """Kepler orbit
 
@@ -85,7 +85,7 @@ class Orbit(
         else:  # circular/elliptic orbit
             self.period = 2*math.pi / self.mean_motion
 
-        self.transform = vector.Matrix.from_euler_angles(
+        self.transform = spyce.vector.Matrix.from_euler_angles(
             self.longitude_of_ascending_node,
             self.inclination,
             self.argument_of_periapsis,
