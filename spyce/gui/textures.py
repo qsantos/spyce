@@ -61,10 +61,10 @@ else:
         w, h = im.size
         try:
             data = im.tobytes("raw", "RGBA", 0, -1)
-        except SystemError:
+        except (SystemError, ValueError):
             try:
                 data = im.tobytes("raw", "RGBX", 0, -1)
-            except SystemError:
+            except (SystemError, ValueError):
                 data = im.convert("RGBA").tobytes("raw", "RGBA", 0, -1)
 
         new_tex = glGenTextures(1)
