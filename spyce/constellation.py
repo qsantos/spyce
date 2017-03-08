@@ -7,7 +7,7 @@ import load
 import human
 
 
-if __name__ == '__main__':
+def main():
     # parse orbited body
     if len(sys.argv) <= 1:
         sys.stderr.write(
@@ -50,3 +50,7 @@ if __name__ == '__main__':
         # print everthing
         print(u'%-20s %i× %s (%s) -- %s (%s)' %
               (antenna+':', size, min_a, min_period, max_a, max_period))
+
+
+if __name__ == '__main__':
+    main()

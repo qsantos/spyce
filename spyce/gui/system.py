@@ -382,5 +382,10 @@ class SystemGUI(gui.picking.PickingGUI, gui.terminal.TerminalGUI):
         else:
             super(SystemGUI, self).mouseFunc(button, state, x, y)
 
-if __name__ == '__main__':
+
+def main():
     SystemGUI.from_cli_args().main()
+
+
+if __name__ == '__main__':
+    main()

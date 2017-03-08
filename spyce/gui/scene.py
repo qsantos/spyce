@@ -170,5 +170,10 @@ class Scene(object):
         """Main loop"""
         glutMainLoop()
 
-if __name__ == '__main__':
+
+def main():
     Scene().main()
+
+
+if __name__ == '__main__':
+    main()

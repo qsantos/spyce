@@ -8,7 +8,7 @@ import human
 import analysis
 
 
-if __name__ == '__main__':
+def main():
     # parse orbited body
     if len(sys.argv) <= 1:
         sys.stderr.write(
@@ -53,3 +53,7 @@ if __name__ == '__main__':
     print('The time spent in the dark is at least %s' % night_time)
     print('This is achieved at altitude %s' % altitude)
     print('Note that this ignores possible eclipses from natural satellites')
+
+
+if __name__ == '__main__':
+    main()

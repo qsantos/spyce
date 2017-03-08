@@ -104,7 +104,8 @@ class MissionGUI(gui.simulation.SimulationGUI):
 
         glutCloseFunc(None)
 
-if __name__ == "__main__":
+
+def main():
     from load import kerbol
     import ksp_cfg
     import rocket
@@ -155,3 +156,7 @@ if __name__ == "__main__":
     sim.rocket = rocket
     sim.focus = rocket
     sim.main()
+
+
+if __name__ == '__main__':
+    main()

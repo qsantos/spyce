@@ -69,5 +69,10 @@ class SimulationGUI(gui.system.SystemGUI):
 
         glutCloseFunc(None)
 
-if __name__ == "__main__":
+
+def main():
     SimulationGUI.from_cli_args().main()
+
+
+if __name__ == '__main__':
+    main()

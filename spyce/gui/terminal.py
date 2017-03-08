@@ -182,5 +182,10 @@ class TerminalGUI(gui.hud.HUD):
         self.hud_print('\n'.join(self.console.lines))
         self.hud_print(self.readline.current_line() + '_')
 
-if __name__ == "__main__":
+
+def main():
     TerminalGUI().main()
+
+
+if __name__ == '__main__':
+    main()

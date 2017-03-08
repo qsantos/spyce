@@ -158,5 +158,10 @@ class HUD(gui.scene.Scene):
         self.set_and_draw_hud()
         glutSwapBuffers()
 
-if __name__ == '__main__':
+
+def main():
     HUD().main()
+
+
+if __name__ == '__main__':
+    main()

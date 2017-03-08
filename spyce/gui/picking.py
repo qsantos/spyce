@@ -135,5 +135,10 @@ class PickingGUI(gui.hud.HUD):
         else:
             super(PickingGUI, self).mouseFunc(button, state, x, y)
 
-if __name__ == '__main__':
+
+def main():
     PickingGUI().main()
+
+
+if __name__ == '__main__':
+    main()

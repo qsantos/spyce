@@ -335,7 +335,8 @@ def get_dwarf_planet_data(bodies, name):
         "mean_anomaly_at_epoch": math.radians(float(elements["M"])),
     }
 
-if __name__ == "__main__":
+
+def main():
     bodies = {}
 
     get_sun_physics(bodies)
@@ -357,3 +358,7 @@ if __name__ == "__main__":
     with open("data/solar.json", "w") as f:
         json.dump(bodies, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.write('\n')
+
+
+if __name__ == '__main__':
+    main()
