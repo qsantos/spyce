@@ -78,7 +78,7 @@ def get_more_physics(bodies, body):
 
     # retrieve page for physical characteristics
     url = "http://nssdc.gsfc.nasa.gov/planetary/factsheet/%sfact.html" \
-        % planet.lower()
+        % body.lower()
     html = urlopen(url).read().decode()
     # in case it drives you crazy, uncomment this
     # html = html.replace('\r', '\r\n')
@@ -93,7 +93,7 @@ def get_more_physics(bodies, body):
     matches = re.search(r'Declination *: *([\-0-9\.]+)', html)
     declination = math.radians(float(matches.group(1)))
 
-    bodies[planet]['north_pole'] = {
+    bodies[body]['north_pole'] = {
         'right_ascension': right_ascension,
         'declination': declination,
     }
