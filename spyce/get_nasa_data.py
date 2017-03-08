@@ -19,6 +19,7 @@ def tt_to_j2000(year, month=1, day=1, hour=0, minute=0, second=0):
     d = y*365 + leap_years + sum(days[:month-1]) + day-1
     return d * 86400 + (hour-12)*3600 + minute*60 + second
 
+
 assert tt_to_j2000(2000,  1,  1, 12) == 0
 assert tt_to_j2000(2000,  3,  3, 12) == 5356800
 assert tt_to_j2000(2001,  3,  3, 12) == 36892800
