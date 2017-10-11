@@ -1,11 +1,10 @@
 #!/bin/bash
-set -e
 cd $(dirname $0)
 
 cd spyce/
 
 echo "Running test for python2"
-if python2-coverage 2>&1 >/dev/null
+if which python2-coverage 2>&1 >/dev/null
 then
     python2-coverage run --source . -m unittest discover
     python2-coverage report
@@ -14,7 +13,7 @@ else
 fi
 
 echo "Running test for python3"
-if python3-coverage 2>&1 >/dev/null
+if which python3-coverage 2>&1 >/dev/null
 then
     python3-coverage run --source . -m unittest discover
     python3-coverage report
