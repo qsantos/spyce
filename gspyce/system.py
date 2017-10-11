@@ -1,12 +1,12 @@
 import sys
 import math
 
-import spyce.gui.textures
-import spyce.gui.skybox
-import spyce.gui.picking
-import spyce.gui.terminal
-import spyce.gui.mesh
-from spyce.gui.graphics import *
+import gspyce.textures
+import gspyce.skybox
+import gspyce.picking
+import gspyce.terminal
+import gspyce.mesh
+from gspyce.graphics import *
 
 
 def ancestors_descendants(body, max_depth=1):
@@ -45,7 +45,7 @@ def ancestors_descendants(body, max_depth=1):
     return ancestors, descendants
 
 
-class SystemGUI(spyce.gui.picking.PickingGUI, spyce.gui.terminal.TerminalGUI):
+class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
     """GUI for showing a planetary system"""
     def __init__(self, focus):
         title = b'Sp' + b'a'*42 + b'ce'
@@ -74,12 +74,12 @@ class SystemGUI(spyce.gui.picking.PickingGUI, spyce.gui.terminal.TerminalGUI):
         glMateriali(GL_FRONT, GL_SHININESS, 16)
 
         # sphere VBO for drawing bodies
-        self.sphere = spyce.gui.mesh.Sphere(1, 64, 64)
+        self.sphere = gspyce.mesh.Sphere(1, 64, 64)
 
         # meshes for drawing orbits
-        self.circle = spyce.gui.mesh.Circle(1, 512)
-        self.circle_through_origin = spyce.gui.mesh.CircleThroughOrigin(1, 256)
-        self.parabola = spyce.gui.mesh.Parabola(256)
+        self.circle = gspyce.mesh.Circle(1, 512)
+        self.circle_through_origin = gspyce.mesh.CircleThroughOrigin(1, 256)
+        self.parabola = gspyce.mesh.Parabola(256)
 
         # make call lists for orbits
         def make_orbit_call_list(body):
@@ -93,19 +93,19 @@ class SystemGUI(spyce.gui.picking.PickingGUI, spyce.gui.terminal.TerminalGUI):
         make_orbit_call_list(self.system)
 
         # textures
-        spyce.gui.textures.init()
+        gspyce.textures.init()
         texture_directory = self.system._texture_directory
 
         def load_body(body):
             """Recursively load textures for celestial bodies"""
             filename = "%s.jpg" % body.name
-            body.texture = spyce.gui.textures.load(texture_directory, filename)
+            body.texture = gspyce.textures.load(texture_directory, filename)
             for satellite in body.satellites:
                 load_body(satellite)
         load_body(self.system)
 
         # skybox
-        self.skybox = spyce.gui.skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
+        self.skybox = gspyce.skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
 
     @classmethod
     def from_cli_args(cls):
@@ -266,10 +266,10 @@ class SystemGUI(spyce.gui.picking.PickingGUI, spyce.gui.terminal.TerminalGUI):
 
         # textured quadric (representation from close by)
         # sphere with radius proportional to that of the body
-        spyce.gui.textures.bind(body.texture, (0.5, 0.5, 1.0))
+        gspyce.textures.bind(body.texture, (0.5, 0.5, 1.0))
         glScalef(body.radius, body.radius, body.radius)
         self.sphere.draw()
-        spyce.gui.textures.unbind()
+        gspyce.textures.unbind()
 
         glPopMatrix()
 

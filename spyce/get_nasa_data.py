@@ -355,7 +355,7 @@ def main():
     for dwarf_planet in dwarf_planets:
         get_dwarf_planet_data(bodies, dwarf_planet)
 
-    with open("data/solar.json", "w") as f:
+    with open("solar.json", "w") as f:
         json.dump(bodies, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.write('\n')
 

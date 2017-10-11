@@ -52,7 +52,7 @@ else:
         If loading the file fails, return dummy texture 0"""
         filename = os.path.join("data", "textures", *path)
         try:
-            image = pkgutil.get_data("spyce", filename)
+            image = pkgutil.get_data("gspyce", filename)
         except:  # FileNotFoundError in Python 3, IOError in Python 2
             sys.stderr.write("Missing %s\n" % filename)
             return 0

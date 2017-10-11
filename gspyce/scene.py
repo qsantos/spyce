@@ -1,6 +1,6 @@
 import sys
 
-from spyce.gui.graphics import *
+from gspyce.graphics import *
 
 
 class Scene(object):

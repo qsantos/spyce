@@ -73,7 +73,7 @@ def make_shader_source(program, source, type_, filename="-"):
 def make_shader_filename(program, filename, type_):
     """Compile and attach shader of given type from file"""
     path = os.path.join("data", "shaders", filename)
-    source = pkgutil.get_data('spyce', path)
+    source = pkgutil.get_data('gspyce', path)
     return make_shader_source(program, source, type_)
 
 

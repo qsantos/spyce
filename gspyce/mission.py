@@ -1,16 +1,16 @@
 import time
 
-import spyce.gui.simulation
-import spyce.gui.textures
-from spyce.gui.graphics import *
+import gspyce.simulation
+import gspyce.textures
+from gspyce.graphics import *
 
 
-class MissionGUI(spyce.gui.simulation.SimulationGUI):
+class MissionGUI(gspyce.simulation.SimulationGUI):
     def __init__(self, *args, **kwargs):
         super(MissionGUI, self).__init__(*args, **kwargs)
 
-        self.texture_rocket_on = spyce.gui.textures.load("rocket_on.png")
-        self.texture_rocket_off = spyce.gui.textures.load("rocket_off.png")
+        self.texture_rocket_on = gspyce.textures.load("rocket_on.png")
+        self.texture_rocket_off = gspyce.textures.load("rocket_off.png")
 
         # texture transparency
         glAlphaFunc(GL_GREATER, 0.)
@@ -33,9 +33,9 @@ class MissionGUI(spyce.gui.simulation.SimulationGUI):
 
         # pick correct texture
         if self.rocket.throttle == 0:
-            spyce.gui.textures.bind(self.texture_rocket_off)
+            gspyce.textures.bind(self.texture_rocket_off)
         else:
-            spyce.gui.textures.bind(self.texture_rocket_on)
+            gspyce.textures.bind(self.texture_rocket_on)
 
         # draw texture
         glDisable(GL_CULL_FACE)
@@ -48,7 +48,7 @@ class MissionGUI(spyce.gui.simulation.SimulationGUI):
         glEnable(GL_CULL_FACE)
 
         # all done
-        spyce.gui.textures.unbind()
+        gspyce.textures.unbind()
         glPopMatrix()
 
     def draw_body(self, body):

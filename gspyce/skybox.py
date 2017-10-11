@@ -1,6 +1,6 @@
 from OpenGL.GL import *
 
-import spyce.gui.textures
+import gspyce.textures
 
 
 class Skybox(object):
@@ -17,12 +17,12 @@ class Skybox(object):
         for coordinate in "XYZ":
             for direction in "Positive", "Negative":
                 full_path = path + [file_pattern % (direction + coordinate)]
-                texture = spyce.gui.textures.load(*full_path)
+                texture = gspyce.textures.load(*full_path)
                 self.faces.append(texture)
 
     def draw(self):
         """Draw a skybox of given size"""
-        spyce.gui.textures.bind(self.faces[0], (0, 0, 0))
+        gspyce.textures.bind(self.faces[0], (0, 0, 0))
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0) or glVertex3f(+10, +10, +10)
         glTexCoord2f(1.0, 0.0) or glVertex3f(+10, +10, -10)
@@ -30,7 +30,7 @@ class Skybox(object):
         glTexCoord2f(0.0, 1.0) or glVertex3f(+10, -10, +10)
         glEnd()
 
-        spyce.gui.textures.bind(self.faces[1], (0, 0, 0))
+        gspyce.textures.bind(self.faces[1], (0, 0, 0))
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0) or glVertex3f(-10, +10, -10)
         glTexCoord2f(1.0, 0.0) or glVertex3f(-10, +10, +10)
@@ -38,7 +38,7 @@ class Skybox(object):
         glTexCoord2f(0.0, 1.0) or glVertex3f(-10, -10, -10)
         glEnd()
 
-        spyce.gui.textures.bind(self.faces[2], (0, 0, 0))
+        gspyce.textures.bind(self.faces[2], (0, 0, 0))
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0) or glVertex3f(+10, +10, +10)
         glTexCoord2f(1.0, 0.0) or glVertex3f(-10, +10, +10)
@@ -46,7 +46,7 @@ class Skybox(object):
         glTexCoord2f(0.0, 1.0) or glVertex3f(+10, +10, -10)
         glEnd()
 
-        spyce.gui.textures.bind(self.faces[3], (0, 0, 0))
+        gspyce.textures.bind(self.faces[3], (0, 0, 0))
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0) or glVertex3f(+10, -10, +10)
         glTexCoord2f(1.0, 0.0) or glVertex3f(+10, -10, -10)
@@ -54,7 +54,7 @@ class Skybox(object):
         glTexCoord2f(0.0, 1.0) or glVertex3f(-10, -10, +10)
         glEnd()
 
-        spyce.gui.textures.bind(self.faces[4], (0, 0, 0))
+        gspyce.textures.bind(self.faces[4], (0, 0, 0))
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0) or glVertex3f(-10, +10, +10)
         glTexCoord2f(1.0, 0.0) or glVertex3f(+10, +10, +10)
@@ -62,7 +62,7 @@ class Skybox(object):
         glTexCoord2f(0.0, 1.0) or glVertex3f(-10, -10, +10)
         glEnd()
 
-        spyce.gui.textures.bind(self.faces[5], (0, 0, 0))
+        gspyce.textures.bind(self.faces[5], (0, 0, 0))
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0) or glVertex3f(+10, +10, -10)
         glTexCoord2f(1.0, 0.0) or glVertex3f(-10, +10, -10)
@@ -70,4 +70,4 @@ class Skybox(object):
         glTexCoord2f(0.0, 1.0) or glVertex3f(+10, -10, -10)
         glEnd()
 
-        spyce.gui.textures.unbind()
+        gspyce.textures.unbind()

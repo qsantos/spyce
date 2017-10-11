@@ -51,8 +51,8 @@ def load_bodies(filename):
         load_body(bodies, data, name)
     return bodies
 
-kerbol = load_bodies("data/kerbol.json")
-solar = load_bodies("data/solar.json")
+kerbol = load_bodies("kerbol.json")
+solar = load_bodies("solar.json")
 
 
 def from_name(name):

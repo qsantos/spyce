@@ -1,23 +1,23 @@
 import time
 import collections
 
-import spyce.gui.textures
-import spyce.gui.scene
-from spyce.gui.graphics import *
+import gspyce.textures
+import gspyce.scene
+from gspyce.graphics import *
 
 
-class HUD(spyce.gui.scene.Scene):
+class HUD(gspyce.scene.Scene):
     """Scene with an HUD"""
     def __init__(self, title=b'HUD'):
         super(HUD, self).__init__(title)
 
         # initialize textures
-        spyce.gui.textures.init()
+        gspyce.textures.init()
 
         # font bitmap information
         self.character_width = 10
         self.character_height = 19
-        self.font = spyce.gui.textures.load("font.png")
+        self.font = gspyce.textures.load("font.png")
 
         # set up buffer objects
         self.text_vbo = BufferObject()
@@ -139,9 +139,9 @@ class HUD(spyce.gui.scene.Scene):
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
 
         # actually draw
-        spyce.gui.textures.bind(self.font)
+        gspyce.textures.bind(self.font)
         glDrawArrays(GL_QUADS, 0, self.text_vbo.size // 2)
-        spyce.gui.textures.unbind()
+        gspyce.textures.unbind()
 
         # restore OpenGL context
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)

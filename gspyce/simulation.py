@@ -1,11 +1,11 @@
 import time
 import collections
 
-import spyce.gui.system
-from spyce.gui.graphics import *
+import gspyce.system
+from gspyce.graphics import *
 
 
-class SimulationGUI(spyce.gui.system.SystemGUI):
+class SimulationGUI(gspyce.system.SystemGUI):
     def __init__(self, *args, **kwargs):
         super(SimulationGUI, self).__init__(*args, **kwargs)
 
