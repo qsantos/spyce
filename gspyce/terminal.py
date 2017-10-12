@@ -148,6 +148,7 @@ class TerminalGUI(gspyce.hud.HUD):
         self.interpreter = code.InteractiveConsole(spyce.interact.namespace)
         self.completer = rlcompleter.Completer(spyce.interact.namespace)
         self.readline = Readline(self.interpreter, self.completer.complete)
+        self.terminal_enabled = False
 
         v = sys.version_info
         with self.console:
@@ -167,20 +168,29 @@ class TerminalGUI(gspyce.hud.HUD):
     def specialFunc(self, k, x, y):
         """Handle special key presses (GLUT callback)"""
         self.update()
-        if k == GLUT_KEY_UP:
-            with self.console:
-                self.readline.up()
-        elif k == GLUT_KEY_DOWN:
-            with self.console:
-                self.readline.down()
+        if self.terminal_enabled:
+            if k == GLUT_KEY_HOME:
+                self.terminal_enabled = False
+            elif k == GLUT_KEY_UP:
+                with self.console:
+                    self.readline.up()
+            elif k == GLUT_KEY_DOWN:
+                with self.console:
+                    self.readline.down()
+            else:
+                super(TerminalGUI, self).specialFunc(k, x, y)
         else:
-            super(TerminalGUI, self).specialFunc(k, x, y)
+            if k == GLUT_KEY_HOME:
+                self.terminal_enabled = True
+            else:
+                super(TerminalGUI, self).specialFunc(k, x, y)
 
     def draw_hud(self):
         """Draw the HUD"""
         super(TerminalGUI, self).draw_hud()
-        self.hud_print('\n'.join(self.console.lines))
-        self.hud_print(self.readline.current_line() + '_')
+        if self.terminal_enabled:
+            self.hud_print('\n'.join(self.console.lines))
+            self.hud_print(self.readline.current_line() + '_')
 
 
 def main():
