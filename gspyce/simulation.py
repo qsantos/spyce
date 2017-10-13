@@ -49,8 +49,6 @@ class SimulationGUI(gspyce.system.SystemGUI):
         """Main loop"""
         last = time.time()
         while self.is_running:
-            glutMainLoopEvent()
-
             # passage of time
             now = time.time()
             elapsed = now - last
@@ -64,6 +62,7 @@ class SimulationGUI(gspyce.system.SystemGUI):
                 time.sleep(pause)
 
             self.update()
+            glutMainLoopEvent()
 
         glutCloseFunc(None)
 
