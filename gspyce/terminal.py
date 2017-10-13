@@ -64,11 +64,15 @@ class Readline(object):
             self.input_buffer = rest + suggestion
         elif k == "\n" or k == "\r":
             print(self.current_line())
-            self.last_line = self.interpreter.push(self.input_buffer)
-            self.history[-1] = self.input_buffer
-            self.history_index = len(self.history)
-            self.history.append("")
-            self.input_buffer = ""
+            try:
+                self.last_line = self.interpreter.push(self.input_buffer)
+            except SystemExit:
+                raise
+            finally:
+                self.history[-1] = self.input_buffer
+                self.history_index = len(self.history)
+                self.history.append("")
+                self.input_buffer = ""
 
     def up(self):
         """Handle up key press"""
@@ -190,7 +194,12 @@ class TerminalGUI(gspyce.hud.HUD):
             self.toggle_terminal(False)
         else:
             with self.console:
-                self.readline.press(k.decode('latin1'))
+                try:
+                    self.readline.press(k.decode('latin1'))
+                except SystemExit:
+                    self.is_running = False
+                    glutCloseFunc(None)
+                    glutLeaveMainLoop()
             self.update()
 
     def terminal_specialFunc(self, k, x, y):
