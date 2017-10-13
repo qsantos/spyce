@@ -30,7 +30,7 @@ class Readline(object):
         self.interpreter = interpreter
         self.completer = completer
         self.input_buffer = ""
-        self.more = False
+        self.last_line = False
         self.history = [""]
         self.history_index = 0
 
@@ -43,7 +43,7 @@ class Readline(object):
             sys.stderr.write("\nKeyboardInterrupt\n")
             self.interpreter.resetbuffer()
             self.input_buffer = ""
-            self.more = False
+            self.last_line = False
         elif k == "\b":
             self.input_buffer = self.input_buffer[:-1]
         elif k == "\t":
@@ -64,7 +64,7 @@ class Readline(object):
             self.input_buffer = rest + suggestion
         elif k == "\n" or k == "\r":
             print(self.current_line())
-            self.more = self.interpreter.push(self.input_buffer)
+            self.last_line = self.interpreter.push(self.input_buffer)
             self.history[-1] = self.input_buffer
             self.history_index = len(self.history)
             self.history.append("")
@@ -88,7 +88,7 @@ class Readline(object):
 
     def current_line(self):
         """Return the current buffer"""
-        prompt = sys.ps2 if self.more else sys.ps1
+        prompt = sys.ps2 if self.last_line else sys.ps1
         return prompt + self.input_buffer
 
 
