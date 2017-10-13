@@ -119,7 +119,7 @@ class Console(object):
         sys.stdout = self
         sys.stderr = self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exc_type, exc_value, traceback):
         sys.stdout = self.stdout
         sys.stderr = self.stderr
 
