@@ -138,7 +138,6 @@ class Circle(Mesh):
         super(Circle, self).__init__(GL_LINE_LOOP)
 
     def vertices(self):
-        vertices = []
         for i in range(self.points):
             x = 2.*i/self.points - 1  # from -1.0 to +1.0
             theta = math.pi * x

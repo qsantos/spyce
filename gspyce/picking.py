@@ -1,5 +1,3 @@
-import math
-
 import gspyce.hud
 from gspyce.graphics import *
 
