@@ -156,38 +156,54 @@ class TerminalGUI(gspyce.hud.HUD):
             print('Spyce (running Python %s.%s.%s on %s)'
                   % (v.major, v.minor, v.micro, sys.platform))
 
-    @glut_callback
-    def specialFunc(self, k, x, y):
-        """Handle special key presses (GLUT callback)"""
-        self.update()
-        if k == GLUT_KEY_HOME:
+    def toggle_terminal(self, enable=None):
+        """Toggle terminal
+
+        If argument is set, enable or disable it instead
+        """
+        if enable is None:
+            enable = not self.terminal_enabled
+        if enable:
             self.terminal_restore_keyboardFunc = self.keyboardFunc
             self.terminal_restore_specialFunc = self.specialFunc
             glutKeyboardFunc(self.terminal_keyboardFunc)
             glutSpecialFunc(self.terminal_specialFunc)
             self.terminal_enabled = True
         else:
+            glutKeyboardFunc(self.keyboardFunc)
+            glutSpecialFunc(self.specialFunc)
+            self.terminal_enabled = False
+        self.update()
+
+    @glut_callback
+    def specialFunc(self, k, x, y):
+        """Handle special key presses (GLUT callback)"""
+        if k == GLUT_KEY_HOME:
+            self.toggle_terminal(True)
+        else:
             super(TerminalGUI, self).specialFunc(k, x, y)
 
     @glut_callback
     def terminal_keyboardFunc(self, k, x, y):
         """Handle key presses when the terminal is enabled (GLUT callback)"""
-        self.update()
-        with self.console:
-            self.readline.press(k.decode('latin1'))
+        if k == b'\x1b':  # escape
+            self.toggle_terminal(False)
+        else:
+            with self.console:
+                self.readline.press(k.decode('latin1'))
+            self.update()
 
     def terminal_specialFunc(self, k, x, y):
         """Handle special key presses when the terminal is enabled (GLUT callback)"""
         if k == GLUT_KEY_HOME:
-            glutKeyboardFunc(self.keyboardFunc)
-            glutSpecialFunc(self.specialFunc)
-            self.terminal_enabled = False
+            self.toggle_terminal(False)
         elif k == GLUT_KEY_UP:
             with self.console:
                 self.readline.up()
         elif k == GLUT_KEY_DOWN:
             with self.console:
                 self.readline.down()
+            self.toggle_fullscreen()
 
     def draw_hud(self):
         """Draw the HUD"""

@@ -64,6 +64,21 @@ class Scene(object):
         # draw!
         self.draw()
 
+    def toggle_fullscreen(self, enable=None):
+        """Toggle fullscreen mode
+
+        If argument is given, enable or disable fullscreen instead.
+        """
+        if enable is None:
+            enable = not self.fullscreen
+        if enable:
+            self.window_width, self.window_height = self.width, self.height
+            glutFullScreen()
+            self.fullscreen = True
+        else:
+            glutReshapeWindow(self.window_width, self.window_height)
+            self.fullscreen = False
+
     @glut_callback
     def displayFunc(self):
         """Draw the screen (GLUT callback)"""
@@ -81,13 +96,7 @@ class Scene(object):
     def specialFunc(self, k, x, y):
         """Handle special key presses (GLUT callback)"""
         if k == GLUT_KEY_F11:
-            if self.fullscreen:
-                glutReshapeWindow(self.window_width, self.window_height)
-                self.fullscreen = False
-            else:
-                self.window_width, self.window_height = self.width, self.height
-                glutFullScreen()
-                self.fullscreen = True
+            self.toggle_fullscreen()
 
     def projection_matrix(self):
         """Make projection matrix"""
