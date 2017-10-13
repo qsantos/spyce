@@ -157,33 +157,37 @@ class TerminalGUI(gspyce.hud.HUD):
                   % (v.major, v.minor, v.micro, sys.platform))
 
     @glut_callback
-    def keyboardFunc(self, k, x, y):
-        """Handle key presses (GLUT callback)"""
-        self.update()
-        with self.console:
-            self.readline.press(k.decode('latin1'))
-        super(TerminalGUI, self).keyboardFunc(k, x, y)
-
-    @glut_callback
     def specialFunc(self, k, x, y):
         """Handle special key presses (GLUT callback)"""
         self.update()
-        if self.terminal_enabled:
-            if k == GLUT_KEY_HOME:
-                self.terminal_enabled = False
-            elif k == GLUT_KEY_UP:
-                with self.console:
-                    self.readline.up()
-            elif k == GLUT_KEY_DOWN:
-                with self.console:
-                    self.readline.down()
-            else:
-                super(TerminalGUI, self).specialFunc(k, x, y)
+        if k == GLUT_KEY_HOME:
+            self.terminal_restore_keyboardFunc = self.keyboardFunc
+            self.terminal_restore_specialFunc = self.specialFunc
+            glutKeyboardFunc(self.terminal_keyboardFunc)
+            glutSpecialFunc(self.terminal_specialFunc)
+            self.terminal_enabled = True
         else:
-            if k == GLUT_KEY_HOME:
-                self.terminal_enabled = True
-            else:
-                super(TerminalGUI, self).specialFunc(k, x, y)
+            super(TerminalGUI, self).specialFunc(k, x, y)
+
+    @glut_callback
+    def terminal_keyboardFunc(self, k, x, y):
+        """Handle key presses when the terminal is enabled (GLUT callback)"""
+        self.update()
+        with self.console:
+            self.readline.press(k.decode('latin1'))
+
+    def terminal_specialFunc(self, k, x, y):
+        """Handle special key presses when the terminal is enabled (GLUT callback)"""
+        if k == GLUT_KEY_HOME:
+            glutKeyboardFunc(self.keyboardFunc)
+            glutSpecialFunc(self.specialFunc)
+            self.terminal_enabled = False
+        elif k == GLUT_KEY_UP:
+            with self.console:
+                self.readline.up()
+        elif k == GLUT_KEY_DOWN:
+            with self.console:
+                self.readline.down()
 
     def draw_hud(self):
         """Draw the HUD"""
