@@ -110,12 +110,6 @@ class Scene(object):
         self.projection_matrix()
         glMatrixMode(GL_MODELVIEW)
 
-        # bugfix: fail to redraw when maximizing or toggling fullscreen
-        # glFinish() does not help
-        glutSwapBuffers()
-        glutSwapBuffers()
-        glutSwapBuffers()
-
     @glut_callback
     def passiveMotionFunc(self, x, y):
         """Handle (passive) mouse motions (GLUT callback)"""
