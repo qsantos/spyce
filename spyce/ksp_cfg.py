@@ -26,8 +26,7 @@ def locate(subpath="GameData"):
             full_path = os.path.join(steam, apps, "common", app, subpath)
             if os.path.exists(full_path):
                 return full_path
-    else:
-        raise IOError("cannot find KSP folder")
+    raise IOError("cannot find KSP folder")
 
 
 def files(directory="GameData", extension=".cfg"):

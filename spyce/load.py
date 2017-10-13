@@ -61,8 +61,7 @@ def from_name(name):
             return system[name]
         except KeyError:
             pass
-    else:
-        raise KeyError(name)
+    raise KeyError(name)
 
 
 kerbol['Kerbol']._texture_directory = 'kerbol'
