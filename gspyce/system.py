@@ -1,6 +1,7 @@
 import sys
 import math
 
+import spyce.human
 import gspyce.textures
 import gspyce.skybox
 import gspyce.picking
@@ -59,6 +60,9 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         self.system = self.focus
         while self.system.orbit is not None:
             self.system = self.system.orbit.primary
+
+        if self.system.name == 'Sun':
+            self.time = spyce.human.now()
 
         glEnable(GL_POINT_SPRITE)
         self.shader_position_marker = main_program("circle_point")

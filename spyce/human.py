@@ -7,6 +7,11 @@ import datetime
 J2000 = datetime.datetime(2000, 1, 1, 12)
 
 
+def now():
+    """Return current number of seconds since J2000"""
+    return (datetime.datetime.utcnow() - J2000).total_seconds()
+
+
 def to_human_time(seconds):
     """Convert a timespan in seconds into a human-readable format"""
     return str(datetime.timedelta(seconds=seconds))
