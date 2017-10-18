@@ -11,9 +11,9 @@ class TestHuman(unittest.TestCase):
         self.assertAlmostEqual(spyce.human.from_human_time(s), t, places=6)
 
     def test_human_date(self):
-        t = random.uniform(0, 1e11)
+        t = random.randrange(0, 1e11)
         s = spyce.human.to_human_date(t)
-        self.assertAlmostEqual(spyce.human.from_human_date(s), t, places=6)
+        self.assertEqual(spyce.human.from_human_date(s), t)
 
     def test_kerbal_time(self):
         t = random.uniform(0, 1e11)

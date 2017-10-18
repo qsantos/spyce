@@ -4,12 +4,13 @@ import re
 import math
 import datetime
 
-J2000 = datetime.datetime(2000, 1, 1, 12)
+J2000 = datetime.datetime(2000, 1, 1, 12, tzinfo=datetime.timezone.utc)
 
 
-def now():
+def seconds_since_J2000():
     """Return current number of seconds since J2000"""
-    return (datetime.datetime.utcnow() - J2000).total_seconds()
+    utcnow = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+    return (utcnow - J2000).total_seconds()
 
 
 def to_human_time(seconds):
@@ -38,7 +39,7 @@ def from_human_date(formatted_date):
     """Convert a date from a human-readable format into seconds since J2000"""
     truncated, _, second_fraction = formatted_date.partition('.')
     microsecond = int(float('0.' + second_fraction) * 1e6)
-    d = datetime.datetime.strptime(truncated, '%Y-%m-%d %H:%M:%S')
+    d = datetime.datetime.strptime(truncated, '%Y-%m-%d %H:%M:%S %z')
     d = d.replace(microsecond=microsecond)
     d = d - J2000
     return d.total_seconds()

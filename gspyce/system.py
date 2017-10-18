@@ -62,7 +62,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             self.system = self.system.orbit.primary
 
         if self.system.name == 'Sun':
-            self.time = spyce.human.now()
+            self.time = spyce.human.seconds_since_J2000()
 
         glEnable(GL_POINT_SPRITE)
         self.shader_position_marker = main_program("circle_point")
