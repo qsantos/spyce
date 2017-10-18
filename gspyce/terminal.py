@@ -211,6 +211,8 @@ class TerminalGUI(gspyce.hud.HUD):
             with self.console:
                 self.readline.down()
             self.toggle_fullscreen()
+        else:
+            self.terminal_restore_specialFunc(k, x, y)
 
     def draw_hud(self):
         """Draw the HUD"""
