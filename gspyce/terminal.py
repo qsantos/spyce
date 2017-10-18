@@ -66,8 +66,6 @@ class Readline(object):
             print(self.current_line())
             try:
                 self.last_line = self.interpreter.push(self.input_buffer)
-            except SystemExit:
-                raise
             finally:
                 self.history[-1] = self.input_buffer
                 self.history_index = len(self.history)

@@ -128,11 +128,5 @@ def glut_callback(f):
         except Exception as e:
             self.is_running = False
             glutLeaveMainLoop()
-
-            # propagate exception with complete traceback
-            if hasattr(e, "with_traceback"):  # Python 3
-                raise e.with_traceback(sys.exc_info()[2])
-            else:  # Python 2
-                cmd = "raise type(e), e.args, sys.exc_info()[2]"
-                exec(cmd, globals(), locals())
+            raise
     return wrapper
