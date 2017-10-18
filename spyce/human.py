@@ -32,7 +32,9 @@ def from_human_time(formatted_time):
 
 def to_human_date(seconds):
     """Convert a date from seconds since J2000 into a human-readable format"""
-    return str(J2000 + datetime.timedelta(seconds=seconds))
+    date = J2000 + datetime.timedelta(seconds=seconds)
+    date = date.astimezone()
+    return '{:%Y-%m-%d %H:%M:%S %z}'.format(date)
 
 
 def from_human_date(formatted_date):
