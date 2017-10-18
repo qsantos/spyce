@@ -18,12 +18,8 @@ namespace = {
     **spyce.load.kerbol,
     **spyce.load.solar,
 }
-
 # filter out symbols starting with "_"
-for k in list(namespace):
-    if k.startswith("_"):
-        del namespace[k]
-
+namespace = {k: v for k, v in namespace.items() if not k.startswith('_')}
 namespace["__name__"] = "spyce"
 
 
