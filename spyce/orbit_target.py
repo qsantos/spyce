@@ -1,6 +1,6 @@
 import math
 
-import spyce.analysis
+from spyce.analysis import golden_section_search, bisection_method
 
 
 class OrbitTarget(object):
@@ -41,7 +41,7 @@ class OrbitTarget(object):
         # Although the distance is not strictly unimodal on a half-period,
         # golden section search works because f has at most one real local
         # minimum on a half-period.
-        time = spyce.analysis.golden_section_search(f, t, t+self.period/2, tolerance)
+        time = golden_section_search(f, t, t+self.period/2, tolerance)
         if time is None or f(time) > tolerance:
             return None
         return time
@@ -60,4 +60,4 @@ class OrbitTarget(object):
             d = (target.position_at_time(t)-self.position_at_time(t)).norm()
             # distance to encounter
             return d - encounter_radius
-        return spyce.analysis.bisection_method(f, t, next_approach)
+        return bisection_method(f, t, next_approach)

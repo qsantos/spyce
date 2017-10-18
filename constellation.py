@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import sys
 
-import spyce.orbit
 import spyce.load
-import spyce.human
+from spyce.orbit import Orbit
+from spyce.human import to_human_time, to_si_prefix
 
 
 def main():
@@ -41,10 +41,10 @@ def main():
         min_a, max_a = primary.constellation_radius(communication_range, size)
 
         # compute period and altitude ranges
-        min_period = spyce.human.to_human_time(spyce.orbit.Orbit(primary, min_a).period)
-        max_period = spyce.human.to_human_time(spyce.orbit.Orbit(primary, max_a).period)
-        min_a = spyce.human.to_si_prefix(min_a - primary.radius, 'm')
-        max_a = spyce.human.to_si_prefix(max_a - primary.radius, 'm')
+        min_period = to_human_time(Orbit(primary, min_a).period)
+        max_period = to_human_time(Orbit(primary, max_a).period)
+        min_a = to_si_prefix(min_a - primary.radius, 'm')
+        max_a = to_si_prefix(max_a - primary.radius, 'm')
 
         # print everthing
         print(u'%-20s %i× %s (%s) -- %s (%s)' %

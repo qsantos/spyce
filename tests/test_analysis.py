@@ -3,19 +3,19 @@ import unittest
 import math
 import time
 
-import spyce.analysis
+import spyce.analysis as methods
 
 
 class TestAnalysis(unittest.TestCase):
     def test_newton_raphson(self):
-        x = spyce.analysis.newton_raphson(
+        x = methods.newton_raphson(
             x_0=1.4,
             f=lambda x: x**2 - 2,
             f_prime=lambda x: 2*x,
         )
         self.assertEqual(x, math.sqrt(2))
 
-    def integration(self, method, n_iterations, step):
+    def integrate(self, method, n_iterations, step):
         # set problem: free fall on Earth surface
         def f(t, y):
             return [y[1], -9.81]  # velocity, acceleration
@@ -34,12 +34,12 @@ class TestAnalysis(unittest.TestCase):
         return error, elapsed
 
     def test_euler(self):
-        error, elapsed = self.integration(spyce.analysis.euler, 100000, 0.1)
+        error, elapsed = self.integrate(methods.euler, 10**5, .1)
         self.assertLess(error, 1e-4)
         self.assertLess(elapsed, 1.0)
 
     def test_rk4(self):
-        error, elapsed = self.integration(spyce.analysis.runge_kutta_4, 100000, 0.1)
+        error, elapsed = self.integrate(methods.runge_kutta_4, 10**5, .1)
         self.assertLess(error, 1e-12)
         self.assertLess(elapsed, 1.0)
 

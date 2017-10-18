@@ -2,7 +2,7 @@ import unittest
 import math
 import itertools
 
-import spyce.orbit
+from spyce.orbit import Orbit
 from spyce.orbit_determination import InvalidElements
 
 
@@ -20,6 +20,8 @@ class DummyPrimary(object):
 
     def __repr__(self):
         return 'X'
+
+
 primary = DummyPrimary()
 
 
@@ -85,33 +87,35 @@ class TestOrbit(unittest.TestCase):
 
         # re-generate from semi-major axis
         if o.eccentricity != 1:  # parabolic trajectories: infinite semi-major
-            new_orbit = spyce.orbit.Orbit.from_semi_major_axis(**args)
-            self.assertAlmostEqualOrbits(o, new_orbit)
+            p = Orbit.from_semi_major_axis(**args)
+            self.assertAlmostEqualOrbits(o, p)
 
         # re-generate from apses
-        self.assertAlmostEqualOrbits(o, spyce.orbit.Orbit.from_apses(
+        self.assertAlmostEqualOrbits(o, Orbit.from_apses(
             apsis1=o.periapsis, apsis2=o.apoapsis, **args))
         # also try with inverted apses
-        self.assertAlmostEqualOrbits(o, spyce.orbit.Orbit.from_apses(
+        self.assertAlmostEqualOrbits(o, Orbit.from_apses(
             apsis1=o.apoapsis, apsis2=o.periapsis, **args))
 
         # re-generate from orbital period ...
         if o.eccentricity < 1:  # parabolic/hyperbolic trajectory has no period
             # ... and eccentricity
-            self.assertAlmostEqualOrbits(o, spyce.orbit.Orbit.from_period(**args))
+            p = Orbit.from_period(**args)
+            self.assertAlmostEqualOrbits(o, p)
 
             # ... and periapsis
-            self.assertAlmostEqualOrbits(o, spyce.orbit.Orbit.from_period_apsis(
-                apsis=o.periapsis, **args))
+            p = Orbit.from_period_apsis(apsis=o.periapsis, **args)
+            self.assertAlmostEqualOrbits(o, p)
+
             # ... and apospsis
-            self.assertAlmostEqualOrbits(o, spyce.orbit.Orbit.from_period_apsis(
-                apsis=o.apoapsis, **args))
+            p = Orbit.from_period_apsis(apsis=o.apoapsis, **args)
+            self.assertAlmostEqualOrbits(o, p)
 
         # re-generate from state point at arbitrary time
         time = 1e4
         position, velocity = o.position_at_time(time), o.velocity_at_time(time)
-        new_orbit = spyce.orbit.Orbit.from_state(primary, position, velocity, time)
-        self.assertAlmostEqualOrbits(o, new_orbit)
+        p = Orbit.from_state(primary, position, velocity, time)
+        self.assertAlmostEqualOrbits(o, p)
 
         # check conversions of anomalies
         time = 1e4
@@ -130,30 +134,31 @@ class TestOrbit(unittest.TestCase):
         angle = (-math.pi/2, 0, math.pi/4, math.pi/2, math.pi)
         for elements in itertools.product(periapsis, eccentricity, angle,
                                           angle, angle):
-            self.orbit(spyce.orbit.Orbit(primary, *elements))
+            self.orbit(Orbit(primary, *elements))
 
     def test_invalid(self):
         # circular or elliptic orbit should have positive semi-major axis
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_semi_major_axis(primary, -1e9, 0)
+            Orbit.from_semi_major_axis(primary, -1e9, 0)
 
         # hyperbolic trajectory should have negative semi-major axis
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_semi_major_axis(primary, 1e9, 2)
+            Orbit.from_semi_major_axis(primary, 1e9, 2)
 
         # parabolic trajectory cannot be defined from semi-major axis
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_semi_major_axis(primary, 1e9, 1)
+            Orbit.from_semi_major_axis(primary, 1e9, 1)
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_semi_major_axis(primary, -1e9, 1)
+            Orbit.from_semi_major_axis(primary, -1e9, 1)
 
         # parabolic trajectory cannot be defined from period
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_period(primary, 1e8, 1)
+            Orbit.from_period(primary, 1e8, 1)
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_period_apsis(primary, math.inf, 1e9)
+            Orbit.from_period_apsis(primary, math.inf, 1e9)
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_period_apsis(primary, -math.inf, 1e9)
+            Orbit.from_period_apsis(primary, -math.inf, 1e9)
+
 
 if __name__ == '__main__':
     unittest.main()

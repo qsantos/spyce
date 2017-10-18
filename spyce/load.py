@@ -1,10 +1,10 @@
 import json
 import pkgutil
 
-import spyce.body
-import spyce.human
-import spyce.orbit
-import spyce.coordinates
+from spyce.body import CelestialBody
+from spyce.human import to_human_date, to_kerbal_date
+from spyce.orbit import Orbit
+from spyce.coordinates import CelestialCoordinates
 
 
 def load_body(bodies, data, name):
@@ -25,17 +25,17 @@ def load_body(bodies, data, name):
         pass
     else:
         orbit_data["primary"] = load_body(bodies, data, orbit_data["primary"])
-        body_data["orbit"] = spyce.orbit.Orbit.from_semi_major_axis(**orbit_data)
+        body_data["orbit"] = Orbit.from_semi_major_axis(**orbit_data)
 
     try:
         north_pole = body_data["north_pole"]
     except KeyError:
         pass
     else:
-        coords = spyce.coordinates.CelestialCoordinates.from_equatorial(**north_pole)
+        coords = CelestialCoordinates.from_equatorial(**north_pole)
         body_data["north_pole"] = coords
 
-    bodies[name] = spyce.body.CelestialBody(name, **body_data)
+    bodies[name] = CelestialBody(name, **body_data)
     return bodies[name]
 
 
@@ -49,6 +49,7 @@ def load_bodies(filename):
     for name in data:
         load_body(bodies, data, name)
     return bodies
+
 
 kerbol = load_bodies("kerbol.json")
 solar = load_bodies("solar.json")
@@ -65,6 +66,6 @@ def from_name(name):
 
 
 kerbol['Kerbol']._texture_directory = 'kerbol'
-kerbol['Kerbol'].format_date = spyce.human.to_kerbal_date
+kerbol['Kerbol'].format_date = to_kerbal_date
 solar['Sun']._texture_directory = 'solar'
-solar['Sun'].format_date = spyce.human.to_human_date
+solar['Sun'].format_date = to_human_date

@@ -187,7 +187,7 @@ class TerminalGUI(gspyce.hud.HUD):
 
     @glut_callback
     def terminal_keyboardFunc(self, k, x, y):
-        """Handle key presses when the terminal is enabled (GLUT callback)"""
+        """Handle key presses (terminal) (GLUT callback)"""
         if k == b'\x1b':  # escape
             self.toggle_terminal(False)
         else:
@@ -201,7 +201,7 @@ class TerminalGUI(gspyce.hud.HUD):
             self.update()
 
     def terminal_specialFunc(self, k, x, y):
-        """Handle special key presses when the terminal is enabled (GLUT callback)"""
+        """Handle special key presses (terminal) (GLUT callback)"""
         if k == GLUT_KEY_HOME:
             self.toggle_terminal(False)
         elif k == GLUT_KEY_UP:

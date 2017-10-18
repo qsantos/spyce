@@ -2,10 +2,9 @@
 import sys
 import math
 
-import spyce.orbit
 import spyce.load
-import spyce.human
-import spyce.analysis
+from spyce.human import to_human_time, to_si_prefix
+from spyce.analysis import newton_raphson
 
 
 def main():
@@ -36,8 +35,8 @@ def main():
     if len(sys.argv) > 2:
         altitude = float(sys.argv[2])
         semi_major_axis = primary.radius + altitude
-        altitude = spyce.human.to_si_prefix(altitude, 'm')
-        night_time = spyce.human.to_human_time(f(semi_major_axis))
+        altitude = to_si_prefix(altitude, 'm')
+        night_time = to_human_time(f(semi_major_axis))
         print('Consider a satellite in a circular orbit around %s' % primary)
         print('Time in the dark at altitude %s: %s' % (altitude, night_time))
         print('This ignores possible eclipses from natural satellites')
@@ -45,10 +44,10 @@ def main():
 
     # find a root of f'
     # i.e. a local extremum of f
-    semi_major_axis = spyce.analysis.newton_raphson(primary.radius+1e-6, ratio=ratio)
+    semi_major_axis = newton_raphson(primary.radius+1e-6, ratio=ratio)
 
-    night_time = spyce.human.to_human_time(f(semi_major_axis))
-    altitude = spyce.human.to_si_prefix(semi_major_axis - primary.radius, 'm')
+    night_time = to_human_time(f(semi_major_axis))
+    altitude = to_si_prefix(semi_major_axis - primary.radius, 'm')
     print('Consider a satellite in a circular orbit around %s' % primary)
     print('The time spent in the dark is at least %s' % night_time)
     print('This is achieved at altitude %s' % altitude)

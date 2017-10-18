@@ -9,5 +9,4 @@ else
     python3 -m unittest discover
 fi
 
-echo "Checking compliance with PEP 8"
 git ls-files -z | grep -z '\.py$' | xargs -0 pep8

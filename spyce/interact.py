@@ -78,4 +78,5 @@ def ask_orbit(cls):
 
     return constructor(**args)
 
+
 spyce.orbit.Orbit.ask = ask_orbit
