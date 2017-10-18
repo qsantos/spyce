@@ -5,7 +5,7 @@ from gspyce.graphics import *
 class PickingGUI(gspyce.hud.HUD):
     """GUI with object picking using a fragment shader"""
     def __init__(self, title=b"Click to pick!"):
-        super(PickingGUI, self).__init__(title)
+        super().__init__(title)
         self.pick_shader = main_program()
         self.pick_enabled = False
         self.pick_current_name = 0
@@ -48,7 +48,7 @@ class PickingGUI(gspyce.hud.HUD):
     def set_and_draw(self):
         """Setup the camera and draw"""
         self.pick_reset()
-        super(PickingGUI, self).set_and_draw()
+        super().set_and_draw()
         self.clear_pick_object()
 
     def shader_set(self, program):
@@ -131,7 +131,7 @@ class PickingGUI(gspyce.hud.HUD):
         if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
             print("You clicked on %s!" % self.pick(x, y, "nothing!"))
         else:
-            super(PickingGUI, self).mouseFunc(button, state, x, y)
+            super().mouseFunc(button, state, x, y)
 
 
 def main():

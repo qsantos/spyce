@@ -6,7 +6,7 @@ import spyce.orbit
 from spyce.orbit_determination import InvalidElements
 
 
-# isclose() from PEP 485
+# isclose() from PEP 485 (new in Python 3.5)
 try:
     from math import isclose
 except ImportError:
@@ -151,9 +151,9 @@ class TestOrbit(unittest.TestCase):
         with self.assertRaises(InvalidElements):
             spyce.orbit.Orbit.from_period(primary, 1e8, 1)
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_period_apsis(primary, float("inf"), 1e9)
+            spyce.orbit.Orbit.from_period_apsis(primary, math.inf, 1e9)
         with self.assertRaises(InvalidElements):
-            spyce.orbit.Orbit.from_period_apsis(primary, float("-inf"), 1e9)
+            spyce.orbit.Orbit.from_period_apsis(primary, -math.inf, 1e9)
 
 if __name__ == '__main__':
     unittest.main()

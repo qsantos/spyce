@@ -12,12 +12,12 @@ namespace = {
     "human": spyce.human,
     "kerbol": spyce.load.kerbol,
     "solar": spyce.load.solar,
+    **math.__dict__,
+    **spyce.physics.__dict__,
+    **spyce.human.__dict__,
+    **spyce.load.kerbol,
+    **spyce.load.solar,
 }
-namespace.update(math.__dict__)
-namespace.update(spyce.physics.__dict__)
-namespace.update(spyce.human.__dict__)
-namespace.update(spyce.load.kerbol)
-namespace.update(spyce.load.solar)
 
 # filter out symbols starting with "_"
 for k in list(namespace):
@@ -29,10 +29,7 @@ namespace["__name__"] = "spyce"
 
 def ask(prompt, default=None):
     """Interactively ask for a value or evaluable expression"""
-    try:  # Python 2
-        line = raw_input(prompt)
-    except NameError:  # Python 3
-        line = input(prompt)
+    line = input(prompt)
     return eval(line, namespace) if line else default
 
 

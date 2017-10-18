@@ -1,5 +1,4 @@
 import os
-import sys
 import pkgutil
 import itertools
 import functools
@@ -9,8 +8,7 @@ from OpenGL.GL import *
 
 def read_pixels(x, y, w, h):
     """Wrapper function to fix inconsistencies PyOpenGL's glReadPixels()"""
-    # setting `outputType` forces output to be a grid
-    # (this avoids Python 2 vs 3 and Linux vs Windows issues)
+    # `outputType` forces output to be a grid (avoids Linux vs Windows issues)
     data = glReadPixels(x, y, w, h, GL_RGB, GL_UNSIGNED_BYTE, outputType=0)
 
     # fix for inversion of dimensions when Numpy is not installed

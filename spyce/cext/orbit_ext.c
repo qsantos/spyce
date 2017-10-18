@@ -119,20 +119,13 @@ static PyMethodDef methods[] =
 	{NULL, NULL, 0, NULL}
 };
 
-#if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef moduledef = {
 	PyModuleDef_HEAD_INIT, "Common functions for orbits",
 	NULL, 0, methods,
 	NULL, NULL, NULL, NULL,
 };
 
-PyMODINIT_FUNC PyInit_orbit_py3()
+PyMODINIT_FUNC PyInit_orbit()
 {
 	return PyModule_Create(&moduledef);
 }
-#else
-PyMODINIT_FUNC initorbit_py2()
-{
-	Py_InitModule("orbit_py2", methods);
-}
-#endif

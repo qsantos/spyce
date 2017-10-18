@@ -19,7 +19,7 @@ else:
     histfile = os.path.join(os.path.expanduser("~"), ".spyce_history")
     try:
         readline.read_history_file(histfile)
-    except:  # FileNotFoundError in Python 3, IOError in Python 2
+    except FileNotFoundError:
         pass
 
     def save_history():

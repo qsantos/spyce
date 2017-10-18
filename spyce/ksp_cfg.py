@@ -1,8 +1,9 @@
 """Parsing utilities for KSP"""
 
 import os
-import io
 import copy
+import glob
+import pathlib
 
 import spyce.rocket
 
@@ -10,33 +11,27 @@ import spyce.rocket
 def locate(subpath="GameData"):
     """Locate path in KSP installation directory"""
 
-    home = os.path.expanduser("~")
     candidates = (
-        home + "/.steam/steam", home + "/.local/share/Steam",  # GNU/Linux
+        "~/.steam/steam", "~/.local/share/Steam",  # GNU/Linux
         "C:\Program Files\Steam", "C:\Program Files (x86)\Steam",  # Windows
-        home + "/Library/Application Support/Steam",  # Mac
+        "~/Library/Application Support/Steam",  # Mac
     )
 
     for steam in candidates:
-        if not os.path.exists(steam):
+        steam = pathlib.Path(steam).expanduser()
+        if not steam.exists():
             continue
-
         for apps in ("SteamApps", "steamapps"):
-            app = "Kerbal Space Program"
-            full_path = os.path.join(steam, apps, "common", app, subpath)
-            if os.path.exists(full_path):
-                return full_path
-    raise IOError("cannot find KSP folder")
+            path = steam / apps / "common" / "Kerbal Space Program" / subpath
+            if path.exists():
+                return path
+    raise FileNotFoundError("cannot find KSP folder")
 
 
 def files(directory="GameData", extension=".cfg"):
     """Iterate through KSP files"""
-
-    directory = locate(directory)
-    for root, dirs, files in os.walk(directory):
-        for file_ in files:
-            if not extension or file_.endswith(extension):
-                yield os.path.join(root, file_)
+    pattern = str(locate(directory)) + '/**/*' + extension
+    yield from glob.iglob(pattern, recursive=True)
 
 
 def parse(f):
@@ -130,17 +125,13 @@ def part_from_cfg(cfg_dict):
 
 def get_parts():
     """Generate all rocket parts from a local KSP installation"""
-
     parts = {}
     for path in files(os.path.join("GameData", "Squad", "Parts")):
         # "utf-8-sig" gets rid of the Byte Order Mask
-        # open() from Python 2 does not have an `encoding` parameter
-        with io.open(path, encoding="utf-8-sig") as f:
+        with open(path, encoding="utf-8-sig") as f:
             cfg_dict = parse(f)
-
         part = part_from_cfg(cfg_dict['PART'])
         parts[part.name] = part
-
     return parts
 
 

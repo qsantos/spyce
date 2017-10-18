@@ -32,7 +32,7 @@ class CelestialCoordinates(object):
 
     @classmethod
     def from_equatorial(cls, right_ascension, declination,
-                        distance=float('inf')):
+                        distance=math.inf):
         """Locate an object from its equatorial coordinates (see class doc)
 
         If distance is omitted, it is assumed to be infinite; the coordinates
@@ -52,7 +52,7 @@ class CelestialCoordinates(object):
 
     @classmethod
     def from_ecliptic(cls, ecliptic_longitude, ecliptic_latitude,
-                      distance=float('inf')):
+                      distance=math.inf):
         """Locate an object from its ecliptic coordinates (see class doc)
 
         If distance is omitted, it is assumed to be infinite; the coordinates

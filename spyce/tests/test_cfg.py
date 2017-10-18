@@ -1,16 +1,12 @@
 import unittest
-
-try:  # Python 2
-    from StringIO import StringIO
-except ImportError:  # Python 3
-    from io import StringIO
+import io
 
 import spyce.ksp_cfg
 
 
 class TestCfg(unittest.TestCase):
     def test_part(self):
-        cfg = StringIO("""
+        cfg = io.StringIO("""
         PART
         {
         name = somepart
@@ -20,7 +16,7 @@ class TestCfg(unittest.TestCase):
         self.assertEqual(spyce.ksp_cfg.parse(cfg), part)
 
     def test_module(self):
-        cfg = StringIO("""
+        cfg = io.StringIO("""
         PART
         {
         MODULE
@@ -32,7 +28,7 @@ class TestCfg(unittest.TestCase):
         self.assertEqual(spyce.ksp_cfg.parse(cfg), part)
 
     def test_groups(self):
-        cfg = StringIO("""
+        cfg = io.StringIO("""
         PART
         {
         MODULE

@@ -86,7 +86,7 @@ class Sphere(Mesh):
         self.radius = radius
         self.slices = slices
         self.stacks = stacks
-        super(Sphere, self).__init__(GL_QUAD_STRIP)
+        super().__init__(GL_QUAD_STRIP)
 
     def vertices(self):
         for j in range(self.stacks):
@@ -135,11 +135,11 @@ class Circle(Mesh):
     def __init__(self, radius, points):
         self.radius = radius
         self.points = points
-        super(Circle, self).__init__(GL_LINE_LOOP)
+        super().__init__(GL_LINE_LOOP)
 
     def vertices(self):
         for i in range(self.points):
-            x = 2.*i/self.points - 1  # from -1.0 to +1.0
+            x = 2*i/self.points - 1  # from -1.0 to +1.0
             theta = math.pi * x
             yield (
                 self.radius * math.cos(theta),
@@ -152,14 +152,14 @@ class CircleThroughOrigin(Mesh):
     def __init__(self, radius, points):
         self.radius = radius
         self.points = points
-        super(CircleThroughOrigin, self).__init__(GL_LINE_LOOP)
+        super().__init__(GL_LINE_LOOP)
 
     def vertices(self):
         for i in range(self.points):
-            x = 2.*i/self.points - 1  # from -1.0 to +1.0
+            x = 2*i/self.points - 1  # from -1.0 to +1.0
             theta = math.pi * x**3
             yield (
-                self.radius * (1. - math.cos(theta)),
+                self.radius * (1 - math.cos(theta)),
                 self.radius * math.sin(theta),
             )
 
@@ -168,10 +168,10 @@ class Parabola(Mesh):
     """Mesh: parabola"""
     def __init__(self, points):
         self.points = points
-        super(Parabola, self).__init__(GL_LINE_STRIP)
+        super().__init__(GL_LINE_STRIP)
 
     def vertices(self):
         for i in range(self.points):
-            x = 2.*i/(self.points-1) - 1  # from -1.0 to +1.0
+            x = 2*i/(self.points-1) - 1  # from -1.0 to +1.0
             theta = math.pi * x
             yield math.cosh(theta), math.sinh(theta)

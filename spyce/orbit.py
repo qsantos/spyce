@@ -61,7 +61,7 @@ class Orbit(
 
         # semi-major axis
         if self.eccentricity == 1:  # parabolic trajectory
-            self.semi_major_axis = float("inf")
+            self.semi_major_axis = math.inf
         else:
             self.semi_major_axis = self.periapsis / (1 - self.eccentricity)
 
@@ -81,7 +81,7 @@ class Orbit(
 
         # period
         if self.eccentricity >= 1:  # parabolic/hyperbolic trajectory
-            self.period = float("inf")
+            self.period = math.inf
         else:  # circular/elliptic orbit
             self.period = 2*math.pi / self.mean_motion
 

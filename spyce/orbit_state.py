@@ -23,7 +23,7 @@ class OrbitState(object):
         """
 
         mu = self.primary.gravitational_parameter
-        return math.sqrt(mu * (2./distance - 1./self.semi_major_axis))
+        return math.sqrt(mu * (2/distance - 1/self.semi_major_axis))
 
     def speed_at_true_anomaly(self, true_anomaly):
         """Orbital speed (m/s) at a given true anomaly (rad)"""

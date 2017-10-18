@@ -1,6 +1,5 @@
 import sys
 import math
-import platform
 
 import spyce.vector
 import spyce.orbit_angles
@@ -48,7 +47,7 @@ class OrbitDetermination(object):
 
         periapsis = min(abs(apsis1), abs(apsis2))
 
-        if float("inf") in (apsis1, apsis2):  # parabolic trajectory
+        if math.inf in (apsis1, apsis2):  # parabolic trajectory
             eccentricity = 1
         else:
             eccentricity = abs(apsis1 - apsis2) / abs(apsis1 + apsis2)
@@ -97,7 +96,7 @@ class OrbitDetermination(object):
         period = float(period)
         mu = primary.gravitational_parameter
         mean_motion = period / (2*math.pi)
-        semi_major_axis = (mean_motion**2 * mu)**(1./3)
+        semi_major_axis = (mean_motion**2 * mu)**(1/3)
         eccentricity = abs(apsis/semi_major_axis - 1)
 
         return cls.from_semi_major_axis(
@@ -177,23 +176,11 @@ class OrbitDetermination(object):
 
 
 # if available, use a C versions
-
-cext = None
-if platform.python_implementation() == 'CPython':
-    if platform.python_version() >= '3':
-        try:  # Python 3
-            from spyce.cext import orbit_py3 as cext
-        except ImportError:
-            pass
-    else:
-        try:  # Python 2
-            from spyce.cext import orbit_py2 as cext
-        except ImportError:
-            pass
-    if cext is None:
-        sys.stderr.write("Note: to improve performance, run `make` in cext/\n")
-
-if cext is not None:
+try:
+    from spyce.cext import orbit as cext
+except ImportError:
+    print("Note: to improve performance, run `make` in cext/", file=sys.stderr)
+else:
     @classmethod
     def from_state(cls, primary, position, velocity, epoch=0):
         mu = primary.gravitational_parameter

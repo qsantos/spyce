@@ -70,7 +70,7 @@ class CelestialBody(object):
 
         # sphere of influence
         if self.orbit is None:
-            self.sphere_of_influence = float("inf")
+            self.sphere_of_influence = math.inf
         else:
             a = self.orbit.semi_major_axis
             mu_p = self.orbit.primary.gravitational_parameter
@@ -83,7 +83,7 @@ class CelestialBody(object):
             sidereal_year = self.orbit.period
             solar_year = sidereal_year - sidereal_day
             if solar_year == 0:
-                self.solar_day = float("inf")
+                self.solar_day = math.inf
             else:
                 self.solar_day = sidereal_day * sidereal_year/solar_year
         else:
@@ -91,7 +91,7 @@ class CelestialBody(object):
 
         # surface velocity
         if self.rotational_period == 0:
-            self.surface_velocity = float("inf")
+            self.surface_velocity = math.inf
         else:
             R = self.radius
             self.surface_velocity = 2*math.pi * R / self.rotational_period

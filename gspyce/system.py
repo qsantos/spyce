@@ -50,7 +50,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
     """GUI for showing a planetary system"""
     def __init__(self, focus):
         title = b'Sp' + b'a'*42 + b'ce'
-        super(SystemGUI, self).__init__(title)
+        super().__init__(title)
 
         self.time = 0
         self.zoom = 1e-7
@@ -124,7 +124,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         try:
             body = spyce.load.from_name(name)
         except KeyError:
-            sys.stderr.write("Unknwon body '%s'\n" % name)
+            print("Unknwon body '%s'" % name, file=sys.stderr)
             sys.exit(1)
 
         return cls(body)
@@ -373,7 +373,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
     def draw_hud(self):
         """Draw the HUD"""
         self.hud_print("Focus: %s\n" % self.focus)
-        super(SystemGUI, self).draw_hud()
+        super().draw_hud()
 
     @glut_callback
     def mouseFunc(self, button, state, x, y):
@@ -383,7 +383,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             self.focus = self.pick(x, y, self.focus)
             self.update()
         else:
-            super(SystemGUI, self).mouseFunc(button, state, x, y)
+            super().mouseFunc(button, state, x, y)
 
 
 def main():

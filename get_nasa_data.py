@@ -1,11 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import math
 import re
 import json
-try:  # python 3
-    from urllib.request import urlopen
-except ImportError:  # python 2
-    from urllib2 import urlopen
+from urllib.request import urlopen
 
 import spyce.physics
 import spyce.coordinates
@@ -122,7 +119,7 @@ def get_planets_orbits(bodies):
             name = "Earth"
 
         # see aprx_pos_planets.md
-        t = float(epoch) / 86400 / 36525
+        t = epoch / 86400 / 36525
         elements = [float(x0) + float(dx)*t
                     for x0, dx in zip(elements, changes)]
 

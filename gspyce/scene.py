@@ -130,8 +130,8 @@ class Scene(object):
         """Handle (active) mouse motions (GLUT callback)"""
         if self.drag_active:
             # update orientation
-            self.theta += (x - self.mouse_x) / 4.
-            self.phi += (y - self.mouse_y) / 4.
+            self.theta += (x - self.mouse_x) / 4
+            self.phi += (y - self.mouse_y) / 4
 
             # clamp phi to [-180, 0]
             self.phi = max(-180, min(self.phi, 0))

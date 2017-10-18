@@ -7,7 +7,7 @@ def bisection_method(f, a, b):
     Look for a root of `f` in [a, b]"""
     fa = f(a)
     for _ in range(54):
-        c = (a + b) / 2.
+        c = (a + b) / 2
         fc = f(c)
         if fa*fc >= 0:
             # f(a) and f(c) have the same sign
@@ -90,8 +90,8 @@ def runge_kutta_4(f, t, y, h):
     # k4 = f(t + h*1.0, y + k3 * (h*1.0))
     # return y + (k1 + k2*2. + k3*2. + k4) * (h/6.)
     k1 = f(t, y)
-    k2 = f(t + h/2., [a+b*h/2. for a, b in zip(y, k1)])
-    k3 = f(t + h/2., [a+b*h/2. for a, b in zip(y, k2)])
-    k4 = f(t + h,    [a+b*h for a, b in zip(y, k3)])
-    return [x + (dx1+2.*(dx2+dx3)+dx4)*h/6.
+    k2 = f(t + h/2, [a+b*h/2 for a, b in zip(y, k1)])
+    k3 = f(t + h/2, [a+b*h/2 for a, b in zip(y, k2)])
+    k4 = f(t + h,   [a+b*h for a, b in zip(y, k3)])
+    return [x + (dx1+2*(dx2+dx3)+dx4)*h/6
             for x, dx1, dx2, dx3, dx4 in zip(y, k1, k2, k3, k4)]

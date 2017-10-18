@@ -7,7 +7,7 @@ from gspyce.graphics import *
 
 class MissionGUI(gspyce.simulation.SimulationGUI):
     def __init__(self, *args, **kwargs):
-        super(MissionGUI, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.texture_rocket_on = gspyce.textures.load("rocket_on.png")
         self.texture_rocket_off = gspyce.textures.load("rocket_off.png")
@@ -57,10 +57,10 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
         if body == self.rocket:
             return
 
-        super(MissionGUI, self).draw_body(body)
+        super().draw_body(body)
 
     def draw(self):
-        super(MissionGUI, self).draw()
+        super().draw()
 
         self.draw_rocket()
 
@@ -134,8 +134,7 @@ def main():
         rocket.throttle = 0.0
 
     def program(rocket):
-        for c in launchpad_to_orbit(rocket):
-            yield c
+        yield from launchpad_to_orbit(rocket)
 
         sim.log("Onto the Mun!")
         rocket.throttle = 1.0

@@ -1,3 +1,5 @@
+import math
+
 import spyce.vector
 import spyce.physics
 import spyce.body
@@ -81,7 +83,7 @@ class Rocket(spyce.body.CelestialBody):
         # initialize flight program
         if program is None:
             self.program = None
-            self.resume_condition = lambda: float('inf')
+            self.resume_condition = lambda: math.inf
         else:
             self.program = program(self)
             self.resume_condition = next(self.program)
@@ -207,7 +209,7 @@ class Rocket(spyce.body.CelestialBody):
         # escape
         v = self.orbit.true_anomaly_at_escape()
         if v is None:
-            self.resume_time_escape = float('inf')
+            self.resume_time_escape = math.inf
         else:
             self.resume_time_escape = self.orbit.time_at_true_anomaly(v)
 
@@ -221,7 +223,7 @@ class Rocket(spyce.body.CelestialBody):
             return
 
         # encounters
-        self.resume_time_encounter = float('inf')
+        self.resume_time_encounter = math.inf
         for satellite in self.primary.satellites:
             if satellite is self:
                 continue
@@ -245,7 +247,7 @@ class Rocket(spyce.body.CelestialBody):
             try:
                 self.resume_condition = next(self.program)
             except StopIteration:
-                self.resume_condition = lambda: float('inf')
+                self.resume_condition = lambda: math.inf
 
         self.update_resume_time()
 

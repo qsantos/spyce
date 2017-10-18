@@ -11,11 +11,11 @@ import spyce.analysis
 def main():
     # parse orbited body
     if len(sys.argv) <= 1:
-        sys.stderr.write(
+        print(
             'Usage: %s BODY [ALTITUDE]\n'
             'Compute the time spent in the dark by a satellite\n'
             'If ALTITUDE is not given, the best one is computed\n'
-            % sys.argv[0])
+            % sys.argv[0], file=sys.stderr)
         sys.exit(1)
     primary = spyce.load.from_name(sys.argv[1])
 

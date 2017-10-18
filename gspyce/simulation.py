@@ -7,7 +7,7 @@ from gspyce.graphics import *
 
 class SimulationGUI(gspyce.system.SystemGUI):
     def __init__(self, *args, **kwargs):
-        super(SimulationGUI, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.timewarp = 1.
         self.message_log = collections.deque(maxlen=10)
@@ -24,7 +24,7 @@ class SimulationGUI(gspyce.system.SystemGUI):
         # display time
         self.hud_print('Date: %s\n' % self.system.format_date(self.time))
 
-        super(SimulationGUI, self).draw_hud()
+        super().draw_hud()
 
         self.hud_grid(-self.message_log.maxlen-1, 1)
         self.hud_print("Message log:\n")
@@ -37,13 +37,13 @@ class SimulationGUI(gspyce.system.SystemGUI):
         if k == b'\x1b':  # escape
             self.is_running = False
         elif k == b',':
-            self.timewarp /= 10.
+            self.timewarp /= 10
             self.update()
         elif k == b';':
-            self.timewarp *= 10.
+            self.timewarp *= 10
             self.update()
         else:
-            super(SimulationGUI, self).keyboardFunc(k, x, y)
+            super().keyboardFunc(k, x, y)
 
     def main(self):
         """Main loop"""
@@ -57,7 +57,7 @@ class SimulationGUI(gspyce.system.SystemGUI):
             self.time += elapsed * self.timewarp
 
             # avoid wasting cycles
-            pause = 1./60 - elapsed
+            pause = 1/60 - elapsed
             if pause > 0.:
                 time.sleep(pause)
 

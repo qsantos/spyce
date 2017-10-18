@@ -1,6 +1,5 @@
 import sys
 import math
-import platform
 
 import spyce.analysis
 
@@ -18,11 +17,11 @@ class OrbitGeometry(object):
         Normally used for parabolic or hyperbolic trajectories
         """
         if self.eccentricity < 1:  # closed orbit
-            return float('inf')
+            return math.inf
         else:
             # when inf = p / (1 + e cos theta),
             # 1 + e cos theta = 0
-            return math.acos(-1. / self.eccentricity)
+            return math.acos(-1 / self.eccentricity)
 
     def mean_anomaly_at_eccentric_anomaly(self, eccentric_anomaly):
         e = self.eccentricity
@@ -55,7 +54,7 @@ class OrbitGeometry(object):
                 f_prime=lambda E: 1 - e*math.cos(E),
             )
         elif e == 1:
-            z = (M + math.sqrt(M**2+1))**(1./3)
+            z = (M + math.sqrt(M**2+1))**(1/3)
             return z - 1/z
         else:  # M = e sinh E - E
             # sinh(E) = E -> M = (e - 1) E
@@ -160,24 +159,12 @@ class OrbitAngles(OrbitGeometry):
         return self.true_anomaly_at_distance(self.primary.sphere_of_influence)
 
 
-# if available, use a C versions
-
-cext = None
-if platform.python_implementation() == 'CPython':
-    if platform.python_version() >= '3':
-        try:  # Python 3
-            from spyce.cext import orbit_py3 as cext
-        except ImportError:
-            pass
-    else:
-        try:  # Python 2
-            from spyce.cext import orbit_py2 as cext
-        except ImportError:
-            pass
-    if cext is None:
-        sys.stderr.write("Note: to improve performance, run `make` in cext/\n")
-
-if cext is not None:
+# if available, use C extension
+try:
+    from spyce.cext import orbit as cext
+except ImportError:
+    print("Note: to improve performance, run `make` in cext/", file=sys.stderr)
+else:
     def true_anomaly_at_mean_anomaly(self, mean_anomaly):
         e = self.eccentricity
         M = mean_anomaly

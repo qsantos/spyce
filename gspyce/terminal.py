@@ -39,8 +39,8 @@ class Readline(object):
         if " " <= k <= "~":
             self.input_buffer += k
         elif k == "\x03":  # Ctrl+C
-            sys.stderr.write(self.current_line())
-            sys.stderr.write("\nKeyboardInterrupt\n")
+            print(self.current_line(), file=sys.stderr)
+            print("KeyboardInterrupt", file=sys.stderr)
             self.interpreter.resetbuffer()
             self.input_buffer = ""
             self.last_line = False
@@ -143,7 +143,7 @@ class Console(object):
 class TerminalGUI(gspyce.hud.HUD):
     """GUI with an interactive text terminal"""
     def __init__(self, title=b"Terminal in GUI"):
-        super(TerminalGUI, self).__init__(title)
+        super().__init__(title)
 
         self.console = Console()
         spyce.interact.namespace["gui"] = self
@@ -183,7 +183,7 @@ class TerminalGUI(gspyce.hud.HUD):
         if k == GLUT_KEY_HOME:
             self.toggle_terminal(True)
         else:
-            super(TerminalGUI, self).specialFunc(k, x, y)
+            super().specialFunc(k, x, y)
 
     @glut_callback
     def terminal_keyboardFunc(self, k, x, y):
@@ -216,7 +216,7 @@ class TerminalGUI(gspyce.hud.HUD):
 
     def draw_hud(self):
         """Draw the HUD"""
-        super(TerminalGUI, self).draw_hud()
+        super().draw_hud()
         if self.terminal_enabled:
             self.hud_print('\n'.join(self.console.lines))
             self.hud_print(self.readline.current_line() + '_')

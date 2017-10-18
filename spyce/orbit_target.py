@@ -1,3 +1,5 @@
+import math
+
 import spyce.analysis
 
 
@@ -49,7 +51,7 @@ class OrbitTarget(object):
         # first, find near approach with just enough precision
         next_approach = self.time_at_next_approach(target, t, encounter_radius)
         if next_approach is None:
-            return float('inf')
+            return math.inf
 
         # second, search for time of encounter
         def f(t):

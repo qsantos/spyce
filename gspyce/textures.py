@@ -37,10 +37,7 @@ def unbind():
 try:
     from PIL import Image
 except ImportError:
-    if sys.version_info[0] == 3:  # Python 3
-        sys.stderr.write("Install python3-pil for textures\n")
-    else:  # Python 2
-        sys.stderr.write("Install python-pil for textures\n")
+    print("Install python3-pil for textures", file=sys.stderr)
 
     def load(*_, **__):
         """No texture can be loaded with PIL; return dummy texture 0"""
@@ -53,8 +50,8 @@ else:
         filename = os.path.join("data", "textures", *path)
         try:
             image = pkgutil.get_data("gspyce", filename)
-        except:  # FileNotFoundError in Python 3, IOError in Python 2
-            sys.stderr.write("Missing %s\n" % filename)
+        except FileNotFoundError:
+            print("Missing %s" % filename, file=sys.stderr)
             return 0
 
         im = Image.open(io.BytesIO(image))
