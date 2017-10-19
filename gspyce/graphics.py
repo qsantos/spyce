@@ -123,7 +123,7 @@ def glut_callback(f):
     def wrapper(self, *args, **kwargs):
         try:
             return f(self, *args, **kwargs)
-        except Exception as e:
+        except:
             self.is_running = False
             glutLeaveMainLoop()
             raise
