@@ -3,7 +3,7 @@ from OpenGL.GL import *
 import gspyce.textures
 
 
-class Skybox(object):
+class Skybox:
     """Simulate the sky with a textured box"""
 
     def __init__(self, *path):

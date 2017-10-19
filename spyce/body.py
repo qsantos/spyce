@@ -9,7 +9,7 @@ class InvalidConstellation(Exception):
     pass
 
 
-class CelestialBody(object):
+class CelestialBody:
     """Celestial Body
 
     Minimalistic model of celestial bodies (stars, planets, moons)

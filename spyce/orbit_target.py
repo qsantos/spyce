@@ -3,7 +3,7 @@ import math
 from spyce.analysis import golden_section_search, bisection_method
 
 
-class OrbitTarget(object):
+class OrbitTarget:
     def __init__(self):
         raise NotImplementedError
 

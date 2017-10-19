@@ -9,7 +9,7 @@ class InvalidElements(Exception):
     pass
 
 
-class OrbitDetermination(object):
+class OrbitDetermination:
     def __init__(self, *args, **kwargs):
         raise NotImplementedError
 

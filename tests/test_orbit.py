@@ -15,7 +15,7 @@ except ImportError:
 
 
 # dummy primary object
-class DummyPrimary(object):
+class DummyPrimary:
     gravitational_parameter = 1e20
 
     def __repr__(self):

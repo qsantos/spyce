@@ -22,7 +22,7 @@ def read_pixels(x, y, w, h):
     return data
 
 
-class BufferObject(object):
+class BufferObject:
     """OpenGL Buffer Object helper"""
     def __init__(self, data=None, flatten=False):
         """Create a new Buffer Object, optionally fill it (see `fill()`)"""

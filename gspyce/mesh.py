@@ -3,7 +3,7 @@ import math
 from gspyce.graphics import *
 
 
-class Mesh(object):
+class Mesh:
     """A 2D or 3D mesh"""
     bound_mesh = None
 

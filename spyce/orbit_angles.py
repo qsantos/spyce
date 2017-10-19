@@ -4,7 +4,7 @@ import math
 import spyce.analysis
 
 
-class OrbitGeometry(object):
+class OrbitGeometry:
     def __init__(self, eccentricity):
         self.eccentricity = eccentricity
 

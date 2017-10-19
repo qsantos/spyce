@@ -7,7 +7,7 @@ import spyce.orbit
 import spyce.analysis
 
 
-class RocketPart(object):
+class RocketPart:
     """Rocket part
 
     Properties:

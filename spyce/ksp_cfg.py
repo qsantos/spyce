@@ -135,7 +135,7 @@ def get_parts():
     return parts
 
 
-class PartSet(object):
+class PartSet:
     def __init__(self):
         self.parts = get_parts()
 

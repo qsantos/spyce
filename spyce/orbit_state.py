@@ -3,7 +3,7 @@ import math
 import spyce.vector
 
 
-class OrbitState(object):
+class OrbitState:
     def __init__(self):
         raise NotImplementedError
 

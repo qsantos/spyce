@@ -3,7 +3,7 @@ import sys
 from gspyce.graphics import *
 
 
-class Scene(object):
+class Scene:
     """A simple Scene handling zooming and camera orientation"""
     def __init__(self, title=b'Scene'):
         # default settings

@@ -9,7 +9,7 @@ import gspyce.hud
 from gspyce.graphics import *
 
 
-class Readline(object):
+class Readline:
     """readline-like interface-agnostic text buffer"""
     def __init__(self, interpreter, completer=None):
         """"Initiate text buffer
@@ -94,7 +94,7 @@ class Readline(object):
         return prompt + self.input_buffer
 
 
-class Console(object):
+class Console:
     """"Capture output
 
     >>> console = Console(n_lines=4)

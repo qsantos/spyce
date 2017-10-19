@@ -1,7 +1,7 @@
 import math
 
 
-class CelestialCoordinates(object):
+class CelestialCoordinates:
     """Celestial coordinates of a point or a direction
 
     Celestial coordinates are spherical coordinates. The referential is thus
