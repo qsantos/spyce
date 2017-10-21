@@ -303,7 +303,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             if body is self.system:
                 continue
             self.draw_body(body)
-        self.shader_reset()
+        self.shader_set()
         self.sphere.unbind()
 
         # draw circles around celestial bodies when from far away
@@ -316,7 +316,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             self.add_pick_object(body, GL_POINTS)
             glVertex3f(*body._relative_position)
         glEnd()
-        self.shader_reset()
+        self.shader_set()
         glDepthMask(True)
 
         # draw orbits
@@ -352,6 +352,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.pick_reset()
+        self.shader_set()
 
         # skybox
         glLoadIdentity()

@@ -6,16 +6,22 @@ class PickingGUI(gspyce.hud.HUD):
     """GUI with object picking using a fragment shader"""
     def __init__(self, title=b"Click to pick!"):
         super().__init__(title)
-        self.pick_shader = main_program()
-        self.pick_enabled = False
-        self.pick_current_name = 0
-        self.shader_reset()
 
-    def set_pick_name(self, name):
+        # shader management
+        self.default_shader = main_program()
+        self.current_shader = self.default_shader
+        glUseProgram(self.current_shader)
+
+        # configure default features
+        self.picking_enabled = False
+        self.picking_name = 0
+
+    def set_picking_name(self, name):
         r = ((name >> 16) & 0xff) / 255.
         g = ((name >> +8) & 0xff) / 255.
         b = ((name >> +0) & 0xff) / 255.
-        glUniform3f(self.pick_name, r, g, b)
+        var = glGetUniformLocation(self.current_shader, b'picking_name')
+        glUniform3f(var, r, g, b)
 
     def add_pick_object(self, thing, mode=None):
         """Register `thing` for picking
@@ -23,23 +29,22 @@ class PickingGUI(gspyce.hud.HUD):
         Anything drawn afterwards is assumed to be part of `thing`.
         Can be used within a glBegin/glEnd scope, if `mode` is given"""
         self.pick_objects.append(thing)
-        name = len(self.pick_objects)
-        self.pick_current_name = name
+        self.picking_name = len(self.pick_objects)
 
-        if self.pick_enabled:
+        if self.picking_enabled:
             if mode is None:
-                self.set_pick_name(name)
+                self.set_picking_name(self.picking_name)
             else:
                 # pause the current glBegin/glEnd group
                 glEnd()
-                self.set_pick_name(name)
+                self.set_picking_name(self.picking_name)
                 glBegin(mode)
 
     def clear_pick_object(self):
         """Clear the current pickable object"""
-        self.pick_current_name = 0
-        if self.pick_enabled:
-            self.set_pick_name(0)
+        self.picking_name = 0
+        if self.picking_enabled:
+            self.set_picking_name(self.picking_name)
 
     def pick_reset(self):
         """Reset the list of pickable objects"""
@@ -48,20 +53,23 @@ class PickingGUI(gspyce.hud.HUD):
     def set_and_draw(self):
         """Setup the camera and draw"""
         self.pick_reset()
+        self.shader_set()
         super().set_and_draw()
         self.clear_pick_object()
 
-    def shader_set(self, program):
-        """Switch the current shader, set pick uniforms to correct values"""
-        glUseProgram(program)
-        var_flag = glGetUniformLocation(program, b"picking_enabled")
-        glUniform1i(var_flag, int(self.pick_enabled))
-        self.pick_name = glGetUniformLocation(program, b"picking_name")
-        self.set_pick_name(self.pick_current_name)
+    def shader_set(self, program=None):
+        """Change the current shader
 
-    def shader_reset(self):
-        """Restore the default shader"""
-        self.shader_set(self.pick_shader)
+        If program is None, use the default shader."""
+        if program is None:
+            program = self.default_shader
+        self.current_shader = program
+        glUseProgram(self.current_shader)
+
+        # update uniforms
+        var = glGetUniformLocation(program, b'picking_enabled')
+        glUniform1i(var, self.picking_enabled)
+        self.set_picking_name(self.picking_name)
 
     def pick(self, x, y, default=None):
         """Find object around given screen coordinates
@@ -69,13 +77,11 @@ class PickingGUI(gspyce.hud.HUD):
         If several objects match, return the one that was provided first."""
 
         # draw with color picking
-        self.pick_enabled = True
-        self.shader_reset()
+        self.picking_enabled = True
         glDisable(GL_MULTISAMPLE)
         self.set_and_draw()
         glEnable(GL_MULTISAMPLE)
-        self.pick_enabled = False
-        self.shader_reset()
+        self.picking_enabled = False
 
         # inverse y axis
         viewport = glGetIntegerv(GL_VIEWPORT)
