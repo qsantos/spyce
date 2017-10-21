@@ -1,5 +1,4 @@
-from OpenGL.GL import *
-
+from gspyce.graphics import *
 import gspyce.textures
 
 
@@ -12,62 +11,37 @@ class Skybox:
         Arguments are joined together to make the paths to the textures. Last
         argument should be a pattern with a "%s", which will be completed as
         "PositiveX", "NegativeY" and so on."""
-        self.faces = []
-        path, file_pattern = list(path[:-1]), path[-1]
-        for coordinate in "XYZ":
-            for direction in "Positive", "Negative":
-                full_path = path + [file_pattern % (direction + coordinate)]
-                texture = gspyce.textures.load(*full_path)
-                self.faces.append(texture)
+
+        self.texture = gspyce.textures.load_cubemap(*path)
+        s = 10
+        vertices = [
+            # +X
+            (+s, +s, +s), (+s, +s, -s), (+s, -s, +s),
+            (+s, -s, +s), (+s, +s, -s), (+s, -s, -s),
+            # -X
+            (-s, -s, +s), (-s, -s, -s), (-s, +s, +s),
+            (-s, +s, +s), (-s, -s, -s), (-s, +s, -s),
+            # +Y
+            (-s, +s, +s), (-s, +s, -s), (+s, +s, +s),
+            (+s, +s, +s), (-s, +s, -s), (+s, +s, -s),
+            # -Y
+            (+s, -s, +s), (+s, -s, -s), (-s, -s, +s),
+            (-s, -s, +s), (+s, -s, -s), (-s, -s, -s),
+            # +Z
+            (+s, +s, +s), (+s, -s, +s), (-s, +s, +s),
+            (-s, +s, +s), (+s, -s, +s), (-s, -s, +s),
+            # -Z
+            (+s, +s, -s), (-s, +s, -s), (+s, -s, -s),
+            (+s, -s, -s), (-s, +s, -s), (-s, -s, -s),
+        ]
+        self.vertex_buffer = BufferObject(vertices, flatten=True)
 
     def draw(self):
         """Draw a skybox of given size"""
-        gspyce.textures.bind(self.faces[0], (0, 0, 0))
-        glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0) or glVertex3f(+10, +10, +10)
-        glTexCoord2f(1.0, 0.0) or glVertex3f(+10, +10, -10)
-        glTexCoord2f(1.0, 1.0) or glVertex3f(+10, -10, -10)
-        glTexCoord2f(0.0, 1.0) or glVertex3f(+10, -10, +10)
-        glEnd()
-
-        gspyce.textures.bind(self.faces[1], (0, 0, 0))
-        glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0) or glVertex3f(-10, +10, -10)
-        glTexCoord2f(1.0, 0.0) or glVertex3f(-10, +10, +10)
-        glTexCoord2f(1.0, 1.0) or glVertex3f(-10, -10, +10)
-        glTexCoord2f(0.0, 1.0) or glVertex3f(-10, -10, -10)
-        glEnd()
-
-        gspyce.textures.bind(self.faces[2], (0, 0, 0))
-        glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0) or glVertex3f(+10, +10, +10)
-        glTexCoord2f(1.0, 0.0) or glVertex3f(-10, +10, +10)
-        glTexCoord2f(1.0, 1.0) or glVertex3f(-10, +10, -10)
-        glTexCoord2f(0.0, 1.0) or glVertex3f(+10, +10, -10)
-        glEnd()
-
-        gspyce.textures.bind(self.faces[3], (0, 0, 0))
-        glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0) or glVertex3f(+10, -10, +10)
-        glTexCoord2f(1.0, 0.0) or glVertex3f(+10, -10, -10)
-        glTexCoord2f(1.0, 1.0) or glVertex3f(-10, -10, -10)
-        glTexCoord2f(0.0, 1.0) or glVertex3f(-10, -10, +10)
-        glEnd()
-
-        gspyce.textures.bind(self.faces[4], (0, 0, 0))
-        glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0) or glVertex3f(-10, +10, +10)
-        glTexCoord2f(1.0, 0.0) or glVertex3f(+10, +10, +10)
-        glTexCoord2f(1.0, 1.0) or glVertex3f(+10, -10, +10)
-        glTexCoord2f(0.0, 1.0) or glVertex3f(-10, -10, +10)
-        glEnd()
-
-        gspyce.textures.bind(self.faces[5], (0, 0, 0))
-        glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0) or glVertex3f(+10, +10, -10)
-        glTexCoord2f(1.0, 0.0) or glVertex3f(-10, +10, -10)
-        glTexCoord2f(1.0, 1.0) or glVertex3f(-10, -10, -10)
-        glTexCoord2f(0.0, 1.0) or glVertex3f(+10, -10, -10)
-        glEnd()
-
-        gspyce.textures.unbind()
+        glBindTexture(GL_TEXTURE_CUBE_MAP, self.texture)
+        self.vertex_buffer.bind()
+        glVertexPointer(3, GL_FLOAT, 0, None)
+        self.vertex_buffer.unbind()
+        glEnableClientState(GL_VERTEX_ARRAY)
+        glDrawArrays(GL_TRIANGLES, 0, 36)
+        glDisableClientState(GL_VERTEX_ARRAY)

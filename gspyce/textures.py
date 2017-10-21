@@ -91,7 +91,9 @@ else:
         texture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture)
         path, file_pattern = list(path[:-1]), path[-1]
-        faces = ["PositiveX", "NegativeX", "PositiveY", "NegativeY", "PositiveZ", "NegativeZ"]
+        faces = ["PositiveX", "NegativeX",
+                 "PositiveY", "NegativeY",
+                 "PositiveZ", "NegativeZ"]
         for i, face in enumerate(faces):
             full_path = path + [file_pattern % face]
             w, h, data = load_image(*full_path)

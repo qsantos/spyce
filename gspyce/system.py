@@ -77,6 +77,13 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         glMaterialfv(GL_FRONT, GL_SPECULAR, [0.3, 0.3, 0.3, 1])
         glMateriali(GL_FRONT, GL_SHININESS, 16)
 
+        # skybox shader
+        self.shader_skybox = main_program('cubemap')
+        # cubemap_texture = GL_TEXTURE0
+        variable = glGetUniformLocation(self.shader_skybox, b"cubemap_texture")
+        glUseProgram(self.shader_skybox)
+        glUniform1i(variable, 0)
+
         # sphere VBO for drawing bodies
         self.sphere = gspyce.mesh.Sphere(1, 64, 64)
 
@@ -359,7 +366,9 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         glRotatef(self.phi,   1, 0, 0)
         glRotatef(self.theta, 0, 0, 1)
         glDisable(GL_DEPTH_TEST)
+        self.shader_set(self.shader_skybox)
         self.skybox.draw()
+        self.shader_set()
         glEnable(GL_DEPTH_TEST)
 
         # set up camera
