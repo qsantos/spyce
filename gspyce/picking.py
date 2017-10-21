@@ -83,7 +83,7 @@ class PickingGUI(gspyce.hud.HUD):
         glEnable(GL_MULTISAMPLE)
         self.picking_enabled = False
 
-        # inverse y axis
+        # invert y axis
         viewport = glGetIntegerv(GL_VIEWPORT)
         y = viewport[3] - y
 
