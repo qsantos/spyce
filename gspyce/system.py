@@ -156,7 +156,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             # TODO: not use display lists
             glBegin(mesh.mode)
             for v in mesh.vertices():
-                glVertex(*v)
+                glVertex2f(*v)
             glEnd()
 
         # apses
