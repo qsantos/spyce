@@ -210,7 +210,6 @@ class TerminalGUI(gspyce.hud.HUD):
         elif k == GLUT_KEY_DOWN:
             with self.console:
                 self.readline.down()
-            self.toggle_fullscreen()
         else:
             self.terminal_restore_specialFunc(k, x, y)
 
