@@ -397,7 +397,8 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
 
 
 def main():
-    SystemGUI.from_cli_args().main()
+    with SystemGUI.from_cli_args() as gui:
+        gui.main()
 
 
 if __name__ == '__main__':

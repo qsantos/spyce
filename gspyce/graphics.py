@@ -124,7 +124,6 @@ def glut_callback(f):
         try:
             return f(self, *args, **kwargs)
         except:
-            self.is_running = False
-            glutLeaveMainLoop()
+            self.quit()
             raise
     return wrapper

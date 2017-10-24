@@ -62,7 +62,8 @@ class SimulationGUI(gspyce.system.SystemGUI):
 
 
 def main():
-    SimulationGUI.from_cli_args().main()
+    with SimulationGUI.from_cli_args() as gui:
+        gui.main()
 
 
 if __name__ == '__main__':

@@ -89,8 +89,7 @@ class Scene:
     def keyboardFunc(self, k, x, y):
         """Handle key presses (GLUT callback)"""
         if k == b'\x1b':  # escape
-            self.is_running = False
-            glutLeaveMainLoop()
+            self.quit()
 
     @glut_callback
     def specialFunc(self, k, x, y):
@@ -164,6 +163,10 @@ class Scene:
     def closeFunc(self):
         """Handle window closing (GLUT callback)"""
         self.is_running = False
+
+    def quit(self):
+        self.is_running = False
+        glutLeaveMainLoop()
 
     def update(self):
         """Force an update of the screen"""
