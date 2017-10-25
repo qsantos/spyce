@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Check version of OpenGL functions in source files"""
-
 import re
 import os
 import sys
@@ -8,22 +7,26 @@ import itertools
 import collections
 
 # parse arguments
-try:
-    rootdir = sys.argv[1]
-except IndexError:
-    rootdir = '.'
+if len(sys.argv) > 1:
+    paths = sys.argv[1:]
+else:
+    paths = ['.']
+
+
+def files(paths, exts=None):
+    for path in paths:
+        for subpath, _, filenames in os.walk(path):
+            for filename in filenames:
+                _, _, ext = filename.rpartition('.')
+                if exts is None or ext in exts:
+                    yield os.path.join(subpath, filename)
+
 
 # list OpenGL functions used in source files
 used_gl_functions = set()
-for path, _, filenames in os.walk(rootdir):
-    for filename in filenames:
-        # filter source files
-        _, _, ext = filename.rpartition('.')
-        if ext not in ('py', 'c', 'cpp', 'cs'):
-            continue
-        # find all names looking like OpenGL functions
-        with open(os.path.join(path, filename)) as f:
-            used_gl_functions |= set(re.findall(r'gl[A-Z]\w+', f.read()))
+for filepath in files(paths, ('py', 'c', 'cpp', 'cs')):
+    with open(filepath) as f:
+        used_gl_functions |= set(re.findall(r'gl[A-Z]\w+', f.read()))
 
 # locate and read gl.spec file
 # source https://www.opengl.org/registry/oldspecs/gl.spec
