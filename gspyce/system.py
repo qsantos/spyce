@@ -379,15 +379,15 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         self.shader_set()
 
         # skybox
+        self.shader_set(self.shader_skybox)
         transform = \
             Mat4.rotate(math.radians(self.phi),   1, 0, 0) @ \
             Mat4.rotate(math.radians(self.theta), 0, 0, 1)
         self.set_modelview_matrix(transform)
         glDisable(GL_DEPTH_TEST)
-        self.shader_set(self.shader_skybox)
         self.skybox.draw()
-        self.shader_set()
         glEnable(GL_DEPTH_TEST)
+        self.shader_set()
 
         # set up camera
         transform = \

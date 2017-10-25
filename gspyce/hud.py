@@ -2,7 +2,6 @@ import time
 import collections
 
 from spyce.vector import Mat4
-import gspyce.textures
 import gspyce.scene
 from gspyce.graphics import *
 
@@ -11,9 +10,6 @@ class HUD(gspyce.scene.Scene):
     """Scene with an HUD"""
     def __init__(self, title=b'HUD'):
         super().__init__(title)
-
-        # initialize textures
-        gspyce.textures.init()
 
         # font bitmap information
         self.character_width = 10

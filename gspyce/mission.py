@@ -19,17 +19,21 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
 
         self.add_pick_object(self.rocket)
 
+        # rocket orientation
+        row1, row2, row3 = self.rocket.orientation
+        orientation = Mat4([
+            [*row1, 0],
+            [*row2, 0],
+            [*row3, 0],
+            [0, 0, 0, 1],
+        ])
+
         original_modelview_matrix = self.modelview_matrix
         transform = self.modelview_matrix @ \
             Mat4.translate(*self.rocket._relative_position) @ \
-            Mat4.scale(1e4, 1e4, 1e4)
+            Mat4.scale(1e4, 1e4, 1e4) @ \
+            orientation
         self.set_modelview_matrix(transform)
-
-        # follow rocket orientation
-        (a, b, c), (d, e, f), (g, h, i) = self.rocket.orientation
-        # glMultMatrixf() excepts a column-major matrix
-        mat44 = [a, d, g, 0, b, e, h, 0, c, f, i, 0, 0, 0, 0, 1]
-        glMultMatrixf(mat44)
 
         # pick correct texture
         if self.rocket.throttle == 0:

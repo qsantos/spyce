@@ -3,6 +3,7 @@ from math import radians
 
 from spyce.vector import Mat4
 from gspyce.graphics import *
+import gspyce.textures
 
 
 class Scene:
@@ -47,9 +48,25 @@ class Scene:
         self.modelview_matrix = Mat4()
         self.projection_matrix = Mat4()
 
+        # initialize textures
+        gspyce.textures.init()
+
+        # shader management
+        program = main_program()
+        self.default_shader = program
+        self.current_shader = program
+        glUseProgram(program)
+
     def draw(self):
         """Draw the scene"""
-        transform = self.modelview_matrix @ Mat4.rotate(radians(90), 1, 0, 0)
+        transform = self.modelview_matrix @ \
+            Mat4.rotate(radians(90), 1, 0, 0)
+
+        # fixed-pipeline transforms in glutWireTeapot() from freeglut_teapot.c
+        transform @= Mat4.rotate(radians(270.0), 1, 0, 0)
+        transform @= Mat4.scale(.5, .5, .5)
+        transform @= Mat4.translate(0, 0, -1.5);
+
         self.set_modelview_matrix(transform)
         glutWireTeapot(1)
 
@@ -58,6 +75,7 @@ class Scene:
 
         # reset everything
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        self.shader_set()
 
         # set camera
         transform = \
@@ -68,6 +86,15 @@ class Scene:
 
         # draw!
         self.draw()
+
+    def shader_set(self, program=None):
+        """Change the current shader
+
+        If program is None, use the default shader."""
+        if program is None:
+            program = self.default_shader
+        self.current_shader = program
+        glUseProgram(self.current_shader)
 
     def toggle_fullscreen(self, enable=None):
         """Toggle fullscreen mode
@@ -102,19 +129,22 @@ class Scene:
         if k == GLUT_KEY_F11:
             self.toggle_fullscreen()
 
+    def set_shader_matrices(self):
+        var = glGetUniformLocation(self.current_shader, b'model_view_matrix')
+        glUniformMatrix4fv(var, 1, False, self.modelview_matrix.column_major())
+
+        var = glGetUniformLocation(self.current_shader,
+                                   b'model_view_projection_matrix')
+        m = self.projection_matrix @ self.modelview_matrix
+        glUniformMatrix4fv(var, 1, False, m.column_major())
+
     def set_modelview_matrix(self, m):
-        original_mode = glGetIntegerv(GL_MATRIX_MODE)
         self.modelview_matrix = m
-        glMatrixMode(GL_MODELVIEW)
-        glLoadMatrixf(m.column_major())
-        glMatrixMode(original_mode)
+        self.set_shader_matrices()
 
     def set_projection_matrix(self, m):
-        original_mode = glGetIntegerv(GL_MATRIX_MODE)
         self.projection_matrix = m
-        glMatrixMode(GL_PROJECTION)
-        glLoadMatrixf(m.column_major())
-        glMatrixMode(original_mode)
+        self.set_shader_matrices()
 
     @glut_callback
     def reshapeFunc(self, width, height):

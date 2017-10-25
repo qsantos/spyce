@@ -8,10 +8,7 @@ from OpenGL.GL import *
 
 def init():
     """Set relevant OpenGL options"""
-    glEnable(GL_TEXTURE_2D)
-
     # fill default texture with white
-    # (for some reasons, this is not the default behavior)
     glBindTexture(GL_TEXTURE_2D, 0)
     glTexImage2D(
         GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_FLOAT,

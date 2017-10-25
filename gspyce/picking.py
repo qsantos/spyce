@@ -7,13 +7,6 @@ class PickingGUI(gspyce.hud.HUD):
     """GUI with object picking using a fragment shader"""
     def __init__(self, title=b"Click to pick!"):
         super().__init__(title)
-
-        # shader management
-        self.default_shader = main_program()
-        self.current_shader = self.default_shader
-        glUseProgram(self.current_shader)
-
-        # configure default features
         self.picking_enabled = False
         self.picking_name = 0
 
@@ -54,20 +47,15 @@ class PickingGUI(gspyce.hud.HUD):
     def set_and_draw(self):
         """Setup the camera and draw"""
         self.pick_reset()
-        self.shader_set()
         super().set_and_draw()
         self.clear_pick_object()
 
     def shader_set(self, program=None):
-        """Change the current shader
-
-        If program is None, use the default shader."""
-        if program is None:
-            program = self.default_shader
-        self.current_shader = program
-        glUseProgram(self.current_shader)
+        super().shader_set(program)
 
         # update uniforms
+        if program is None:
+            program = self.default_shader
         var = glGetUniformLocation(program, b'picking_enabled')
         glUniform1i(var, self.picking_enabled)
         self.set_picking_name(self.picking_name)
