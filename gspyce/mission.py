@@ -12,10 +12,6 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
         self.texture_rocket_on = gspyce.textures.load("rocket_on.png")
         self.texture_rocket_off = gspyce.textures.load("rocket_off.png")
 
-        # texture transparency
-        glAlphaFunc(GL_GREATER, 0.)
-        glEnable(GL_ALPHA_TEST)
-
     def draw_rocket(self):
         """Draw the rocket"""
 
