@@ -1,6 +1,7 @@
 import time
 import collections
 
+from spyce.vector import Mat4
 import gspyce.textures
 import gspyce.scene
 from gspyce.graphics import *
@@ -107,14 +108,14 @@ class HUD(gspyce.scene.Scene):
     def set_and_draw_hud(self):
         """Set up the camera and draw the HUD"""
 
-        # set up OpenGL context for HUD
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        glOrtho(0.0, self.width, self.height, 0.0, -1.0, 10.0)
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glLoadIdentity()
+        # save matrix state
+        original_projection_matrix = self.projection_matrix
+        original_modelview_matrix = self.modelview_matrix
+
+        # set up matrices for HUD
+        transform = Mat4.ortho(0.0, self.width, self.height, 0.0, -1.0, 10.0)
+        self.set_projection_matrix(transform)
+        self.set_modelview_matrix(Mat4())
 
         # reset HUD
         self.texcoords = []
@@ -143,13 +144,11 @@ class HUD(gspyce.scene.Scene):
         glDrawArrays(GL_QUADS, 0, self.text_vbo.size // 2)
         gspyce.textures.unbind()
 
-        # restore OpenGL context
+        # restore state
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
         glDisableClientState(GL_VERTEX_ARRAY)
-        glPopMatrix()
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
+        self.set_modelview_matrix(original_modelview_matrix)
+        self.set_projection_matrix(original_projection_matrix)
 
     @glut_callback
     def displayFunc(self):

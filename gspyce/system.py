@@ -2,6 +2,7 @@ import sys
 import math
 
 import spyce.human
+from spyce.vector import Mat4
 import gspyce.textures
 import gspyce.skybox
 import gspyce.picking
@@ -93,6 +94,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         self.parabola = gspyce.mesh.Parabola(256)
 
         # make call lists for orbits
+        '''
         def make_orbit_call_list(body):
             if body.orbit:
                 body.orbit.call_list = glGenLists(1)
@@ -102,6 +104,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             for satellite in body.satellites:
                 make_orbit_call_list(satellite)
         make_orbit_call_list(self.system)
+        '''
 
         # textures
         gspyce.textures.init()
@@ -138,14 +141,17 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
 
     def draw_orbit(self, orbit, use_vbo=True):
         """Draw an orbit using focus as origin"""
-        glPushMatrix()
+        original_modelview_matrix = self.modelview_matrix
 
         # make tilted ellipse from a circle or tilted hyperbola from a parabola
-        glRotatef(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
-        glRotatef(math.degrees(orbit.inclination),                 1, 0, 0)
-        glRotatef(math.degrees(orbit.argument_of_periapsis),       0, 0, 1)
-        glTranslatef(-orbit.focus, 0, 0)
-        glScalef(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
+        transform = \
+            self.modelview_matrix @ \
+            Mat4.rotate(orbit.longitude_of_ascending_node, 0, 0, 1) @ \
+            Mat4.rotate(orbit.inclination,                 1, 0, 0) @ \
+            Mat4.rotate(orbit.argument_of_periapsis,       0, 0, 1) @ \
+            Mat4.translate(-orbit.focus, 0, 0) @ \
+            Mat4.scale(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
+        self.set_modelview_matrix(transform)
 
         # draw circle or parabola
         mesh = self.circle if orbit.eccentricity < 1. else self.parabola
@@ -169,7 +175,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             glVertex3f(-1, 0, 0)
         glEnd()
 
-        glPopMatrix()
+        self.set_modelview_matrix(original_modelview_matrix)
 
     def draw_orbit_focused(self, body):
         """Draw on orbit using current position as origin"""
@@ -230,23 +236,25 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             # while still using VBOs
             # unsure it can be adapted for parabolic and hyperbolic orbits
 
-            glPushMatrix()
+            original_modelview_matrix = self.modelview_matrix
 
             # make tilted ellipse from a circle
-            glRotatef(math.degrees(orbit.longitude_of_ascending_node), 0, 0, 1)
-            glRotatef(math.degrees(orbit.inclination),                 1, 0, 0)
-            glRotatef(math.degrees(orbit.argument_of_periapsis),       0, 0, 1)
-            glScalef(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
+            transform = \
+                self.modelview_matrix @ \
+                Mat4.rotate(orbit.longitude_of_ascending_node, 0, 0, 1) @ \
+                Mat4.rotate(orbit.inclination,                 1, 0, 0) @ \
+                Mat4.rotate(orbit.argument_of_periapsis,       0, 0, 1) @ \
+                Mat4.scale(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
 
             # account for current position of the body (use circle symmetry)
             anomaly = orbit.eccentric_anomaly_at_time(self.time)
-            glRotatef(math.degrees(anomaly) - 180., 0, 0, 1)
+            transform @= Mat4.rotate(anomaly - math.pi, 0, 0, 1)
 
             # the first point of circle_through_origin is (0,0) (2.)
             # more points are located near the origin (3.)
+            self.set_modelview_matrix(transform)
             self.circle_through_origin.draw()
-
-            glPopMatrix()
+            self.set_modelview_matrix(original_modelview_matrix)
 
             # apses
             glPointSize(5)
@@ -258,31 +266,36 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
     def draw_body(self, body):
         """Draw a CelestialBody"""
 
-        glPushMatrix()
-
-        glTranslatef(*body._relative_position)
+        transform = \
+            self.modelview_matrix @ \
+            Mat4.translate(*body._relative_position)
         self.add_pick_object(body)
 
         # axial tilt
         if body.north_pole is not None:
             z_angle = body.north_pole.ecliptic_longitude - math.pi/2
-            glRotatef(math.degrees(z_angle), 0, 0, 1)
+            transform @= Mat4.rotate(z_angle, 0, 0, 1)
             x_angle = body.north_pole.ecliptic_latitude - math.pi/2
-            glRotatef(math.degrees(x_angle), 1, 0, 0)
+            transform @= Mat4.rotate(x_angle, 1, 0, 0)
 
         # OpenGL use single precision while Python has double precision
         # reducing modulo 2 PI in Python reduces loss of significance
         turn_fraction, _ = math.modf(self.time / body.rotational_period)
-        glRotatef(360. * turn_fraction, 0, 0, 1)
+        transform @= Mat4.rotate(2 * math.pi * turn_fraction, 0, 0, 1)
+
+        # radius
+        transform @= Mat4.scale(body.radius, body.radius, body.radius)
 
         # textured quadric (representation from close by)
         # sphere with radius proportional to that of the body
         gspyce.textures.bind(body.texture, (0.5, 0.5, 1.0))
-        glScalef(body.radius, body.radius, body.radius)
-        self.sphere.draw()
-        gspyce.textures.unbind()
 
-        glPopMatrix()
+        original_modelview_matrix = self.modelview_matrix
+        self.set_modelview_matrix(transform)
+        self.sphere.draw()
+        self.set_modelview_matrix(original_modelview_matrix)
+
+        gspyce.textures.unbind()
 
         glDepthMask(True)
 
@@ -329,14 +342,17 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         # draw orbits
         glColor4f(1.0, 1.0, 0.0, 0.2)
         for body in descendants:  # skip ancestors (see below)
-            glPushMatrix()
-            glTranslatef(*body.orbit.primary._relative_position)
+            original_modelview_matrix = self.modelview_matrix
+            transform = \
+                self.modelview_matrix @ \
+                Mat4.translate(*body.orbit.primary._relative_position)
+            self.set_modelview_matrix(transform)
             self.add_pick_object(body)
             if hasattr(body.orbit, "call_list"):
                 glCallList(body.orbit.call_list)
             else:
                 self.draw_orbit(body.orbit)
-            glPopMatrix()
+            self.set_modelview_matrix(original_modelview_matrix)
 
         # separately draw orbits of ancestors
         # since the focused celestial body  and its ancestors are relatively
@@ -346,11 +362,14 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         for body in ancestors:
             if body.orbit is None:
                 continue
-            glPushMatrix()
-            glTranslatef(*body._relative_position)
+            original_modelview_matrix = self.modelview_matrix
+            transform = \
+                self.modelview_matrix @ \
+                Mat4.translate(*body._relative_position)
+            self.set_modelview_matrix(transform)
             self.add_pick_object(body)
             self.draw_orbit_focused(body)
-            glPopMatrix()
+            self.set_modelview_matrix(original_modelview_matrix)
 
     def set_and_draw(self):
         """Setup the camera and draw"""
@@ -362,9 +381,10 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         self.shader_set()
 
         # skybox
-        glLoadIdentity()
-        glRotatef(self.phi,   1, 0, 0)
-        glRotatef(self.theta, 0, 0, 1)
+        transform = \
+            Mat4.rotate(math.radians(self.phi),   1, 0, 0) @ \
+            Mat4.rotate(math.radians(self.theta), 0, 0, 1)
+        self.set_modelview_matrix(transform)
         glDisable(GL_DEPTH_TEST)
         self.shader_set(self.shader_skybox)
         self.skybox.draw()
@@ -372,10 +392,11 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         glEnable(GL_DEPTH_TEST)
 
         # set up camera
-        glLoadIdentity()
-        glTranslatef(0, 0, -1/self.zoom)
-        glRotatef(self.phi,   1, 0, 0)
-        glRotatef(self.theta, 0, 0, 1)
+        transform = \
+            Mat4.translate(0, 0, -1/self.zoom) @ \
+            Mat4.rotate(math.radians(self.phi),   1, 0, 0) @ \
+            Mat4.rotate(math.radians(self.theta), 0, 0, 1)
+        self.set_modelview_matrix(transform)
 
         self.draw()
         self.clear_pick_object()

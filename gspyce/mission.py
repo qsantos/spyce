@@ -1,5 +1,7 @@
 import time
+from math import radians
 
+from spyce.vector import Mat4
 import gspyce.simulation
 import gspyce.textures
 from gspyce.graphics import *
@@ -17,9 +19,11 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
 
         self.add_pick_object(self.rocket)
 
-        glPushMatrix()
-        glTranslatef(*self.rocket._relative_position)
-        glScalef(1e4, 1e4, 1e4)
+        original_modelview_matrix = self.modelview_matrix
+        transform = self.modelview_matrix @ \
+            Mat4.translate(*self.rocket._relative_position) @ \
+            Mat4.scale(1e4, 1e4, 1e4)
+        self.set_modelview_matrix(transform)
 
         # follow rocket orientation
         (a, b, c), (d, e, f), (g, h, i) = self.rocket.orientation
@@ -45,7 +49,7 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
 
         # all done
         gspyce.textures.unbind()
-        glPopMatrix()
+        self.set_modelview_matrix(original_modelview_matrix)
 
     def draw_body(self, body):
         """Draw a CelestialBody (or a Rocket)"""

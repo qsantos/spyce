@@ -1,5 +1,7 @@
 import sys
+from math import radians
 
+from spyce.vector import Mat4
 from gspyce.graphics import *
 
 
@@ -42,10 +44,13 @@ class Scene:
         glEnable(GL_MULTISAMPLE)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glClearColor(0.0, 0.0, 0.0, 1.0)
+        self.modelview_matrix = Mat4()
+        self.projection_matrix = Mat4()
 
     def draw(self):
         """Draw the scene"""
-        glRotatef(90, 1, 0, 0)
+        transform = self.modelview_matrix @ Mat4.rotate(radians(90), 1, 0, 0)
+        self.set_modelview_matrix(transform)
         glutWireTeapot(1)
 
     def set_and_draw(self):
@@ -53,12 +58,13 @@ class Scene:
 
         # reset everything
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()
 
         # set camera
-        glTranslatef(0, 0, -1/self.zoom)
-        glRotatef(self.phi,   1, 0, 0)
-        glRotatef(self.theta, 0, 0, 1)
+        transform = \
+            Mat4.translate(0, 0, -1/self.zoom) @ \
+            Mat4.rotate(radians(self.phi),   1, 0, 0) @ \
+            Mat4.rotate(radians(self.theta), 0, 0, 1)
+        self.set_modelview_matrix(transform)
 
         # draw!
         self.draw()
@@ -96,13 +102,19 @@ class Scene:
         if k == GLUT_KEY_F11:
             self.toggle_fullscreen()
 
-    def projection_matrix(self):
-        """Make projection matrix"""
-        x, y, width, height = glGetIntegerv(GL_VIEWPORT)
-        aspect = float(height) / float(width)
-        near = .1
-        # see https://stackoverflow.com/a/16459424/4457767
-        glFrustum(-near, near, -near*aspect, near*aspect, 2*near, 1e7)
+    def set_modelview_matrix(self, m):
+        original_mode = glGetIntegerv(GL_MATRIX_MODE)
+        self.modelview_matrix = m
+        glMatrixMode(GL_MODELVIEW)
+        glLoadMatrixf(m.column_major())
+        glMatrixMode(original_mode)
+
+    def set_projection_matrix(self, m):
+        original_mode = glGetIntegerv(GL_MATRIX_MODE)
+        self.projection_matrix = m
+        glMatrixMode(GL_PROJECTION)
+        glLoadMatrixf(m.column_major())
+        glMatrixMode(original_mode)
 
     @glut_callback
     def reshapeFunc(self, width, height):
@@ -111,11 +123,12 @@ class Scene:
         self.width = width
         self.height = height
 
-        # reset projection matrix
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        self.projection_matrix()
-        glMatrixMode(GL_MODELVIEW)
+        aspect = height / width
+        near = .1
+        # see https://stackoverflow.com/a/16459424/4457767
+        self.set_projection_matrix(
+            Mat4.frustrum(-near, near, -near*aspect, near*aspect, 2*near, 1e7)
+        )
 
     @glut_callback
     def passiveMotionFunc(self, x, y):

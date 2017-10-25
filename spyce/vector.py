@@ -1,7 +1,7 @@
 """
 Utilities for linear algebra
 
-We only care 3D:
+We only care about 3D:
   * vectors are lists of length 3
   * matrices are 3-by-3 lists of lists
 """
@@ -140,3 +140,98 @@ class Matrix(list):
     def rotation_deg(cls, angle, x, y, z):
         """Rotation matrix of given angle (degrees) around axis (x,y,z)"""
         return cls.rotation(math.radians(angle), x, y, z)
+
+
+class Mat4:
+    def __init__(self, v=None):
+        if v is None:
+            self.v = [
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1]
+            ]
+        else:
+            self.v = v
+
+    def __sub__(A, B):
+        return Mat4([x - y for a, b in zip(A, B) for x, y in zip(a, b)])
+
+    def __abs__(A):
+        """Maximum metric (see Chebyshev distance)"""
+        return max(abs(a) for a in A)
+
+    def transpose(self):
+        return Mat4(list(zip(*self.v)))
+
+    def __matmul__(self, other):
+        if isinstance(other, Mat4):  # matrix-matrix multiplication
+            m = other.transpose()
+            return Mat4([m @ row for row in self.v])
+        else:  # matrix-vector multiplication
+            return [sum(a * b for a, b in zip(row, other)) for row in self.v]
+
+    def row_major(self):
+        return [v for row in self.v for v in row]
+
+    def column_major(self):
+        return [v for col in zip(*self.v) for v in col]
+
+    @classmethod
+    def translate(cls, x, y, z):
+        """Rotation matrix of given angle (radians) around axis (x,y,z)"""
+        return cls([
+            [1, 0, 0, x],
+            [0, 1, 0, y],
+            [0, 0, 1, z],
+            [0, 0, 0, 1],
+        ])
+
+    @classmethod
+    def scale(cls, x, y, z):
+        """Rotation matrix of given angle (radians) around axis (x,y,z)"""
+        return cls([
+            [x, 0, 0, 0],
+            [0, y, 0, 0],
+            [0, 0, z, 0],
+            [0, 0, 0, 1],
+        ])
+
+    @classmethod
+    def rotate(cls, angle, x, y, z):
+        """Rotation matrix of given angle (radians) around axis (x,y,z)"""
+        s = math.sin(angle)
+        c = math.cos(angle)
+        d = math.sqrt(x*x + y*y + z*z)
+        x, y, z = x/d, y/d, z/d
+        return cls([
+            [x*x*(1-c)+c,   x*y*(1-c)-z*s, x*z*(1-c)+y*s, 0],
+            [y*x*(1-c)+z*s, y*y*(1-c)+c,   y*z*(1-c)-x*s, 0],
+            [z*x*(1-c)-y*s, z*y*(1-c)+x*s, z*z*(1-c)+c,   0],
+            [0, 0, 0, 1],
+        ])
+
+    @classmethod
+    def frustrum(cls, left, right, bottom, top, near, far):
+        A = (right + left) / (right - left)
+        B = (top + bottom) / (top - bottom)
+        C = - (far + near) / (far - near)
+        D = - (2*far * near) / (far - near)
+        return cls([
+            [2 * near / (right - left), 0, A, 0],
+            [0, 2 * near / (top - bottom), B, 0],
+            [0, 0, C, D],
+            [0, 0, -1, 0],
+        ])
+
+    @classmethod
+    def ortho(cls, left, right, bottom, top, near, far):
+        tx = - (right + left) / (right - left)
+        ty = - (top + bottom) / (top - bottom)
+        tz = - (far + near) / (far - near)
+        return cls([
+            [2 / (right - left), 0, 0, tx],
+            [0, 2 / (top - bottom), 0, ty],
+            [0, 0, -2 / (far - near), tz],
+            [0, 0, 0, 1],
+        ])
