@@ -65,18 +65,12 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         if self.system.name == 'Sun':
             self.time = spyce.human.seconds_since_J2000()
 
-        glEnable(GL_POINT_SPRITE)
         self.shader_position_marker = main_program("circle_point")
 
         # lighting shader
         self.shader_lighting = main_program("lighting")
-        # set up light
-        glLightfv(GL_LIGHT0, GL_AMBIENT,  [1, 1, 1, 1])
-        glLightfv(GL_LIGHT0, GL_DIFFUSE,  [3, 3, 3, 1])
-        glLightfv(GL_LIGHT0, GL_SPECULAR, [1, 1, 1, 1])
-        # set up material for planets
-        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.3, 0.3, 0.3, 1])
-        glMateriali(GL_FRONT, GL_SHININESS, 16)
+        self.lighting_source = \
+            glGetUniformLocation(self.shader_lighting, b'lighting_source')
 
         # skybox shader
         self.shader_skybox = main_program('cubemap')
@@ -316,13 +310,16 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         self.sphere.bind()
         # draw system star individually (without lighting)
         self.draw_body(self.system)
-        # draw planets and moons (with lighting)
-        glLightfv(GL_LIGHT0, GL_POSITION, self.system._relative_position)
+        # enable lighting and place light source
         self.shader_set(self.shader_lighting)
+        x, y, z, _ = self.modelview_matrix @ self.system._relative_position
+        glUniform3f(self.lighting_source, x, y, z)
+        # draw planets and moons (with lighting)
         for body in bodies:
             if body is self.system:
                 continue
             self.draw_body(body)
+        # clean
         self.shader_set()
         self.sphere.unbind()
 
@@ -336,6 +333,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             self.add_pick_object(body, GL_POINTS)
             glVertex3f(*body._relative_position)
         glEnd()
+        # clean
         self.shader_set()
         glDepthMask(True)
 
