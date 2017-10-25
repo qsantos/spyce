@@ -72,7 +72,7 @@ class Rocket(spyce.body.CelestialBody):
         self.primary = primary
 
         self.orientation = Mat3()
-        self.rotate_deg(90, 0, 1, 0)
+        self.rotate(math.pi / 2, 0, 1, 0)
 
         self.resume_time_program = 0
         self.resume_time_escape = 0
@@ -277,7 +277,7 @@ class Rocket(spyce.body.CelestialBody):
         self.update_parts()
         return self
 
-    def rotate_deg(self, angle, x, y, z):
+    def rotate(self, angle, x, y, z):
         """Rotate `angle` degrees along axis (x,y,z)"""
-        self.orientation *= Mat3.rotation(math.radians(angle), x, y, z)
+        self.orientation *= Mat3.rotation(angle, x, y, z)
         self.prograde = self.orientation * [0, 0, 1]

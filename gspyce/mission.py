@@ -120,10 +120,10 @@ def main():
         sim.log("Phase 1 (vertical take-off)")
         yield lambda: rocket.position[0] > 610e3
         sim.log("Phase 2 (start of gravity turn)")
-        rocket.rotate_deg(-45, 1, 0, 0)
+        rocket.rotate(radians(-45), 1, 0, 0)
         yield lambda: rocket.orbit.apoapsis > 675e3
         sim.log("Phase 3 (end of gravity turn)")
-        rocket.rotate_deg(-45, 1, 0, 0)
+        rocket.rotate(radians(-45), 1, 0, 0)
         yield lambda: rocket.orbit.apoapsis > 700e3
         sim.log("Phase 4 (coasting)")
         rocket.throttle = 0.
@@ -131,7 +131,7 @@ def main():
         # circularizing
         yield lambda: rocket.position.norm() > 699e3
         sim.log("Phase 5 (circularizing)")
-        rocket.rotate_deg(-20, 1, 0, 0)
+        rocket.rotate(radians(-20), 1, 0, 0)
         rocket.throttle = 1.0
         yield lambda: rocket.orbit.periapsis > 695e3
         sim.log("In orbit")
@@ -142,7 +142,7 @@ def main():
 
         sim.log("Onto the Mun!")
         rocket.throttle = 1.0
-        rocket.rotate_deg(58.0515, 1, 0, 0)
+        rocket.rotate(radians(58.0515), 1, 0, 0)
 
         yield lambda: rocket.propellant <= 0.
         sim.log("Out of propellant!")
