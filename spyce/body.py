@@ -1,7 +1,7 @@
 import re
 import math
 
-import spyce.vector
+from spyce.vector import Vec3
 import spyce.physics
 
 
@@ -107,7 +107,7 @@ class CelestialBody:
     def global_position_at_time(self, time):
         """Global position of the celestial body within the stellar system"""
         if self.orbit is None:
-            return spyce.vector.Vector([0, 0, 0])
+            return Vec3([0, 0, 0])
         primary_position = self.orbit.primary.global_position_at_time(time)
         return primary_position + self.orbit.position_at_time(time)
 

@@ -1,6 +1,6 @@
 import math
 
-import spyce.vector
+from spyce.vector import Mat3
 import spyce.orbit_determination
 import spyce.orbit_angles
 import spyce.orbit_state
@@ -85,7 +85,7 @@ class Orbit(
         else:  # circular/elliptic orbit
             self.period = 2*math.pi / self.mean_motion
 
-        self.transform = spyce.vector.Matrix.from_euler_angles(
+        self.transform = Mat3.from_euler_angles(
             self.longitude_of_ascending_node,
             self.inclination,
             self.argument_of_periapsis,

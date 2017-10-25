@@ -1,6 +1,6 @@
 import math
 
-import spyce.vector
+from spyce.vector import Vec3
 
 
 class OrbitState:
@@ -48,7 +48,7 @@ class OrbitState:
         e = self.eccentricity
 
         x = self.semi_latus_rectum*e*s/(1+e*c)**2
-        v = spyce.vector.Vector([-distance*s + x*c, distance*c + x*s, 0])
+        v = Vec3([-distance*s + x*c, distance*c + x*s, 0])
 
         norm_v = v.norm()
         speed = self.speed_at_true_anomaly(true_anomaly)

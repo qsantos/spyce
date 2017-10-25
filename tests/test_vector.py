@@ -3,22 +3,22 @@ import unittest
 import math
 import random
 
-from spyce.vector import Vector, Matrix
+from spyce.vector import Vec3, Mat3
 
 
 class TestVector(unittest.TestCase):
     def test_vector(self):
 
         # shorthands
-        def norm(u): return Vector(u).norm()
+        def norm(u): return Vec3(u).norm()
 
-        def dot(u, v): return Vector(u).dot(Vector(v))
+        def dot(u, v): return Vec3(u).dot(Vec3(v))
 
-        def cross(u, v): return Vector(u).cross(Vector(v))
+        def cross(u, v): return Vec3(u).cross(Vec3(v))
 
-        def angle(u, v): return Vector(u).angle(Vector(v))
+        def angle(u, v): return Vec3(u).angle(Vec3(v))
 
-        def oriented_angle(u, v): return Vector(u).oriented_angle(Vector(v))
+        def oriented_angle(u, v): return Vec3(u).oriented_angle(Vec3(v))
 
         # easily verified
         self.assertEqual(dot([1, 0, 0], [0, 1, 1]), 0)
@@ -40,9 +40,9 @@ class TestVector(unittest.TestCase):
 
     def test_matrix(self):
         # easily verified
-        i = Matrix.identity()
-        m = Matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]])
-        r = Matrix.rotation(math.pi/2, 1, 0, 0)
+        i = Mat3()
+        m = Mat3([[2, 0, 0], [0, 2, 0], [0, 0, 2]])
+        r = Mat3.rotation(math.pi/2, 1, 0, 0)
         self.assertEqual(i * [1, 2, 3], [1, 2, 3])
         self.assertEqual(m * [1, 2, 3], [2, 4, 6])
         self.assertEqual(i * i, i)
@@ -50,8 +50,8 @@ class TestVector(unittest.TestCase):
         self.assertAlmostEqual([[1, 0, 0], [0, 0, -1], [0, 1, 0]], r)
 
         # initial results
-        A = Matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-        B = Matrix([[3, 2, 1], [6, 5, 4], [9, 8, 7]])
+        A = Mat3([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+        B = Mat3([[3, 2, 1], [6, 5, 4], [9, 8, 7]])
         self.assertEqual(A * B, [[42, 36, 30], [96, 81, 66], [150, 126, 102]])
         self.assertEqual(B * A, [[18, 24, 30], [54, 69, 84], [90, 114, 138]])
 
@@ -60,17 +60,17 @@ class TestVector(unittest.TestCase):
             a = random.uniform(0, math.pi)
             x = random.uniform(0, 1)
             y = random.uniform(0, 1)
-            r = Matrix.rotation(a, 0, 0, 1)
-            u = Vector([x, y, 0])
+            r = Mat3.rotation(a, 0, 0, 1)
+            u = Vec3([x, y, 0])
             v = r * u
             self.assertAlmostEqual(a, u.angle(v))
 
-        m = Matrix([
+        m = Mat3([
             [0.33482917221585295, 0.8711838511445769, -0.3590656248350022],
             [-0.66651590413407, 0.4883301324737331, 0.5632852130622015],
             [0.6660675453507625, 0.050718627969319086, 0.7441650662368666],
         ])
-        r = Matrix.rotation(5, 1, 2, 3)
+        r = Mat3.rotation(5, 1, 2, 3)
         self.assertAlmostEqual(r, m)
 
 

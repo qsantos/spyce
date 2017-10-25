@@ -1,7 +1,7 @@
 import sys
 import math
 
-import spyce.vector
+from spyce.vector import Vec3
 import spyce.orbit_angles
 
 
@@ -123,13 +123,13 @@ class OrbitDetermination:
         speed = velocity.norm()
         mu = primary.gravitational_parameter
 
-        x_axis = spyce.vector.Vector([1, 0, 0])
-        z_axis = spyce.vector.Vector([0, 0, 1])
+        x_axis = Vec3([1, 0, 0])
+        z_axis = Vec3([0, 0, 1])
         orbital_plane_normal_vector = position.cross(velocity)
 
         # eccentricity
         rv = position.dot(velocity)
-        eccentricity_vector = spyce.vector.Vector([
+        eccentricity_vector = Vec3([
             (speed**2 * p - rv*v)/mu - p/distance
             for p, v in zip(position, velocity)
         ])

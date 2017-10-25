@@ -9,7 +9,7 @@ We only care about 3D:
 import math
 
 
-class Vector(list):
+class Vec3(list):
     def norm(u):
         return math.sqrt(u.dot(u))
 
@@ -23,7 +23,7 @@ class Vector(list):
         """Cross product"""
         u1, u2, u3 = u
         v1, v2, v3 = v
-        return Vector([
+        return Vec3([
             u2*v3 - u3*v2,
             u3*v1 - u1*v3,
             u1*v2 - u2*v1,
@@ -38,7 +38,7 @@ class Vector(list):
     def oriented_angle(u, v, normal=None):
         """Angle formed by two vectors"""
         if normal is None:
-            normal = Vector([0, 0, 1])
+            normal = Vec3([0, 0, 1])
         geometric_angle = u.angle(v)
         if normal.dot(u.cross(v)) < 0:
             return -geometric_angle
@@ -47,68 +47,63 @@ class Vector(list):
 
     def __mul__(u, s):
         x, y, z = u
-        return Vector([x*s, y*s, z*s])
+        return Vec3([x*s, y*s, z*s])
 
     def __div__(u, s):
         x, y, z = u
-        return Vector([x/s, y/s, z/s])
+        return Vec3([x/s, y/s, z/s])
 
     def __add__(u, v):
         x, y, z = u
         a, b, c = v
-        return Vector([x+a, y+b, z+c])
+        return Vec3([x+a, y+b, z+c])
 
     def __iadd__(u, v):
         x, y, z = u
         a, b, c = v
-        return Vector([x+a, y+b, z+c])
+        return Vec3([x+a, y+b, z+c])
 
     def __sub__(u, v):
         x, y, z = u
         a, b, c = v
-        return Vector([x-a, y-b, z-c])
+        return Vec3([x-a, y-b, z-c])
 
     def __isub__(u, v):
         x, y, z = u
         a, b, c = v
-        return Vector([x-a, y-b, z-c])
+        return Vec3([x-a, y-b, z-c])
 
     def __neg__(u):
         x, y, z = u
-        return Vector([-x, -y, -z])
+        return Vec3([-x, -y, -z])
 
     def __abs__(u):
         """Maximum metric (see Chebyshev distance)"""
         return max(u)
 
 
-class Matrix(list):
+class Mat3(list):
+    def __init__(cls, *args, **kwargs):
+        if args or kwargs:
+            super().__init__(*args, **kwargs)
+        else:
+            super().__init__([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+
     def __sub__(A, B):
-        return Matrix([x-y for a, b in zip(A, B) for x, y in zip(a, b)])
+        # used by assertAlmostEqual()
+        return Mat3([x-y for a, b in zip(A, B) for x, y in zip(a, b)])
 
     def __abs__(A):
         """Maximum metric (see Chebyshev distance)"""
+        # used by assertAlmostEqual()
         return max(abs(a) for a in A)
 
     def __mul__(self, x):
-        if isinstance(x, Matrix):  # matrix-matrix multiplication
-            m = Matrix(zip(*x))
-            return Matrix([m*row for row in self])
+        if isinstance(x, Mat3):  # matrix-matrix multiplication
+            m = Mat3(zip(*x))
+            return Mat3([m*row for row in self])
         else:  # matrix-vector multiplication
-            # 3x3 version (optimized)
-            [a, b, c], [d, e, f], [g, h, i] = self
-            x, y, z = x
-            return Vector([
-                a*x + b*y + c*z,
-                d*x + e*y + f*z,
-                g*x + h*y + i*z,
-            ])
-            # generic version
-            # return Vector([sum(a*b for a, b in zip(row, x)) for row in self])
-
-    @classmethod
-    def identity(cls):
-        return cls([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+            return Vec3([sum(a*b for a, b in zip(row, x)) for row in self])
 
     @classmethod
     def rotation(cls, angle, x, y, z):
@@ -135,11 +130,6 @@ class Matrix(list):
             [c3*s1+c1*c2*s3, c1*c2*c3-s1*s3,  -c1*s2],
             [s2*s3,          c3*s2,           c2],
         ])
-
-    @classmethod
-    def rotation_deg(cls, angle, x, y, z):
-        """Rotation matrix of given angle (degrees) around axis (x,y,z)"""
-        return cls.rotation(math.radians(angle), x, y, z)
 
 
 class Mat4:

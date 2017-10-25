@@ -1,6 +1,6 @@
 import math
 
-from spyce.vector import Vector, Matrix
+from spyce.vector import Vec3, Mat3
 import spyce.physics
 import spyce.body
 import spyce.orbit
@@ -62,16 +62,16 @@ class Rocket(spyce.body.CelestialBody):
         self.name = "rocket"
         self.satellites = []
 
-        self.acceleration = Vector([0, 0, 0])
+        self.acceleration = Vec3([0, 0, 0])
         if primary is None:
-            self.velocity = Vector([0, 0, 0])
-            self.position = Vector([0, 0, 0])
+            self.velocity = Vec3([0, 0, 0])
+            self.position = Vec3([0, 0, 0])
         else:
-            self.velocity = Vector([0, primary.surface_velocity, 0])
-            self.position = Vector([primary.radius, 0, 0])
+            self.velocity = Vec3([0, primary.surface_velocity, 0])
+            self.position = Vec3([primary.radius, 0, 0])
         self.primary = primary
 
-        self.orientation = Matrix.identity()
+        self.orientation = Mat3()
         self.rotate_deg(90, 0, 1, 0)
 
         self.resume_time_program = 0
@@ -175,10 +175,10 @@ class Rocket(spyce.body.CelestialBody):
             mass = self.dry_mass + self.propellant
             thrust = self.prograde*(self.max_thrust*thrust_ratio/mass)
         else:
-            thrust = Vector([0, 0, 0])
+            thrust = Vec3([0, 0, 0])
 
         def f(t, y):
-            position, velocity = Vector(y[:3]), y[3:]
+            position, velocity = Vec3(y[:3]), y[3:]
 
             # gravity
             if self.primary:
@@ -186,7 +186,7 @@ class Rocket(spyce.body.CelestialBody):
                 g = self.primary.gravity(distance)
                 acceleration = position * (-g/distance)
             else:
-                acceleration = Vector([0, 0, 0])
+                acceleration = Vec3([0, 0, 0])
 
             # propulsion
             acceleration += thrust
@@ -196,8 +196,8 @@ class Rocket(spyce.body.CelestialBody):
         # update velocity and position
         y = self.position[:] + self.velocity
         y = spyce.analysis.runge_kutta_4(f, t, y, dt)
-        self.position = Vector(y[:3])
-        self.velocity = Vector(y[3:])
+        self.position = Vec3(y[:3])
+        self.velocity = Vec3(y[3:])
 
         self.update_orbit(t + dt)
 
@@ -279,5 +279,5 @@ class Rocket(spyce.body.CelestialBody):
 
     def rotate_deg(self, angle, x, y, z):
         """Rotate `angle` degrees along axis (x,y,z)"""
-        self.orientation *= Matrix.rotation_deg(angle, x, y, z)
+        self.orientation *= Mat3.rotation(math.radians(angle), x, y, z)
         self.prograde = self.orientation * [0, 0, 1]
