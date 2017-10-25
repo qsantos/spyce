@@ -95,7 +95,7 @@ class PickingGUI(gspyce.hud.HUD):
 
     def draw(self):
         """Draw the scene"""
-        glColor4f(1, 1, 1, 1)
+        self.set_color(1, 1, 1, 1)
         self.add_pick_object("the sphere")
         glutSolidSphere(1, 16, 16)
 
@@ -103,25 +103,25 @@ class PickingGUI(gspyce.hud.HUD):
 
         transform @= Mat4.translate(-4, -4, 0)
         self.set_modelview_matrix(transform)
-        glColor4f(1, 0, 0, 1)
+        self.set_color(1, 0, 0, 1)
         self.add_pick_object("the cube")
         glutSolidCube(2)
 
         transform @= Mat4.translate(0, 8, 0)
         self.set_modelview_matrix(transform)
-        glColor4f(1, 1, 0, 1)
+        self.set_color(1, 1, 0, 1)
         self.add_pick_object("the torus")
         glutSolidTorus(1, 2, 16, 16)
 
         transform @= Mat4.translate(8, 0, 0)
         self.set_modelview_matrix(transform)
-        glColor4f(0, 0, 1, 1)
+        self.set_color(0, 0, 1, 1)
         self.add_pick_object("the cone")
         glutSolidCone(1, 2, 16, 16)
 
         transform @= Mat4.translate(0, -8, 0) @ Mat4.scale(.5, .5, .5)
         self.set_modelview_matrix(transform)
-        glColor4f(0, 1, 1, 1)
+        self.set_color(0, 1, 1, 1)
         self.add_pick_object("the dodecahedron")
         glutSolidDodecahedron()
 

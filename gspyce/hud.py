@@ -136,9 +136,9 @@ class HUD(gspyce.scene.Scene):
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
 
         # actually draw
-        gspyce.textures.bind(self.font)
+        glBindTexture(GL_TEXTURE_2D, self.font)
         glDrawArrays(GL_QUADS, 0, self.text_vbo.size // 2)
-        gspyce.textures.unbind()
+        glBindTexture(GL_TEXTURE_2D, 0)
 
         # restore state
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)

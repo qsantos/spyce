@@ -37,9 +37,9 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
 
         # pick correct texture
         if self.rocket.throttle == 0:
-            gspyce.textures.bind(self.texture_rocket_off)
+            glBindTexture(GL_TEXTURE_2D, self.texture_rocket_off)
         else:
-            gspyce.textures.bind(self.texture_rocket_on)
+            glBindTexture(GL_TEXTURE_2D, self.texture_rocket_on)
 
         # draw texture
         glDisable(GL_CULL_FACE)
@@ -52,7 +52,7 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
         glEnable(GL_CULL_FACE)
 
         # all done
-        gspyce.textures.unbind()
+        glBindTexture(GL_TEXTURE_2D, 0)
         self.set_modelview_matrix(original_modelview_matrix)
 
     def draw_body(self, body):

@@ -282,14 +282,21 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
 
         # textured quadric (representation from close by)
         # sphere with radius proportional to that of the body
-        gspyce.textures.bind(body.texture, (0.5, 0.5, 1.0))
+        if body.texture:
+            glBindTexture(GL_TEXTURE_2D, body.texture)
+        else:
+            original_color = self.color
+            self.set_color(.5, .5, 1., 1.)
 
         original_modelview_matrix = self.modelview_matrix
         self.set_modelview_matrix(transform)
         self.sphere.draw()
         self.set_modelview_matrix(original_modelview_matrix)
 
-        gspyce.textures.unbind()
+        if body.texture:
+            glBindTexture(GL_TEXTURE_2D, 0)
+        else:
+            self.set_color(*original_color)
 
         glDepthMask(True)
 
@@ -327,8 +334,8 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         glPointSize(20)
         glDepthMask(False)
         self.shader_set(self.shader_position_marker)
+        self.set_color(1, 0, 0, 0.5)
         glBegin(GL_POINTS)
-        glColor4f(1, 0, 0, 0.5)
         for body in bodies:
             self.add_pick_object(body, GL_POINTS)
             glVertex3f(*body._relative_position)
@@ -338,7 +345,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         glDepthMask(True)
 
         # draw orbits
-        glColor4f(1.0, 1.0, 0.0, 0.2)
+        self.set_color(1.0, 1.0, 0.0, 0.2)
         for body in descendants:  # skip ancestors (see below)
             original_modelview_matrix = self.modelview_matrix
             transform = \
@@ -356,7 +363,7 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         # since the focused celestial body  and its ancestors are relatively
         # close to the camera, it is best to draw them with the origin the
         # orbit, rather than at the primary
-        glColor4f(1.0, 1.0, 0.0, 1.0)
+        self.set_color(1.0, 1.0, 0.0, 1.0)
         for body in ancestors:
             if body.orbit is None:
                 continue

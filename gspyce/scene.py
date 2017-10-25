@@ -45,8 +45,6 @@ class Scene:
         glEnable(GL_MULTISAMPLE)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glClearColor(0.0, 0.0, 0.0, 1.0)
-        self.modelview_matrix = Mat4()
-        self.projection_matrix = Mat4()
 
         # initialize textures
         gspyce.textures.init()
@@ -56,6 +54,9 @@ class Scene:
         self.default_shader = program
         self.current_shader = program
         glUseProgram(program)
+        self.modelview_matrix = Mat4()
+        self.projection_matrix = Mat4()
+        self.set_color(1., 1., 1., 1.)
 
     def draw(self):
         """Draw the scene"""
@@ -95,6 +96,10 @@ class Scene:
             program = self.default_shader
         self.current_shader = program
         glUseProgram(self.current_shader)
+
+        self.set_shader_matrices()
+        var = glGetUniformLocation(self.current_shader, b'color')
+        glUniform4f(var, *self.color)
 
     def toggle_fullscreen(self, enable=None):
         """Toggle fullscreen mode
@@ -145,6 +150,11 @@ class Scene:
     def set_projection_matrix(self, m):
         self.projection_matrix = m
         self.set_shader_matrices()
+
+    def set_color(self, r, g, b, a):
+        self.color = (r, g, b, a)
+        var = glGetUniformLocation(self.current_shader, b'color')
+        glUniform4f(var, *self.color)
 
     @glut_callback
     def reshapeFunc(self, width, height):

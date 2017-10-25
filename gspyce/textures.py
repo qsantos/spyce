@@ -16,21 +16,6 @@ def init():
     )
 
 
-def bind(tex_id, default_color=(1.0, 1.0, 1.0)):
-    """Bind texture if non-null; otherwise fill with default color"""
-    if tex_id == 0:
-        r, g, b = default_color
-        glColor4f(r, g, b, 1.0)
-    else:
-        glColor4f(1.0, 1.0, 1.0, 1.0)
-        glBindTexture(GL_TEXTURE_2D, tex_id)
-
-
-def unbind():
-    """Unbind texture"""
-    glBindTexture(GL_TEXTURE_2D, 0)
-
-
 try:
     from PIL import Image
 except ImportError:
