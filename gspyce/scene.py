@@ -37,7 +37,6 @@ class Scene:
 
         # OpenGL init
         glEnable(GL_CULL_FACE)  # one-way faces
-        glEnable(GL_POINT_SMOOTH)  # may make GL_POINTS round
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
         glEnable(GL_MULTISAMPLE)
