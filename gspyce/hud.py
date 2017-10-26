@@ -136,6 +136,7 @@ class HUD(gspyce.scene.Scene):
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
 
         # actually draw
+        self.set_color(1, 1, 1, 1)
         glBindTexture(GL_TEXTURE_2D, self.font)
         glDrawArrays(GL_QUADS, 0, self.text_vbo.size // 2)
         glBindTexture(GL_TEXTURE_2D, 0)
