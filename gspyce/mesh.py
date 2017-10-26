@@ -81,6 +81,34 @@ class Mesh:
             self.unbind()
 
 
+class Generic(Mesh):
+    def __init__(self, mode, vertices):
+        self.vertices_ = vertices
+        super().__init__(mode)
+
+    def vertices(self):
+        yield from self.vertices_
+
+
+class Square(Mesh):
+    def __init__(self, size):
+        self.size = size
+        super().__init__(GL_QUADS)
+
+    def vertices(self):
+        s = self.size
+        yield -s, 0, -s
+        yield -s, 0, +s
+        yield +s, 0, +s
+        yield +s, 0, -s
+
+    def texcoords(self):
+        yield 0, 0
+        yield 0, 1
+        yield 1, 1
+        yield 1, 0
+
+
 class Sphere(Mesh):
     """Mesh: UV sphere centered on (0, 0, 0)"""
     def __init__(self, radius, slices, stacks):

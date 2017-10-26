@@ -4,6 +4,7 @@ from math import radians
 from spyce.vector import Mat4
 import gspyce.simulation
 import gspyce.textures
+import gspyce.mesh
 from gspyce.graphics import *
 
 
@@ -11,6 +12,7 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.rocket_mesh = gspyce.mesh.Square(1)
         self.texture_rocket_on = gspyce.textures.load("rocket_on.png")
         self.texture_rocket_off = gspyce.textures.load("rocket_off.png")
 
@@ -43,12 +45,7 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
 
         # draw texture
         glDisable(GL_CULL_FACE)
-        glBegin(GL_QUADS)
-        glTexCoord2f(0, 0) or glVertex3f(-1, 0, -1)
-        glTexCoord2f(0, 1) or glVertex3f(-1, 0, +1)
-        glTexCoord2f(1, 1) or glVertex3f(+1, 0, +1)
-        glTexCoord2f(1, 0) or glVertex3f(+1, 0, -1)
-        glEnd()
+        self.rocket_mesh.draw()
         glEnable(GL_CULL_FACE)
 
         # all done

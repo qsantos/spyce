@@ -17,22 +17,14 @@ class PickingGUI(gspyce.hud.HUD):
         var = glGetUniformLocation(self.current_shader, b'picking_name')
         glUniform3f(var, r, g, b)
 
-    def add_pick_object(self, thing, mode=None):
+    def add_pick_object(self, thing):
         """Register `thing` for picking
 
-        Anything drawn afterwards is assumed to be part of `thing`.
-        Can be used within a glBegin/glEnd scope, if `mode` is given"""
+        Anything drawn afterwards is assumed to be part of `thing`."""
         self.pick_objects.append(thing)
         self.picking_name = len(self.pick_objects)
-
         if self.picking_enabled:
-            if mode is None:
-                self.set_picking_name(self.picking_name)
-            else:
-                # pause the current glBegin/glEnd group
-                glEnd()
-                self.set_picking_name(self.picking_name)
-                glBegin(mode)
+            self.set_picking_name(self.picking_name)
 
     def clear_pick_object(self):
         """Clear the current pickable object"""

@@ -208,12 +208,9 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         glDepthMask(False)
         self.shader_set(self.shader_position_marker)
         self.set_color(1, 0, 0, 0.5)
-        glBegin(GL_POINTS)
-        for body in bodies:
-            self.add_pick_object(body, GL_POINTS)
-            glVertex3f(*body._relative_position)
-        glEnd()
-        # clean
+        self.clear_pick_object()
+        points = (body._relative_position for body in bodies)
+        gspyce.mesh.Generic(GL_POINTS, points).draw()
         self.shader_set()
         glDepthMask(True)
 
