@@ -83,34 +83,30 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         self.sphere = gspyce.mesh.Sphere(1, 64, 64)
 
         # meshes for drawing orbits
-        self.circle = gspyce.mesh.Circle(1, 512)
         self.circle_through_origin = gspyce.mesh.CircleThroughOrigin(1, 256)
-        self.parabola = gspyce.mesh.Parabola(256)
 
-        # make call lists for orbits
-        '''
-        def make_orbit_call_list(body):
-            if body.orbit:
-                body.orbit.call_list = glGenLists(1)
-                glNewList(body.orbit.call_list, GL_COMPILE)
-                self.draw_orbit(body.orbit, use_vbo=False)
-                glEndList()
+        # collect list of all bodies
+        self.bodies = []
+
+        def collect_bodies(body):
+            self.bodies.append(body)
             for satellite in body.satellites:
-                make_orbit_call_list(satellite)
-        make_orbit_call_list(self.system)
-        '''
+                collect_bodies(satellite)
+        collect_bodies(self.system)
+
+        # orbit meshes
+        for body in self.bodies:
+            if body.orbit is None:
+                continue
+            body.orbit.mesh = gspyce.mesh.OrbitMesh(body.orbit)
+            body.orbit.apses_mesh = gspyce.mesh.ApsesMesh(body.orbit)
 
         # textures
         gspyce.textures.init()
         texture_directory = self.system._texture_directory
-
-        def load_body(body):
-            """Recursively load textures for celestial bodies"""
+        for body in self.bodies:
             filename = "%s.jpg" % body.name
             body.texture = gspyce.textures.load(texture_directory, filename)
-            for satellite in body.satellites:
-                load_body(satellite)
-        load_body(self.system)
 
         # skybox
         self.skybox = gspyce.skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
@@ -133,48 +129,10 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
 
         return cls(body)
 
-    def draw_orbit(self, orbit, use_vbo=True):
-        """Draw an orbit using focus as origin"""
-        original_modelview_matrix = self.modelview_matrix
-
-        # make tilted ellipse from a circle or tilted hyperbola from a parabola
-        self.set_modelview_matrix(
-            self.modelview_matrix @
-            Mat4.rotate(orbit.longitude_of_ascending_node, 0, 0, 1) @
-            Mat4.rotate(orbit.inclination,                 1, 0, 0) @
-            Mat4.rotate(orbit.argument_of_periapsis,       0, 0, 1) @
-            Mat4.translate(-orbit.focus, 0, 0) @
-            Mat4.scale(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
-        )
-
-        # draw circle or parabola
-        mesh = self.circle if orbit.eccentricity < 1. else self.parabola
-        if use_vbo:
-            mesh.draw()
-        else:
-            # quick fix to allow drawing in display lists
-            # TODO: not use display lists
-            glBegin(mesh.mode)
-            for v in mesh.vertices():
-                glVertex2f(*v)
-            glEnd()
-
-        # apses
-        glPointSize(5)
-        glBegin(GL_POINTS)
-        # periapsis
-        glVertex3f(+1, 0, 0)
-        if orbit.eccentricity < 1.:  # circular and elliptic orbits
-            # apoapsis
-            glVertex3f(-1, 0, 0)
-        glEnd()
-
-        self.set_modelview_matrix(original_modelview_matrix)
-
     def draw_orbit_focused(self, body):
         """Draw on orbit using current position as origin"""
 
-        # issues when drawing the orbit a focused body:
+        # issues when drawing the orbit of a focused body:
         # 1. moving to system center and back close to camera induces
         #    loss of significance and produces jitter
         # 2. drawing the orbit as segments may put the body visibly out
@@ -343,19 +301,21 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         glDepthMask(True)
 
         # draw orbits
+        glPointSize(5)
         self.set_color(1.0, 1.0, 0.0, 0.2)
+        original_modelview_matrix = self.modelview_matrix
         for body in descendants:  # skip ancestors (see below)
-            original_modelview_matrix = self.modelview_matrix
             self.set_modelview_matrix(
-                self.modelview_matrix @
+                original_modelview_matrix @
                 Mat4.translate(*body.orbit.primary._relative_position)
             )
             self.add_pick_object(body)
-            if hasattr(body.orbit, "call_list"):
-                glCallList(body.orbit.call_list)
-            else:
-                self.draw_orbit(body.orbit)
-            self.set_modelview_matrix(original_modelview_matrix)
+            if not hasattr(body.orbit, "mesh"):
+                body.orbit.mesh = gspyce.mesh.OrbitMesh(body.orbit)
+                body.orbit.apses_mesh = gspyce.mesh.ApsesMesh(body.orbit)
+            body.orbit.mesh.draw()
+            body.orbit.apses_mesh.draw()
+        self.set_modelview_matrix(original_modelview_matrix)
 
         # separately draw orbits of ancestors
         # since the focused celestial body  and its ancestors are relatively

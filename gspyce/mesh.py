@@ -1,5 +1,6 @@
 import math
 
+from spyce.vector import Vec4, Mat4
 from gspyce.graphics import *
 
 
@@ -175,3 +176,46 @@ class Parabola(Mesh):
             x = 2*i/(self.points-1) - 1  # from -1.0 to +1.0
             theta = math.pi * x
             yield math.cosh(theta), math.sinh(theta)
+
+
+class OrbitMesh(Mesh):
+    def __init__(self, orbit):
+        self.orbit = orbit
+        mode = GL_LINE_LOOP if orbit.eccentricity < 1. else GL_LINE_STRIP
+        super().__init__(mode)
+
+    def vertices(self):
+        orbit = self.orbit
+        transform = (
+            Mat4.rotate(orbit.longitude_of_ascending_node, 0, 0, 1) @
+            Mat4.rotate(orbit.inclination,                 1, 0, 0) @
+            Mat4.rotate(orbit.argument_of_periapsis,       0, 0, 1) @
+            Mat4.translate(-orbit.focus, 0, 0) @
+            Mat4.scale(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
+        )
+        if orbit.eccentricity < 1.:
+            base_mesh = Circle(1, 512)
+        else:
+            base_mesh = Parabola(256)
+        for vertice in base_mesh.vertices():
+            yield transform @ Vec4(*vertice)
+
+
+class ApsesMesh(Mesh):
+    def __init__(self, orbit):
+        self.orbit = orbit
+        self.transform = (
+            Mat4.rotate(orbit.longitude_of_ascending_node, 0, 0, 1) @
+            Mat4.rotate(orbit.inclination,                 1, 0, 0) @
+            Mat4.rotate(orbit.argument_of_periapsis,       0, 0, 1) @
+            Mat4.translate(-orbit.focus, 0, 0) @
+            Mat4.scale(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0)
+        )
+        super().__init__(GL_POINTS)
+
+    def vertices(self):
+        # periapsis
+        yield self.transform @ Vec4(+1)
+        if self.orbit.eccentricity < 1.:  # circular and elliptic orbits
+            # apoapsis
+            yield self.transform @ Vec4(-1)

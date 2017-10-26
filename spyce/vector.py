@@ -132,6 +132,11 @@ class Mat3(list):
         ])
 
 
+class Vec4(list):
+    def __init__(cls, x=0, y=0, z=0, w=1):
+        super().__init__([x, y, z, w])
+
+
 class Mat4:
     def __init__(self, v=None):
         if v is None:
