@@ -60,15 +60,15 @@ class Scene:
 
     def draw(self):
         """Draw the scene"""
-        transform = self.modelview_matrix @ \
-            Mat4.rotate(radians(90), 1, 0, 0)
+        self.set_modelview_matrix(
+            self.modelview_matrix @
+            Mat4.rotate(radians(90), 1, 0, 0) @
+            # fixed-pipeline transforms in glutWireTeapot() (freeglut_teapot.c)
+            Mat4.rotate(radians(270.0), 1, 0, 0) @
+            Mat4.scale(.5, .5, .5) @
+            Mat4.translate(0, 0, -1.5)
+        )
 
-        # fixed-pipeline transforms in glutWireTeapot() from freeglut_teapot.c
-        transform @= Mat4.rotate(radians(270.0), 1, 0, 0)
-        transform @= Mat4.scale(.5, .5, .5)
-        transform @= Mat4.translate(0, 0, -1.5);
-
-        self.set_modelview_matrix(transform)
         glutWireTeapot(1)
 
     def set_and_draw(self):
@@ -79,11 +79,11 @@ class Scene:
         self.shader_set()
 
         # set camera
-        transform = \
-            Mat4.translate(0, 0, -1/self.zoom) @ \
-            Mat4.rotate(radians(self.phi),   1, 0, 0) @ \
+        self.set_modelview_matrix(
+            Mat4.translate(0, 0, -1/self.zoom) @
+            Mat4.rotate(radians(self.phi),   1, 0, 0) @
             Mat4.rotate(radians(self.theta), 0, 0, 1)
-        self.set_modelview_matrix(transform)
+        )
 
         # draw!
         self.draw()
