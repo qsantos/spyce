@@ -66,11 +66,13 @@ class PickingGUI(gspyce.hud.HUD):
         If several objects match, return the one that was provided first."""
 
         # draw with color picking
+        original_color = self.color
         self.picking_enabled = True
         glDisable(GL_MULTISAMPLE)
         self.set_and_draw()
         glEnable(GL_MULTISAMPLE)
         self.picking_enabled = False
+        self.set_color(*original_color)
 
         # invert y axis
         viewport = glGetIntegerv(GL_VIEWPORT)
