@@ -45,6 +45,7 @@ class MissionGUI(gspyce.simulation.SimulationGUI):
 
         # draw texture
         glDisable(GL_CULL_FACE)
+        self.set_color(1, 1, 1, 1)
         self.rocket_mesh.draw()
         glEnable(GL_CULL_FACE)
 
