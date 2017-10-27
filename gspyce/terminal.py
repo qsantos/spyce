@@ -9,7 +9,6 @@ import threading  # Thread
 import collections  # deque
 import rlcompleter  # Completer
 
-import spyce.interact
 import gspyce.hud
 from gspyce.graphics import *
 
@@ -42,23 +41,10 @@ class PTY:
 
 
 def repl(gui):
-    # setup readline
-    import readline
-    completer = rlcompleter.Completer(spyce.interact.namespace)
-    readline.set_completer(completer.complete)
-    readline.parse_and_bind("tab: complete")
-
-    # banner
-    v = sys.version_info
-    banner = (
-        'Spyce (running Python %s.%s.%s on %s)'
-        % (v.major, v.minor, v.micro, sys.platform)
-    )
-
-    # actual REPL
+    import spyce.interact
     spyce.interact.namespace["gui"] = gui
     try:
-        code.interact(banner=banner, local=spyce.interact.namespace)
+        import spyce.__main__
     except SystemExit:
         pass
     gui.quit()
