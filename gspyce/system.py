@@ -184,7 +184,6 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
             body._relative_position = body_position - scene_origin
 
         # draw celestial bodies
-        self.sphere.bind()
         # draw system star individually (without lighting)
         self.draw_body(self.system)
         # enable lighting and place light source
@@ -192,13 +191,14 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         x, y, z, _ = self.modelview_matrix @ self.system._relative_position
         glUniform3f(self.lighting_source, x, y, z)
         # draw planets and moons (with lighting)
+        self.sphere.bind()
         for body in bodies:
             if body is self.system:
                 continue
             self.draw_body(body)
+        self.sphere.unbind()
         # clean
         self.shader_set()
-        self.sphere.unbind()
 
         # draw circles around celestial bodies when from far away
         glPointSize(20)
