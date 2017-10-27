@@ -78,13 +78,16 @@ class TerminalGUI(gspyce.hud.HUD):
     def __enter__(self):
         # prepare standard file descriptors for raw manipulation
         self.was_blocking = os.get_blocking(0)
-        self.terminal_attr_stdin = termios.tcgetattr(0)
-        self.terminal_attr_stdout = termios.tcgetattr(1)
-        self.terminal_attr_stderr = termios.tcgetattr(2)
         os.set_blocking(0, False)
-        tty.setraw(0)
-        tty.setraw(1)
-        tty.setraw(2)
+        try:
+            self.terminal_attr_stdin = termios.tcgetattr(0)
+            self.terminal_attr_stdout = termios.tcgetattr(1)
+            self.terminal_attr_stderr = termios.tcgetattr(2)
+            tty.setraw(0)
+            tty.setraw(1)
+            tty.setraw(2)
+        except termios.error:  # probably redirected
+            self.terminal_attr_stdin = None
 
         # redirect standard file descriptors to new PTY
         master, slave = pty.openpty()
@@ -121,9 +124,10 @@ class TerminalGUI(gspyce.hud.HUD):
         self.terminal_pipe = None
 
         # restore standard file descriptors attributes
-        termios.tcsetattr(2, termios.TCSADRAIN, self.terminal_attr_stderr)
-        termios.tcsetattr(1, termios.TCSADRAIN, self.terminal_attr_stdout)
-        termios.tcsetattr(0, termios.TCSADRAIN, self.terminal_attr_stdin)
+        if self.terminal_attr_stdin is not None:
+            termios.tcsetattr(2, termios.TCSADRAIN, self.terminal_attr_stderr)
+            termios.tcsetattr(1, termios.TCSADRAIN, self.terminal_attr_stdout)
+            termios.tcsetattr(0, termios.TCSADRAIN, self.terminal_attr_stdin)
         os.set_blocking(0, self.was_blocking)
 
     def toggle_terminal(self, enable=None):
