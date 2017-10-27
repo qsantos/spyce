@@ -107,7 +107,7 @@ class Generic(Mesh):
 class Square(Mesh):
     def __init__(self, size):
         self.size = size
-        super().__init__(GL_QUADS)
+        super().__init__(GL_TRIANGLE_STRIP)
 
     def vertices(self):
         s = self.size
@@ -129,7 +129,7 @@ class Sphere(Mesh):
         self.radius = radius
         self.slices = slices
         self.stacks = stacks
-        super().__init__(GL_QUAD_STRIP)
+        super().__init__(GL_TRIANGLE_STRIP)
 
     def vertices(self):
         for j in range(self.stacks):

@@ -20,6 +20,8 @@ class Scene:
 
         # GLUT init
         glutInit(sys.argv)
+        glutInitContextVersion(3, 0)  # 2.0 enough, 3.0 = forward compatiblity
+        glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG)
         glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH |
                             GLUT_MULTISAMPLE)
         glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,
@@ -45,6 +47,12 @@ class Scene:
         glEnable(GL_MULTISAMPLE)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glClearColor(0.0, 0.0, 0.0, 1.0)
+
+        # use of VAO is required by OpenGL 3.2 core, so we use one if available
+        if bool(glGenVertexArrays):  # OpenGL 3.0
+            vao = glGenVertexArrays(1)
+            glEnableVertexAttribArray(vao)
+            glBindVertexArray(vao)
 
         # initialize textures
         gspyce.textures.init()

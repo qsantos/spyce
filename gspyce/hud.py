@@ -80,7 +80,9 @@ class HUD(gspyce.scene.Scene):
             append_vertex(row, col, 0, 0)
             append_vertex(row, col, 0, 1)
             append_vertex(row, col, 1, 1)
+            append_vertex(row, col, 1, 1)
             append_vertex(row, col, 1, 0)
+            append_vertex(row, col, 0, 0)
 
             # skip forward to next character
             self.hud_x += self.character_width
@@ -142,7 +144,7 @@ class HUD(gspyce.scene.Scene):
         # actually draw
         self.set_color(1, 1, 1, 1)
         glBindTexture(GL_TEXTURE_2D, self.font)
-        glDrawArrays(GL_QUADS, 0, self.text_vbo.size // 2)
+        glDrawArrays(GL_TRIANGLES, 0, self.text_vbo.size // 2)
         glBindTexture(GL_TEXTURE_2D, 0)
 
         # restore state
