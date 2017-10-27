@@ -155,7 +155,8 @@ def main():
 
     sim.rocket = rocket
     sim.focus = rocket
-    sim.main()
+    with sim:
+        sim.main()
 
 
 if __name__ == '__main__':
