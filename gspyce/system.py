@@ -72,12 +72,12 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         self.lighting_source = \
             glGetUniformLocation(self.shader_lighting, b'lighting_source')
 
-        # skybox shader
+        # skybox
         self.shader_skybox = main_program('cubemap')
-        # cubemap_texture = GL_TEXTURE0
-        variable = glGetUniformLocation(self.shader_skybox, b"cubemap_texture")
-        glUseProgram(self.shader_skybox)
-        glUniform1i(variable, 0)
+        self.shader_set(self.shader_skybox)
+        var = glGetUniformLocation(self.shader_skybox, b"cubemap_texture")
+        glUniform1i(var, 0)
+        self.skybox = gspyce.skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
 
         # sphere VBO for drawing bodies
         self.sphere = gspyce.mesh.Sphere(1, 64, 64)
@@ -107,9 +107,6 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
         for body in self.bodies:
             filename = "%s.jpg" % body.name
             body.texture = gspyce.textures.load(texture_directory, filename)
-
-        # skybox
-        self.skybox = gspyce.skybox.Skybox("skybox", "GalaxyTex_%s.jpg")
 
     @classmethod
     def from_cli_args(cls):
