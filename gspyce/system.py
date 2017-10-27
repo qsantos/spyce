@@ -129,89 +129,6 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
 
         return cls(body)
 
-    def draw_orbit_focused(self, body):
-        """Draw on orbit using current position as origin"""
-
-        # issues when drawing the orbit of a focused body:
-        # 1. moving to system center and back close to camera induces
-        #    loss of significance and produces jitter
-        # 2. drawing the orbit as segments may put the body visibly out
-        #    of the line when zooming in
-        # 3. line breaks may be visible close to the camera
-
-        # now, we fix the three issues mentioned above
-        # draw the orbit from the body rather than from the orbit focus (1.)
-
-        def corrected_orbit_position_at_true_anomaly(theta):
-            return body.orbit.position_at_true_anomaly(theta) - focus_offset
-        focus_offset = body.orbit.position_at_time(self.time)
-
-        orbit = body.orbit
-
-        if orbit.eccentricity >= 1.:  # open orbits
-            # choose interpolation points
-            def _():
-                true_anomaly = orbit.true_anomaly_at_time(self.time)
-                # decide when to stop drawing
-                max_true_anomaly = orbit.true_anomaly_at_escape()
-                if max_true_anomaly is None:
-                    max_true_anomaly = orbit.ejection_angle() - 1e-2
-                # normal hyperbola
-                n = 128
-                for i in range(n+1):
-                    t = 2.*i/n - 1
-                    yield max_true_anomaly * t
-                # ensure the body will be on the line (2.)
-                # more points close to the camera (3.)
-                n = 64
-                for i in range(n+1):
-                    t = 2.*i/n - 1
-                    theta = true_anomaly + t * abs(t)
-                    if abs(theta) < max_true_anomaly:
-                        yield theta
-            angles = sorted(_())
-
-            # draw trajectory
-            glPointSize(2)
-            glBegin(GL_LINE_STRIP)
-            for angle in angles:
-                glVertex3f(*corrected_orbit_position_at_true_anomaly(angle))
-            glEnd()
-
-            # periapsis
-            glPointSize(5)
-            glBegin(GL_POINTS)
-            glVertex3f(*corrected_orbit_position_at_true_anomaly(0))
-            glEnd()
-        else:  # closed orbits
-            # nice hack with circle symetry to draw the orbit from the body
-            # while still using VBOs
-            # unsure it can be adapted for parabolic and hyperbolic orbits
-
-            # make tilted ellipse from a circle; and rotate at current anomaly
-            anomaly = orbit.eccentric_anomaly_at_time(self.time)
-            original_modelview_matrix = self.modelview_matrix
-            self.set_modelview_matrix(
-                self.modelview_matrix @
-                Mat4.rotate(orbit.longitude_of_ascending_node, 0, 0, 1) @
-                Mat4.rotate(orbit.inclination,                 1, 0, 0) @
-                Mat4.rotate(orbit.argument_of_periapsis,       0, 0, 1) @
-                Mat4.scale(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0) @
-                Mat4.rotate(anomaly - math.pi, 0, 0, 1)
-            )
-
-            # the first point of circle_through_origin is (0,0) (2.)
-            # more points are located near the origin (3.)
-            self.circle_through_origin.draw()
-            self.set_modelview_matrix(original_modelview_matrix)
-
-            # apses
-            glPointSize(5)
-            glBegin(GL_POINTS)
-            glVertex3f(*corrected_orbit_position_at_true_anomaly(0))
-            glVertex3f(*corrected_orbit_position_at_true_anomaly(math.pi))
-            glEnd()
-
     def draw_body(self, body):
         """Draw a CelestialBody"""
 
@@ -331,7 +248,8 @@ class SystemGUI(gspyce.picking.PickingGUI, gspyce.terminal.TerminalGUI):
                 Mat4.translate(*body._relative_position)
             )
             self.add_pick_object(body)
-            self.draw_orbit_focused(body)
+            gspyce.mesh.FocusedOrbitMesh(body.orbit, self.time).draw()
+            gspyce.mesh.FocusedApsesMesh(body.orbit, self.time).draw()
             self.set_modelview_matrix(original_modelview_matrix)
 
     def set_and_draw(self):

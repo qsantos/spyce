@@ -219,3 +219,87 @@ class ApsesMesh(Mesh):
         if self.orbit.eccentricity < 1.:  # circular and elliptic orbits
             # apoapsis
             yield self.transform @ Vec4(-1)
+
+# issues when drawing the orbit of a focused body:
+# 1. moving to system center and back close to camera induces
+#    loss of significance and produces jitter
+# 2. drawing the orbit as segments may put the body visibly out
+#    of the line when zooming in
+# 3. line breaks may be visible close to the camera
+
+
+class FocusedOrbitMesh(Mesh):
+    def __init__(self, orbit, time):
+        self.orbit = orbit
+        self.time = time
+        mode = GL_LINE_LOOP if orbit.eccentricity < 1. else GL_LINE_STRIP
+        super().__init__(mode)
+
+    def vertices(self):
+        orbit = self.orbit
+
+        # now, we fix the three issues mentioned above
+        # draw the orbit from the body rather than from the orbit focus (1.)
+
+        if orbit.eccentricity >= 1.:  # open orbits
+            # choose interpolation points
+            def _():
+                true_anomaly = orbit.true_anomaly_at_time(self.time)
+                # decide when to stop drawing
+                max_true_anomaly = orbit.true_anomaly_at_escape()
+                if max_true_anomaly is None:
+                    max_true_anomaly = orbit.ejection_angle() - 1e-2
+                # normal hyperbola
+                n = 128
+                for i in range(n+1):
+                    t = 2.*i/n - 1
+                    yield max_true_anomaly * t
+                # ensure the body will be on the line (2.)
+                # more points close to the camera (3.)
+                n = 64
+                for i in range(n+1):
+                    t = 2.*i/n - 1
+                    theta = true_anomaly + t * abs(t)
+                    if abs(theta) < max_true_anomaly:
+                        yield theta
+            angles = sorted(_())
+
+            focus_offset = orbit.position_at_time(self.time)
+            for angle in angles:
+                yield orbit.position_at_true_anomaly(angle) - focus_offset
+        else:  # closed orbits
+            # nice hack with circle symetry to draw the orbit from the body
+            # while still using VBOs
+            # unsure it can be adapted for parabolic and hyperbolic orbits
+
+            # make tilted ellipse from a circle; and rotate at current anomaly
+            anomaly = orbit.eccentric_anomaly_at_time(self.time)
+            transform = (
+                Mat4.rotate(orbit.longitude_of_ascending_node, 0, 0, 1) @
+                Mat4.rotate(orbit.inclination,                 1, 0, 0) @
+                Mat4.rotate(orbit.argument_of_periapsis,       0, 0, 1) @
+                Mat4.scale(orbit.semi_major_axis, orbit.semi_minor_axis, 1.0) @
+                Mat4.rotate(anomaly - math.pi, 0, 0, 1)
+            )
+
+            # the first point of circle_through_origin is (0,0) (2.)
+            # more points are located near the origin (3.)
+            base_mesh = CircleThroughOrigin(1, 256)
+            for vertice in base_mesh.vertices():
+                yield transform @ Vec4(*vertice)
+
+
+class FocusedApsesMesh(Mesh):
+    def __init__(self, orbit, time):
+        self.orbit = orbit
+        self.time = time
+        super().__init__(GL_POINTS)
+
+    def vertices(self):
+        focus_offset = self.orbit.position_at_time(self.time)
+
+        # periapsis
+        yield self.orbit.position_at_true_anomaly(0) - focus_offset
+        if self.orbit.eccentricity < 1.:  # circular and elliptic orbits
+            # apoapsis
+            yield self.orbit.position_at_true_anomaly(math.pi) - focus_offset
