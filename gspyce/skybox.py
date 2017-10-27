@@ -39,9 +39,14 @@ class Skybox:
     def draw(self):
         """Draw a skybox of given size"""
         glBindTexture(GL_TEXTURE_CUBE_MAP, self.texture)
+
         self.vertex_buffer.bind()
-        glVertexPointer(3, GL_FLOAT, 0, None)
-        self.vertex_buffer.unbind()
-        glEnableClientState(GL_VERTEX_ARRAY)
+
+        program = glGetIntegerv(GL_CURRENT_PROGRAM)
+        var = glGetAttribLocation(program, "vertex")
+        glEnableVertexAttribArray(var)
+        glVertexAttribPointer(var, 3, GL_FLOAT, False, 0, None)
         glDrawArrays(GL_TRIANGLES, 0, 36)
-        glDisableClientState(GL_VERTEX_ARRAY)
+        glDisableVertexAttribArray(var)
+        self.vertex_buffer.unbind()
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0)

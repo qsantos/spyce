@@ -44,33 +44,47 @@ class Mesh:
                 raise RuntimeError("Another mesh is already bound")
         Mesh.bound_mesh = self
 
+        program = glGetIntegerv(GL_CURRENT_PROGRAM)
+
         # select vertex buffer object
+        var = glGetAttribLocation(program, "vertex")
+        glEnableVertexAttribArray(var)
         self.vertex_buffer.bind()
-        glVertexPointer(self.components, GL_FLOAT, 0, None)
+        glVertexAttribPointer(var, self.components, GL_FLOAT, False, 0, None)
         self.vertex_buffer.unbind()
-        glEnableClientState(GL_VERTEX_ARRAY)
 
         # select texcoord buffer object
         if hasattr(self, "texcoord_buffer"):
-            self.texcoord_buffer.bind()
-            glTexCoordPointer(2, GL_FLOAT, 0, None)
-            self.texcoord_buffer.unbind()
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+            var = glGetAttribLocation(program, "texcoord")
+            if var != -1:  # active attribute
+                glEnableVertexAttribArray(var)
+                self.texcoord_buffer.bind()
+                glVertexAttribPointer(var, 2, GL_FLOAT, False, 0, None)
+                self.texcoord_buffer.unbind()
 
         # select normal buffer object
         if hasattr(self, "normal_buffer"):
-            self.normal_buffer.bind()
-            glNormalPointer(GL_FLOAT, 0, None)
-            self.normal_buffer.unbind()
-            glEnableClientState(GL_NORMAL_ARRAY)
+            var = glGetAttribLocation(program, "normal")
+            if var != -1:  # active attribute
+                glEnableVertexAttribArray(var)
+                self.normal_buffer.bind()
+                glVertexAttribPointer(var, 3, GL_FLOAT, False, 0, None)
+                self.normal_buffer.unbind()
 
         return False
 
     def unbind(self):
         """Unbind the mesh"""
-        glDisableClientState(GL_NORMAL_ARRAY)
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
-        glDisableClientState(GL_VERTEX_ARRAY)
+        program = glGetIntegerv(GL_CURRENT_PROGRAM)
+        var = glGetAttribLocation(program, "vertex")
+        if var != -1:
+            glDisableVertexAttribArray(var)
+        var = glGetAttribLocation(program, "texcoord")
+        if var != -1:
+            glDisableVertexAttribArray(var)
+        var = glGetAttribLocation(program, "normal")
+        if var != -1:
+            glDisableVertexAttribArray(var)
         Mesh.bound_mesh = None
 
     def draw(self):

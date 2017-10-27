@@ -121,19 +121,23 @@ class HUD(gspyce.scene.Scene):
         # fill vertex lists
         self.draw_hud()
 
+        program = self.current_shader
+
         # vertices
+        var = glGetAttribLocation(program, "vertex")
+        glEnableVertexAttribArray(var)
         self.text_vbo.fill(self.vertcoords)
         self.text_vbo.bind()
-        glVertexPointer(2, GL_FLOAT, 0, None)
-        self.text_tbo.unbind()
-        glEnableClientState(GL_VERTEX_ARRAY)
+        glVertexAttribPointer(var, 2, GL_FLOAT, False, 0, None)
+        self.text_vbo.unbind()
 
-        # texture coordinatess
+        # textures coordinates
+        var = glGetAttribLocation(program, "texcoord")
+        glEnableVertexAttribArray(var)
         self.text_tbo.fill(self.texcoords)
         self.text_tbo.bind()
-        glTexCoordPointer(2, GL_FLOAT, 0, None)
-        self.text_vbo.unbind()
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        glVertexAttribPointer(var, 2, GL_FLOAT, False, 0, None)
+        self.text_tbo.unbind()
 
         # actually draw
         self.set_color(1, 1, 1, 1)
@@ -142,8 +146,10 @@ class HUD(gspyce.scene.Scene):
         glBindTexture(GL_TEXTURE_2D, 0)
 
         # restore state
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
-        glDisableClientState(GL_VERTEX_ARRAY)
+        var = glGetAttribLocation(program, "texcoord")
+        glDisableVertexAttribArray(var)
+        var = glGetAttribLocation(program, "vertex")
+        glDisableVertexAttribArray(var)
         self.set_modelview_matrix(original_modelview_matrix)
         self.set_projection_matrix(original_projection_matrix)
 
