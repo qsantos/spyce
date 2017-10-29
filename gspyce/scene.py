@@ -3,6 +3,7 @@ from math import radians
 
 from spyce.vector import Mat4
 from gspyce.graphics import *
+import gspyce.mesh
 import gspyce.textures
 
 
@@ -68,16 +69,10 @@ class Scene:
 
     def draw(self):
         """Draw the scene"""
-        self.set_modelview_matrix(
-            self.modelview_matrix @
-            Mat4.rotate(radians(90), 1, 0, 0) @
-            # fixed-pipeline transforms in glutWireTeapot() (freeglut_teapot.c)
-            Mat4.rotate(radians(270.0), 1, 0, 0) @
-            Mat4.scale(.5, .5, .5) @
-            Mat4.translate(0, 0, -1.5)
-        )
-
-        glutWireTeapot(1)
+        glDisable(GL_CULL_FACE)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+        gspyce.mesh.Sphere(1, 16, 16).draw()
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
     def set_and_draw(self):
         """Setup the camera and draw"""
