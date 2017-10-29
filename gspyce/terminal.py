@@ -61,7 +61,10 @@ class TerminalGUI(gspyce.hud.HUD):
         self.terminal_pipe = None  # all I/O of the terminal go through this
         self.terminal_pty = PTY()  # save I/O for graphical display
 
-    def __enter__(self):
+    def start_redirection(self):
+        if self.terminal_pipe:
+            return
+
         # prepare standard file descriptors for raw manipulation
         self.was_blocking = os.get_blocking(0)
         os.set_blocking(0, False)
@@ -93,10 +96,9 @@ class TerminalGUI(gspyce.hud.HUD):
         # start REPL in separate thread
         threading.Thread(target=repl, args=(self,), daemon=True).start()
 
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.flush_pipes()
+    def stop_redirection(self):
+        if not self.terminal_pipe:
+            return
 
         # should kill thread because of readline, but cannot do this in Python
 
@@ -115,6 +117,14 @@ class TerminalGUI(gspyce.hud.HUD):
             termios.tcsetattr(1, termios.TCSADRAIN, self.terminal_attr_stdout)
             termios.tcsetattr(0, termios.TCSADRAIN, self.terminal_attr_stdin)
         os.set_blocking(0, self.was_blocking)
+
+    def __enter__(self):
+        self.start_redirection()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.flush_pipes()
+        self.stop_redirection()
 
     def toggle_terminal(self, enable=None):
         """Toggle terminal
@@ -199,7 +209,13 @@ class TerminalGUI(gspyce.hud.HUD):
 
     @glut_callback
     def idleFunc(self):
-        self.flush_pipes()
+        try:
+            self.flush_pipes()
+        except:
+            # any exception in flush_pipes() is an error
+            self.stop_redirection()
+            raise
+
         time.sleep(.01)
 
     def draw_hud(self):
