@@ -211,7 +211,7 @@ class TerminalGUI(gspyce.hud.HUD):
 
 
 def main():
-    with TerminalGUI():
+    with TerminalGUI() as gui:
         gui.main()
 
 
