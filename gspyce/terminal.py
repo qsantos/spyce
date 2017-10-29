@@ -109,6 +109,9 @@ class TerminalGUI(gspyce.hud.HUD):
         os.dup2(self.real_stderr, 2)
         os.dup2(self.real_stdout, 1)
         os.dup2(self.real_stdin, 0)
+        os.close(self.real_stderr)
+        os.close(self.real_stdout)
+        os.close(self.real_stdin)
         self.terminal_pipe = None
 
         # restore standard file descriptors attributes
