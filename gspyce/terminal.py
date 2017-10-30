@@ -13,31 +13,137 @@ import gspyce.hud
 from gspyce.graphics import *
 
 
-class PTY:
-    """"Collect lines of text"""
-    def __init__(self, n_lines=24, n_columns=80):
-        """Wrap output to n_columns and keep the last n_lines lines"""
-        self.n_lines = n_lines
-        self.n_columns = n_columns
-        self.lines = collections.deque([""], maxlen=n_lines)
+def printable(c):
+    d = ord(c)
+    if c == '\x7f':
+        return '^?'
+    elif c != '\r' and c != '\n' and d < 32:
+        return '^' + r'@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_'[d]
+    else:
+        return c
+
+
+def parse_control_sequence(sequence):
+    sequence = iter(sequence)
+    if next(sequence) != '\x1b':  # escape
+        return 0, None, []
+    if next(sequence) != '[':
+        return 0, None, []
+    length = 2
+    args = []
+    current_arg = []
+    while True:
+        c = next(sequence)
+        length += 1
+        if c in '0123456789':
+            current_arg.append(c)
+        elif c == ';':
+            args.append(int(''.join(current_arg) or 0))
+            current_arg.clear()
+        elif c in '@CKPm':
+            args.append(int(''.join(current_arg) or 0))
+            return length, c, args
+        else:
+            return 0, None, []
+
+
+class VTERow:
+    def __init__(self):
+        self.cells = []
 
     def __str__(self):
-        return '\n'.join(self.lines)
+        return ''.join(printable(c) for c in self.cells)
+
+    def insert(self, column, c):
+        if column >= len(self.cells):
+            self.cells += [' ' for _ in range(column+1 - len(self.cells))]
+        self.cells[column] = c
+
+
+class PTY:
+    """"Collect lines of text"""
+    def __init__(self, n_rows=24, n_columns=80):
+        """Wrap output to n_columns and keep the last n_rows lines"""
+        self.n_rows = n_rows
+        self.n_columns = n_columns
+        self.rows = [VTERow() for _ in range(n_rows)]
+        self.cur_row = 0
+        self.cur_col = 0
+        self.input_buffer = ''
+
+    def __str__(self):
+        return '\n'.join(str(row) for row in self.rows)
+
+    def next_col(self, amount=1):
+        self.cur_col += amount
+        if self.cur_col >= self.n_columns:
+            self.cur_col = 0
+            self.next_row()
+
+    def next_row(self, amount=1):
+        self.cur_row += amount
+        if self.cur_row >= self.n_rows:
+            self.rows = self.rows[1:] + [VTERow()]
+            self.cur_row -= 1
+
+    def insertchar(self, c):
+        self.rows[self.cur_row].insert(self.cur_col, c)
+        self.next_col()
 
     def write(self, text):
-        # wrap to n_columns
-        def hard_wrap(text, width):
-            for line in text.split('\r\n'):
-                if not line:
-                    yield line
-                for i in range(0, len(line), width):
-                    yield line[i:i+width]
-        lines = hard_wrap(text, width=self.n_columns)
+        buf = self.input_buffer + text
+        i = 0
+        while i < len(buf):
+            try:
+                length, command, args = parse_control_sequence(buf[i:])
+            except StopIteration:
+                self.input_buffer = buf[i:]
+                break
+            else:
+                if command is not None:
+                    if command == '@':  # insert character
+                        arg = args[0] or 1
+                        row = self.rows[self.cur_row]
+                        if self.cur_col < len(row.cells):
+                            row.cells[self.cur_col:self.cur_col] = [
+                                ' ' for _ in range(arg)
+                            ]
+                    elif command == 'C':  # cursor right
+                        arg = args[0] or 1
+                        self.cur_col = min(self.cur_col + arg, self.n_columns)
+                    elif command == 'K':  # erase in line
+                        arg = args[0]
+                        row = self.rows[self.cur_row]
+                        if arg == 0:  # from cursor to end
+                            if self.cur_col < len(row.cells):
+                                row.cells[self.cur_col:] = []
+                        elif arg == 1:  # from beginning to cursor
+                            for i in range(0, self.cur_col):
+                                row.insert(i, ' ')
+                        elif arg == 2:  # all line
+                            row.cells[:] = []
+                    elif command == 'P':  # delete character
+                        arg = args[0] or 1
+                        row = self.rows[self.cur_row]
+                        row.cells[self.cur_col:self.cur_col+arg] = []
+                    elif command == 'm':  # select graphic rendition
+                        pass  # TODO: implement
+                    i += length
+                    continue
 
-        # collect lines
-        self.lines[-1] += next(lines)
-        for line in lines:
-            self.lines.append(line)
+            c = buf[i]
+            if c == '\a':  # bell
+                pass
+            elif c == '\b':  # backspace
+                self.cur_col = max(self.cur_col - 1, 0)
+            elif c == '\r':  # caret return
+                self.cur_col = 0
+            elif c == '\n':  # new line
+                self.next_row()
+                self.cur_col = 0
+            else:
+                self.insertchar(c)
+            i += 1
 
 
 def repl(gui):
@@ -169,6 +275,8 @@ class TerminalGUI(gspyce.hud.HUD):
             except OSError:
                 break
         self.terminal_pty.write(data.decode())
+        if self.terminal_enabled and data:
+            self.update()
         os.write(self.real_stdout, data)
 
     @glut_callback
@@ -184,10 +292,16 @@ class TerminalGUI(gspyce.hud.HUD):
         """Handle key presses (terminal) (GLUT callback)"""
         if k == b'\x1b':  # escape
             self.toggle_terminal(False)
-        else:
-            c = k.decode('latin1')
-            if self.terminal_pipe:
-                os.write(self.terminal_pipe, c.encode())
+        elif self.terminal_pipe:
+            c = k.decode('latin1').encode()
+
+            # pass Alt+X shortcuts to e.g. readline
+            # e.g. Alt+b = back one word, Alt+u = capitalize word
+            modifiers = glutGetModifiers()
+            if modifiers & GLUT_ACTIVE_ALT:
+                c = b'\x1b' + c
+
+            os.write(self.terminal_pipe, c)
             self.update()
 
     @glut_callback
