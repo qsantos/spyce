@@ -141,15 +141,15 @@ class OrbitAngles(OrbitGeometry):
 
         # circular orbit
         if self.eccentricity == 0:
-            return None
+            return math.nan
 
-        # too high a periapsis
+        # periapsis too high
         if distance < self.periapsis:
-            return None
+            return math.nan
 
-        # parabolic orbit with too low an apoapsis
-        if 0 < self.apoapsis <= distance:
-            return None
+        # closed orbit and apoapsis too low
+        if 0 < self.apoapsis < distance:
+            return math.nan
 
         return math.acos(
             (self.semi_latus_rectum / distance - 1) / self.eccentricity
