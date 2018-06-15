@@ -75,7 +75,7 @@ class Orbit(
         # mean motion
         mu = self.primary.gravitational_parameter
         if self.eccentricity == 1:  # parabolic trajectory
-            self.mean_motion = 3 * math.sqrt(mu / (self.semi_latus_rectum)**3)
+            self.mean_motion = 3 * math.sqrt(mu / self.semi_latus_rectum**3)
         else:
             self.mean_motion = math.sqrt(mu / abs(self.semi_major_axis)**3)
 
