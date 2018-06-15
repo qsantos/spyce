@@ -70,14 +70,14 @@ class OrbitGeometry:
     def eccentric_anomaly_at_true_anomaly(self, true_anomaly):
         """Eccentric anomaly at given time, mean anomaly, or true anomaly"""
         v = true_anomaly
-        if self.eccentricity < 1:  # circular or elliptic orbit
-            x = math.sqrt(1+self.eccentricity)*math.cos(v/2)
-            y = math.sqrt(1-self.eccentricity)*math.sin(v/2)
+        e = self.eccentricity;
+        if e < 1:  # circular or elliptic orbit
+            x = math.sqrt(1+e)*math.cos(v/2)
+            y = math.sqrt(1-e)*math.sin(v/2)
             return 2 * math.atan2(y, x)
-        elif self.eccentricity == 1:  # parabolic trajectory
+        elif e == 1:  # parabolic trajectory
             return math.tan(v / 2)
         else:  # hyperbolic trajectory
-            e = self.eccentricity
             return 2 * math.atanh(math.sqrt((e-1)/(e+1)) * math.tan(v/2))
 
     def true_anomaly_at_mean_anomaly(self, mean_anomaly):
@@ -86,15 +86,16 @@ class OrbitGeometry:
 
     def true_anomaly_at_eccentric_anomaly(self, eccentric_anomaly):
         E = eccentric_anomaly
-        if self.eccentricity < 1:  # circular or elliptic orbit
-            x = math.sqrt(1-self.eccentricity)*math.cos(E/2)
-            y = math.sqrt(1+self.eccentricity)*math.sin(E/2)
+        e = self.eccentricity;
+        if e < 1:  # circular or elliptic orbit
+            x = math.sqrt(1-e)*math.cos(E/2)
+            y = math.sqrt(1+e)*math.sin(E/2)
             return 2 * math.atan2(y, x)
-        elif self.eccentricity == 1:  # parabolic trajectory
+        elif e == 1:  # parabolic trajectory
             return 2 * math.atan(E)
         else:  # hyperbolic trajectory
-            x = math.sqrt(self.eccentricity-1)*math.cosh(E/2)
-            y = math.sqrt(self.eccentricity+1)*math.sinh(E/2)
+            x = math.sqrt(e-1)*math.cosh(E/2)
+            y = math.sqrt(e+1)*math.sinh(E/2)
             return 2 * math.atan2(y, x)
 
 
