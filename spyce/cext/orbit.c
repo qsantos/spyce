@@ -199,7 +199,7 @@ double eccentric_anomaly_at_mean_anomaly(double e, double M)
 		for (int i = 0; i < 30; i++)
 		{
 			double previous_previous_E = previous_E;
-			double previous_E = E;
+			previous_E = E;
 			E -= f(E) / fprime(E);
 			if (E == previous_E || E == previous_previous_E)
 				break;
@@ -228,7 +228,7 @@ double eccentric_anomaly_at_mean_anomaly(double e, double M)
 		for (int i = 0; i < 30; i++)
 		{
 			double previous_previous_E = previous_E;
-			double previous_E = E;
+			previous_E = E;
 			E -= f(E) / fprime(E);
 			if (E == previous_E || E == previous_previous_E)
 				break;
