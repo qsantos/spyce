@@ -31,8 +31,7 @@ class CelestialCoordinates:
         self.distance = distance
 
     @classmethod
-    def from_equatorial(cls, right_ascension, declination,
-                        distance=math.inf):
+    def from_equatorial(cls, right_ascension, declination, distance=math.inf):
         """Locate an object from its equatorial coordinates (see class doc)
 
         If distance is omitted, it is assumed to be infinite; the coordinates
@@ -40,8 +39,11 @@ class CelestialCoordinates:
         """
         e = cls.obliquity_of_the_ecliptic
         ecliptic_longitude = math.atan(
-            math.tan(right_ascension) * math.cos(e) +
-            math.tan(declination) * math.sin(e) / math.cos(right_ascension)
+            (
+                math.sin(right_ascension) * math.cos(e) +
+                math.tan(declination) * math.sin(e)
+            )
+            / math.cos(right_ascension)
         )
         ecliptic_latitude = math.asin(
             math.sin(declination) * math.cos(e) -
@@ -60,9 +62,10 @@ class CelestialCoordinates:
         """
         e = cls.obliquity_of_the_ecliptic
         right_ascension = math.atan(
-            math.tan(ecliptic_longitude) * math.cos(e) -
-            math.tan(ecliptic_latitude) * math.sin(e) /
-            math.cos(ecliptic_longitude)
+            (
+                math.sin(ecliptic_longitude) * math.cos(e) -
+                math.tan(ecliptic_latitude) * math.sin(e)
+            ) / math.cos(ecliptic_longitude)
         )
         declination = math.asin(
             math.sin(ecliptic_latitude) * math.cos(e) +
