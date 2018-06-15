@@ -79,7 +79,7 @@ class Vec3(list):
 
     def __abs__(u):
         """Maximum metric (see Chebyshev distance)"""
-        return max(u)
+        return max(abs(x) for x in u)
 
 
 class Mat3(list):
