@@ -60,7 +60,7 @@ class VTERow:
         self.cells[column] = c
 
 
-class PTY:
+class VTE:
     """"Collect lines of text"""
     def __init__(self, n_rows=24, n_columns=80):
         """Wrap output to n_columns and keep the last n_rows lines"""
@@ -165,7 +165,7 @@ class TerminalGUI(gspyce.hud.HUD):
         # terminal controls
         self.terminal_enabled = False
         self.terminal_pipe = None  # all I/O of the terminal go through this
-        self.terminal_pty = PTY()  # save I/O for graphical display
+        self.terminal_vte = VTE()  # save I/O for graphical display
 
     def start_redirection(self):
         if self.terminal_pipe:
@@ -184,7 +184,7 @@ class TerminalGUI(gspyce.hud.HUD):
         except termios.error:  # probably redirected
             self.terminal_attr_stdin = None
 
-        # redirect standard file descriptors to new PTY
+        # redirect standard file descriptors to new VTE
         master, slave = pty.openpty()
         os.set_blocking(master, False)
         self.real_stdin = os.dup(0)
@@ -274,7 +274,7 @@ class TerminalGUI(gspyce.hud.HUD):
                 data = os.read(self.terminal_pipe, 4096)
             except OSError:
                 break
-        self.terminal_pty.write(data.decode())
+        self.terminal_vte.write(data.decode())
         if self.terminal_enabled and data:
             self.update()
         os.write(self.real_stdout, data)
@@ -340,7 +340,7 @@ class TerminalGUI(gspyce.hud.HUD):
         super().draw_hud()
         self.flush_pipes()
         if self.terminal_enabled:
-            self.hud_print(str(self.terminal_pty))
+            self.hud_print(str(self.terminal_vte))
 
 
 def main():
