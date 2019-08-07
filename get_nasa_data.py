@@ -47,7 +47,7 @@ def get_planets_physics(bodies):
     html = urlopen(url_physics).read().decode()
 
     # extract data from table
-    pattern = """
+    pattern = r"""
     <td align="left">(.*)<br>&nbsp;</td>
 ([\s\S]*?)
   </tr>
@@ -60,7 +60,7 @@ def get_planets_physics(bodies):
     G = 6.67428e-11
 
     for name, data in matches:
-        pattern = '<td align="right" nowrap>(.*)<br>'
+        pattern = r'<td align="right" nowrap>(.*)<br>'
         matches = re.findall(pattern, data)
 
         _, radius, mass, _, rotational_period, _, _, _, _, _ = matches
@@ -156,7 +156,7 @@ def get_moons_physics(bodies):
     html = urlopen(url_physics).read().decode()
 
     # find moons
-    pattern = """<TR ALIGN=right><TD ALIGN=left>(.*?)\s*</TD>
+    pattern = r"""<TR ALIGN=right><TD ALIGN=left>(.*?)\s*</TD>
 <TD.*>(.*?)(&#177;.*)?</TD><TD>.*</TD>
 <TD.*>(.*?)(&#177;.*)?</TD><TD>.*</TD>"""
     matches = re.findall(pattern, html)
@@ -177,7 +177,7 @@ def get_moons_orbits(bodies):
     html = urlopen(url_orbits).read().decode()
 
     # find planetary systems
-    pattern = """<table cellpadding="5" cellspacing="0" border="0" width="100%">
+    pattern = r"""<table cellpadding="5" cellspacing="0" border="0" width="100%">
   <tr bgcolor="#CCCCCC">
     <td align="left" nowrap><b>Satellites of (.*)</b></td>
 ([\s\S]*?)
@@ -186,7 +186,7 @@ def get_moons_orbits(bodies):
 
     for primary, data in matches:
         # find orbit sets
-        pattern = """(<td colspan="2">|<HR>)
+        pattern = r"""(<td colspan="2">|<HR>)
 <H3>([\s\S]*?)</H3>(
 Epoch (.*) TD?T<BR>)?
 ([\s\S]*?)
@@ -206,7 +206,7 @@ Epoch (.*) TD?T<BR>)?
             epoch = tt_to_j2000(int(year), month, float(day))
 
             # find moons
-            pattern = """<TR ALIGN=right><TD ALIGN=left>(.*?)</TD>
+            pattern = r"""<TR ALIGN=right><TD ALIGN=left>(.*?)</TD>
 ?<TD>(.*?)</TD>
 ?<TD>(.*?)</TD>
 ?<TD>(.*?)</TD>
@@ -221,7 +221,7 @@ Epoch (.*) TD?T<BR>)?
                  longitude_of_ascending_node) in matches:
 
                 # S/2003 J1 -> S/2003J1
-                if re.match('^S/[0-9]{4} [A-Z] [0-9]*$', name):
+                if re.match(r'^S/[0-9]{4} [A-Z] [0-9]*$', name):
                     name = ''.join(name.rsplit(' ', 1))
 
                 # convert to standard units
@@ -296,7 +296,7 @@ def get_dwarf_planet_data(bodies, name):
     body = bodies.setdefault(name, {})
 
     # extract physical information
-    pattern = """<tr>
+    pattern = r"""<tr>
   <td.*>(.*)</font></a></td>
 .*
   <td.*>(.*)</font></td>"""
@@ -317,7 +317,7 @@ def get_dwarf_planet_data(bodies, name):
     epoch *= 86400  # convert from Julian days to seconds
 
     # extract orbital information
-    pattern = '<tr.*>(.*)</a></font></td> <td.*?><font.*?>(.*?)</font></td>'
+    pattern = r'<tr.*>(.*)</a></font></td> <td.*?><font.*?>(.*?)</font></td>'
     matches = re.findall(pattern, html)
     elements = dict(matches)
 
