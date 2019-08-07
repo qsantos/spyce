@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import json
-import math
 import re
+from math import acos, asin, cos, pi, radians, sin
 from urllib.request import urlopen
 
-import spyce.coordinates
-import spyce.physics
+from spyce.physics import au
+from spyce.coordinates import CelestialCoordinates
 
 
 def tt_to_j2000(year, month=1, day=1, hour=0, minute=0, second=0):
@@ -84,11 +84,11 @@ def get_more_physics(bodies, body):
 
     # extract right ascension
     matches = re.search(r'Right Ascension *: *([\-0-9\.]+)', html)
-    right_ascension = math.radians(float(matches.group(1)))
+    right_ascension = radians(float(matches.group(1)))
 
     # extract declination
     matches = re.search(r'Declination *: *([\-0-9\.]+)', html)
-    declination = math.radians(float(matches.group(1)))
+    declination = radians(float(matches.group(1)))
 
     bodies[body]['north_pole'] = {
         'right_ascension': right_ascension,
@@ -133,14 +133,14 @@ def get_planets_orbits(bodies):
         body = bodies.setdefault(name, {})
         body['orbit'] = {
             'primary': 'Sun',
-            'semi_major_axis': semi_major_axis * spyce.physics.au,
+            'semi_major_axis': semi_major_axis * au,
             'eccentricity': eccentricity,
-            'inclination': math.radians(inclination % 360),
+            'inclination': radians(inclination % 360),
             'longitude_of_ascending_node':
-                math.radians(longitude_of_ascending_node % 360),
-            'argument_of_periapsis': math.radians(argument_of_periapsis % 360),
+                radians(longitude_of_ascending_node % 360),
+            'argument_of_periapsis': radians(argument_of_periapsis % 360),
             'epoch': epoch,
-            'mean_anomaly_at_epoch': math.radians(mean_anomaly % 360),
+            'mean_anomaly_at_epoch': radians(mean_anomaly % 360),
         }
 
 
@@ -223,10 +223,10 @@ Epoch (.*) TD?T<BR>)?
                 # convert to standard units
                 semi_major_axis = float(semi_major_axis) * 1e3
                 eccentricity = float(eccentricity)
-                inclination = math.radians(float(inclination))
-                longitude_of_ascending_node = math.radians(float(longitude_of_ascending_node))
-                argument_of_periapsis = math.radians(float(argument_of_periapsis))
-                mean_anomaly_at_epoch = math.radians(float(mean_anomaly_at_epoch))
+                inclination = radians(float(inclination))
+                longitude_of_ascending_node = radians(float(longitude_of_ascending_node))
+                argument_of_periapsis = radians(float(argument_of_periapsis))
+                mean_anomaly_at_epoch = radians(float(mean_anomaly_at_epoch))
 
                 # when given equatorial elements, convert to ecliptic elements
                 # when given Laplacian elements, handle as equatorial elements
@@ -237,9 +237,9 @@ Epoch (.*) TD?T<BR>)?
 
                     # recover ecliptic coordinates of the primary's north pole
                     north_pole = bodies[primary]['north_pole']
-                    north_pole = (
-                        spyce.coordinates.CelestialCoordinates.
-                        from_equatorial(north_pole['right_ascension'], north_pole['declination'])
+                    north_pole = CelestialCoordinates.from_equatorial(
+                        north_pole['right_ascension'],
+                        north_pole['declination'],
                     )
 
                     # from http://www.krysstal.com/sphertrig.html
@@ -255,19 +255,19 @@ Epoch (.*) TD?T<BR>)?
 
                     # compute ecliptic inclination
                     a = inclination
-                    c = math.pi / 2 - north_pole.ecliptic_latitude
-                    B = longitude_of_ascending_node + math.pi / 2
-                    cb = math.cos(a) * math.cos(c) + math.sin(a) * math.sin(c) * math.cos(B)
-                    b = math.acos(cb)
+                    c = pi / 2 - north_pole.ecliptic_latitude
+                    B = longitude_of_ascending_node + pi / 2
+                    cb = cos(a) * cos(c) + sin(a) * sin(c) * cos(B)
+                    b = acos(cb)
 
                     # compute ecliptic longitude of the orbital normal
-                    sA = math.sin(B) * math.sin(a) / math.sin(b)
-                    A = math.asin(sA)
+                    sA = sin(B) * sin(a) / sin(b)
+                    A = asin(sA)
                     A += north_pole.ecliptic_longitude
 
                     # ecliptic elements
                     inclination = b  # relative to the ecliptic
-                    longitude_of_ascending_node = A + math.pi / 2
+                    longitude_of_ascending_node = A + pi / 2
 
                 # save orbit
                 body = bodies.setdefault(name, {})
@@ -319,13 +319,13 @@ def get_dwarf_planet_data(bodies, name):
 
     body['orbit'] = {
         'primary': 'Sun',
-        'semi_major_axis': float(elements['a']) * spyce.physics.au,
+        'semi_major_axis': float(elements['a']) * au,
         'eccentricity': float(elements['e']),
-        'inclination': math.radians(float(elements['i'])),
-        'longitude_of_ascending_node': math.radians(float(elements['node'])),
-        'argument_of_periapsis': math.radians(float(elements['peri'])),
+        'inclination': radians(float(elements['i'])),
+        'longitude_of_ascending_node': radians(float(elements['node'])),
+        'argument_of_periapsis': radians(float(elements['peri'])),
         'epoch': epoch,
-        'mean_anomaly_at_epoch': math.radians(float(elements['M'])),
+        'mean_anomaly_at_epoch': radians(float(elements['M'])),
     }
 
 
