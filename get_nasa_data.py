@@ -193,7 +193,7 @@ Epoch (.*) TD?T<BR>)?
 </TABLE>"""
         matches = re.findall(pattern, data)
 
-        for reference_plane, comment, _, epoch, data in matches:
+        for _, reference_plane, _, epoch, data in matches:
             # missing epoch
             if not epoch and primary == 'Pluto':
                 epoch = '2013 Jan. 1.00'
