@@ -336,18 +336,28 @@ def get_dwarf_planet_data(bodies, name):
 def main():
     bodies = {}
 
+    print('Loading Sun physics')
     get_sun_physics(bodies)
+
+    print('Loading planets physics')
     get_planets_physics(bodies)
     for planet in [
         'Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus',
         'Neptune', 'Pluto',
     ]:
         get_more_physics(bodies, planet)
+
+    print('Loading planets orbits')
     get_planets_orbits(bodies)
+
+    print('Loading moons physics')
     get_moons_physics(bodies)
     get_more_physics(bodies, 'Moon')
+
+    print('Loading moons orbits')
     get_moons_orbits(bodies)
 
+    print('Loading dwarf planets data')
     dwarf_planets = ['Ceres', 'Pluto', 'Sedna', 'Haumea', 'Makemake', 'Eris']
     for dwarf_planet in dwarf_planets:
         get_dwarf_planet_data(bodies, dwarf_planet)
