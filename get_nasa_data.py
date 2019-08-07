@@ -84,10 +84,14 @@ def get_more_physics(bodies, body):
 
     # extract right ascension
     matches = re.search(r'Right Ascension *: *([\-0-9\.]+)', html)
+    if matches is None:
+        return
     right_ascension = radians(float(matches.group(1)))
 
     # extract declination
     matches = re.search(r'Declination *: *([\-0-9\.]+)', html)
+    if matches is None:
+        return
     declination = radians(float(matches.group(1)))
 
     bodies[body]['north_pole'] = {
