@@ -125,14 +125,16 @@ class Rocket(spyce.body.CelestialBody):
             if satellite == self:
                 continue
 
+            sat_SoI = satellite.sphere_of_influence
+
             # in most situations, orbits do not reach satellites
-            if 0 < self.orbit.apoapsis < satellite.orbit.periapsis:
+            if 0 < self.orbit.apoapsis < satellite.orbit.periapsis - sat_Soi
                 continue
 
             # compare distance to radius of sphere of influence
             satellite_position = satellite.orbit.position_at_time(t + dt)
             distance = (self.position - satellite_position).norm()
-            if distance > satellite.sphere_of_influence:
+            if distance > sat_SoI:
                 continue
 
             # update information
