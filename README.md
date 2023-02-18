@@ -29,7 +29,7 @@ extensions](#c-extensions).
 ### Starting an interactive session
 
 ```bash
-$ python spyce
+$ PYTHONPATH=. python3 spyce
 ```
 
 
